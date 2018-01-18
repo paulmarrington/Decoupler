@@ -10,6 +10,7 @@ namespace Decoupled {
     static List<T> instanceList = new List<T> ();
     static Dictionary<string,T> instanceDictionary = new Dictionary<string,T> ();
     static T defaultInstance = null;
+    public static AssetSelector<T> selector = new AssetSelector<T> ();
 
     public static bool Available{ get { return instanceList.Count > 0; } }
 
@@ -18,18 +19,19 @@ namespace Decoupled {
         if (!Available) {
           if (defaultInstance == null) {
             defaultInstance = new T ();
-            Debug.LogWarning("Service '" + instance.GetType().Name + "' does not have an implemention");
-            available = false;
+            Debug.LogWarning("Service '" + typeof(T).Name + "' does not have an implemention");
           }
         }
-        return instanceList [0];
+        return picker();
       }
     }
 
-    public static IEnumerator Create() {
-      string name = typeof(T).Name;
+    public static IEnumerator Create(string name = null) {
       T instance = new T ();
+      name = (name == null) ? instance.GetType().Name : name;
       instanceList.Add(instance);
+      instanceDictionary.Add(name, instance);
+      selector.assets = instanceList.ToArray();
       yield return instance.Initialise();
     }
 
