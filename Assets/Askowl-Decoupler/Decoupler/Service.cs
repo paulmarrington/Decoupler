@@ -7,26 +7,33 @@ namespace Decoupled {
 
   public class Service<T> where T : Service<T>, new() {
 
-    static T instance = default(T);
-    static bool available = false;
+    static List<T> instanceList = new List<T> ();
+    static Dictionary<string,T> instanceDictionary = new Dictionary<string,T> ();
+    static T defaultInstance = null;
 
-    public bool Available{ get { return available; } }
+    public static bool Available{ get { return instanceList.Count > 0; } }
 
     public static T Instance {
       get {
-        if (instance == null) {
-          instance = new T ();
-          Debug.LogWarning("Service '" + instance.GetType().Name + "' not implemented");
-          available = false;
+        if (!Available) {
+          if (defaultInstance == null) {
+            defaultInstance = new T ();
+            Debug.LogWarning("Service '" + instance.GetType().Name + "' does not have an implemention");
+            available = false;
+          }
         }
-        return instance;
+        return instanceList [0];
       }
     }
 
     public static IEnumerator Create() {
-      instance = new T ();
-      available = true;
+      string name = typeof(T).Name;
+      T instance = new T ();
+      instanceList.Add(instance);
       yield return instance.Initialise();
+    }
+
+    Service() {
     }
 
     public virtual IEnumerator Initialise() {
