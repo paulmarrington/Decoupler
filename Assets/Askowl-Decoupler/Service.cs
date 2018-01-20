@@ -14,6 +14,10 @@ namespace Decoupled {
 
     public static bool Available{ get { return instanceList.Count > 0; } }
 
+    static Service() {
+      selector.Cycle();
+    }
+
     public static T Instance {
       get {
         if (!Available) {
@@ -22,11 +26,15 @@ namespace Decoupled {
             Debug.LogWarning("Service '" + typeof(T).Name + "' does not have an implemention");
           }
         }
-        return picker();
+        return selector.Pick();
       }
     }
 
-    public static IEnumerator Create(string name = null) {
+    public static T Fetch(string name) {
+      return instanceDictionary [name];
+    }
+
+    public static IEnumerator Register(string name = null) {
       T instance = new T ();
       name = (name == null) ? instance.GetType().Name : name;
       instanceList.Add(instance);
@@ -35,8 +43,7 @@ namespace Decoupled {
       yield return instance.Initialise();
     }
 
-    Service() {
-    }
+    public AssetSelector<T> Selector { get { return selector; } }
 
     public virtual IEnumerator Initialise() {
       yield return null;
