@@ -7,15 +7,31 @@ namespace Decoupled {
 
   public class Service<T> where T : Service<T>, new() {
 
-    static List<T> instanceList = new List<T> ();
-    static Dictionary<string,T> instanceDictionary = new Dictionary<string,T> ();
-    static T defaultInstance = null;
-    public static AssetSelector<T> selector = new AssetSelector<T> ();
+    static List<T> instanceList;
+    static Dictionary<string,T> instanceDictionary;
+    static T defaultInstance;
+    static AssetSelector<T> selector;
 
     public static bool Available{ get { return instanceList.Count > 0; } }
 
     static Service() {
+      Reset();
+    }
+
+    public static void Reset() {
+      instanceList = new List<T> ();
+      instanceDictionary = new Dictionary<string,T> ();
+      defaultInstance = null;
+//      selector = AssetSelector<T>.Singleton();
       selector.Cycle();
+    }
+
+    public static void Random() {
+      selector.Random();
+    }
+
+    public static void Exhaustive() {
+      selector.Exhaustive();
     }
 
     public static T Instance {
@@ -25,6 +41,7 @@ namespace Decoupled {
             defaultInstance = new T ();
             Debug.LogWarning("Service '" + typeof(T).Name + "' does not have an implemention");
           }
+          return defaultInstance;
         }
         return selector.Pick();
       }
@@ -42,8 +59,6 @@ namespace Decoupled {
       selector.assets = instanceList.ToArray();
       yield return instance.Initialise();
     }
-
-    public AssetSelector<T> Selector { get { return selector; } }
 
     public virtual IEnumerator Initialise() {
       yield return null;

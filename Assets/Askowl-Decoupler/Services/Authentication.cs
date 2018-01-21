@@ -21,10 +21,13 @@ namespace Decoupled {
     public User user = new User ();
 
     public virtual IEnumerator CreateUser(string email, string password, Action<string> error = null) {
+      user.Name = user.Email = email;
       yield return null;
     }
 
     public virtual IEnumerator UpdateProfile(string displayName, string photoUrl = null, Action<string> error = null) {
+      user.Name = displayName;
+      user.PhotoUrl = photoUrl;
       yield return null;
     }
 
