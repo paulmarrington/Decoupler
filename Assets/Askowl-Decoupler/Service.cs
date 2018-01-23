@@ -5,7 +5,7 @@ using System;
 
 namespace Decoupled {
 
-  public class Service<T> where T : Service<T>, new() {
+  public class Service<T> : UnityEngine.Object where T : Service<T>, new() {
 
     static List<T> instanceList;
     static Dictionary<string,T> instanceDictionary;
@@ -21,8 +21,8 @@ namespace Decoupled {
     public static void Reset() {
       instanceList = new List<T> ();
       instanceDictionary = new Dictionary<string,T> ();
-      defaultInstance = null;
-//      selector = AssetSelector<T>.Singleton();
+      defaultInstance = default(T);
+      selector = AssetSelector<T>.Singleton();
       selector.Cycle();
     }
 
