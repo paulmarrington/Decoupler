@@ -16,15 +16,15 @@ public class TestDecoupler {
   }
 
   [UnityTest]
-  public IEnumerator SingletonAssetTest() {
+  public IEnumerator ImplementedServiceTest() {
     Decoupled.TestDecouplerInterface.Reset();
 
-    yield return Decoupled.TestDecouplerInterface.Register();
+    yield return TestDecouplerService.Register<TestDecouplerService>();
 
     Decoupled.TestDecouplerInterface testDecoupler = Decoupled.TestDecouplerInterface.Instance;
 
     testDecoupler.entry1(12);
-    Assert.AreEqual(testDecoupler.entry2(), 24);
+    Assert.AreEqual(24, testDecoupler.entry2());
   }
 }
 
@@ -46,9 +46,5 @@ public class TestDecouplerService : Decoupled.TestDecouplerInterface {
 
   public override void entry1(int number) {
     this.number = number * 2;
-  }
-
-  public override int entry2() {
-    return number * 2;
   }
 }

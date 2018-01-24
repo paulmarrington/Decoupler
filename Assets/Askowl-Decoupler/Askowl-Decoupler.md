@@ -54,7 +54,7 @@ All services have a name. Names are set by either specifying the name in `Regist
 ```C#
   IEnumerator Start() {
     // the string name is redundant here as it is also the name of the class
-    yield return Facebook.Register("Facebook");
+    yield return Social.Register<Facebook>("Facebook");
   }
 ```
 ```C#
@@ -126,17 +126,19 @@ namespace Firebase.Unity.Analytics {
 It may sound complicated, so here is an example to show how simple the controller is. And this one drives two related decoupled packages.
 
 ```C#
+using Decoupled.Analytics;
+
 public class FirebaseAnalyticsController : MonoBehaviour {
 
   IEnumerator Start() {
     DontDestroyOnLoad(gameObject);
-    yield return Firebase.Unity.Analytics.Play.Register();
-    yield return Firebase.Unity.Analytics.eCommerce.Register();
+    yield return Play.Register<Firebase.Unity.Analytics.Play>();
+    yield return eCommerce.Register<Firebase.Unity.Analytics.eCommerce>();
   }
 
   IEnumerator onDestroy() {
-    yield return Firebase.Unity.Analytics.Play.Instance.Destroy();
-    yield return Firebase.Unity.Analytics.eCommerce.Instance.Destroy();
+    yield return Play.Instance.Destroy();
+    yield return eCommerce.Instance.Destroy();
   }
 }
 ```

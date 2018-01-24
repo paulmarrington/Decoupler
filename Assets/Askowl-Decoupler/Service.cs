@@ -10,7 +10,7 @@ namespace Decoupled {
     static List<T> instanceList;
     static Dictionary<string,T> instanceDictionary;
     static T defaultInstance;
-    static AssetSelector<T> selector;
+    static Selector<T> selector;
 
     public static bool Available{ get { return instanceList.Count > 0; } }
 
@@ -22,7 +22,7 @@ namespace Decoupled {
       instanceList = new List<T> ();
       instanceDictionary = new Dictionary<string,T> ();
       defaultInstance = default(T);
-      selector = AssetSelector<T>.Singleton();
+      selector = new Selector<T> ();
       selector.Cycle();
     }
 
@@ -51,12 +51,12 @@ namespace Decoupled {
       return instanceDictionary [name];
     }
 
-    public static IEnumerator Register(string name = null) {
-      T instance = new T ();
+    public static IEnumerator Register<D>(string name = null) where D : T, new() {
+      T instance = new D ();
       name = (name == null) ? instance.GetType().Name : name;
       instanceList.Add(instance);
       instanceDictionary.Add(name, instance);
-      selector.assets = instanceList.ToArray();
+      selector.Choices = instanceList.ToArray();
       yield return instance.Initialise();
     }
 
