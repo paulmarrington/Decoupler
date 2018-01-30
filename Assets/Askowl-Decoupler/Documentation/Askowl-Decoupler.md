@@ -78,10 +78,15 @@ All service interfaces have a static member `Available`.
 
 ## How much work do I need to do to implement a decoupler?
 ### For an already written decoupled package
+#### If it comes with a controller or *prefab*
 1. Create an empty gameObject in the first scene of your game
-2. Drag the controller code or prefab to the gameObject
+2. Drag the controller code or *prefab* to the gameObject
 3. Fill any requirements in the controller from the Unity editor
 4. Run the app. The decoupled package will replace the default placeholder
+#### If it has an initialiser in an Editor directory
+There is nothing more to do.
+
+In either case, if external dependencies are needed you will see a message in the log.
 
 ### For a new package and an existing interface
 1. Create a new project
@@ -115,13 +120,39 @@ namespace Firebase.Unity.Analytics {
 }
 ```
 
-#### Write the controller
+#### Write the controller or a loader
+##### A Controller
+A controller is best if the implementation has additional work to do during initialisation.
 1. Create a MonoBehaviour script
 2. Change `Start` method to return `IEnumerator` if needed.
 3. Add `DontDestroyOnLoad(gameObject);` to the `Start` Method
-4. Add `yield return ***.Register`  to the `Start` Method
+4. Add `yield return ???.Register` or `Load`  to the `Start` Method
 5. Create an `IEnumerator OnDestroy()` method
 6. Add `yield return ***.Destroy()`  to the `OnDestroy` Method
+
+##### A Loader
+For simple packages, a loader will do. It is a script in a ***Editor*** directory if a form similar to:
+
+```C#
+#if ImplementationExists
+Decoupled.TestDecouplerInterface.Load<TestDecouplerService>();
+#endif
+```
+Use the `AddDefineSymbols` class to set a preprocessor definition. Normally with will be if an external package is ready.
+
+```C#
+[InitializeOnLoad]
+public class MyDefinitions : AddDefineSymbols {
+  static MyDefinitions() {
+    if (HasFolder("Askowl-Lib")) {
+      AddDefines("AskowlLibExists;AskowlLib");
+    }
+  }
+```
+
+Note that this script must be in an Editor directory.
+
+**Warning:** `Load` does not call the initialise method on the newly created instance.
 
 It may sound complicated, so here is an example to show how simple the controller is. And this one drives two related decoupled packages.
 

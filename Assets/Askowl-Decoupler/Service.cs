@@ -52,20 +52,16 @@ namespace Decoupled {
     }
 
     public static IEnumerator Register<D>(string name = null) where D : T, new() {
+      yield return Load<D>().Initialise();
+    }
+
+    public static T Load<D>(string name = null) where D : T, new() {
       T instance = new D ();
       name = (name == null) ? instance.GetType().Name : name;
       instanceList.Add(instance);
       instanceDictionary.Add(name, instance);
       selector.Choices = instanceList.ToArray();
-      yield return instance.Initialise();
-    }
-
-    public virtual IEnumerator Initialise() {
-      yield return null;
-    }
-
-    public virtual IEnumerator Destroy() {
-      yield return null;
+      return instance;
     }
   }
 }

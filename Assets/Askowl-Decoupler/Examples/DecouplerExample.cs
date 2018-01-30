@@ -4,19 +4,32 @@ using NUnit.Framework;
 using System.Collections;
 
 public class TestDecoupler {
-  [UnityTest]
-  public IEnumerator DefaultServiceTest() {
+  [Test]
+  public void DefaultServiceTest() {
     Decoupled.TestDecouplerInterface.Reset();
 
     Decoupled.TestDecouplerInterface testDecoupler = Decoupled.TestDecouplerInterface.Instance;
 
     testDecoupler.entry1(12);
     Assert.AreEqual(testDecoupler.entry2(), 12);
-    yield return null;
+  }
+
+  [Test]
+  public void LoadImplementedServiceTest() {
+    Decoupled.TestDecouplerInterface.Reset();
+
+    Decoupled.TestDecouplerInterface created = Decoupled.TestDecouplerInterface.Load<TestDecouplerService>();
+
+    Decoupled.TestDecouplerInterface testDecoupler = Decoupled.TestDecouplerInterface.Instance;
+
+    Assert.AreEqual(testDecoupler, created);
+
+    testDecoupler.entry1(12);
+    Assert.AreEqual(24, testDecoupler.entry2());
   }
 
   [UnityTest]
-  public IEnumerator ImplementedServiceTest() {
+  public IEnumerator ControllerImplementedServiceTest() {
     Decoupled.TestDecouplerInterface.Reset();
 
     yield return TestDecouplerService.Register<TestDecouplerService>();
