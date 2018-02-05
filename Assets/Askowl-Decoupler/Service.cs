@@ -63,5 +63,14 @@ namespace Decoupled {
       selector.Choices = instanceList.ToArray();
       return instance;
     }
+
+    public virtual IEnumerator Initialise() {
+      yield return null;
+    }
+
+    public virtual IEnumerator Destroy() {
+      yield return null;
+    }
+
   }
 }
