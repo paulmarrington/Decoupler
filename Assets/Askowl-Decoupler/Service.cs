@@ -9,7 +9,7 @@ namespace Decoupled {
 
     static List<T> instanceList;
     static Dictionary<string,T> instanceDictionary;
-    static T defaultInstance;
+    static T defaultInstance = default(T);
     static Selector<T> selector;
 
     public static bool Available{ get { return instanceList.Count > 0; } }
@@ -37,9 +37,11 @@ namespace Decoupled {
     public static T Instance {
       get {
         if (!Available) {
-          if (defaultInstance == null) {
-            defaultInstance = new T ();
+          if (defaultInstance == default(T)) {
             Debug.LogWarning("Service '" + typeof(T).Name + "' does not have an implemention");
+            if ((defaultInstance = new T ()) == null) {
+              Debug.LogError("Cannot instantiate default '" + typeof(T).Name + "'");
+            }
           }
           return defaultInstance;
         }

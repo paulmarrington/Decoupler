@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Decoupled.Analytics {
 
-  public class eCommerce : Decoupled.Service<eCommerce> {
+  public class eCommerceLog : Decoupled.Service<eCommerceLog> {
     
     public virtual void AddPaymentInfo() {
       Debug.Log("$$$$ Add Payment Info");
