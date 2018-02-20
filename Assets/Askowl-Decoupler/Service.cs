@@ -5,7 +5,8 @@ using System;
 
 namespace Decoupled {
 
-  public class Service : UnityEngine.Object {
+  public class Service {
+// : UnityEngine.Object {
 
     static List<Service> instanceList;
     static Dictionary<string,Service> instanceDictionary;
@@ -71,6 +72,5 @@ namespace Decoupled {
     public virtual IEnumerator Destroy() {
       yield return null;
     }
-
   }
 }
