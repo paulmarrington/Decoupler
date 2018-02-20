@@ -3,6 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Decoupled {
-  public class Storage : Decoupled.Service<Storage> {
+  public class Storage : Decoupled.Service {
   }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 
 namespace Decoupled {
-  public class Authentication : Decoupled.Service<Authentication> {
+  public class Authentication : Decoupled.Service {
 
     public class User {
       public string Name = "guest";

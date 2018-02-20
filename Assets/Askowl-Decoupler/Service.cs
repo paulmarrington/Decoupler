@@ -5,12 +5,12 @@ using System;
 
 namespace Decoupled {
 
-  public class Service<T> : UnityEngine.Object where T : Service<T>, new() {
+  public class Service : UnityEngine.Object {
 
-    static List<T> instanceList;
-    static Dictionary<string,T> instanceDictionary;
-    static T defaultInstance = default(T);
-    static Selector<T> selector;
+    static List<Service> instanceList;
+    static Dictionary<string,Service> instanceDictionary;
+    static Service defaultInstance = null;
+    static Selector<Service> selector;
 
     public static bool Available{ get { return instanceList.Count > 0; } }
 
@@ -19,10 +19,10 @@ namespace Decoupled {
     }
 
     public static void Reset() {
-      instanceList = new List<T> ();
-      instanceDictionary = new Dictionary<string,T> ();
-      defaultInstance = default(T);
-      selector = new Selector<T> ();
+      instanceList = new List<Service> ();
+      instanceDictionary = new Dictionary<string,Service> ();
+      defaultInstance = null;
+      selector = new Selector<Service> ();
       selector.Cycle();
     }
 
@@ -34,31 +34,29 @@ namespace Decoupled {
       selector.Exhaustive();
     }
 
-    public static T Instance {
-      get {
-        if (!Available) {
-          if (defaultInstance == default(T)) {
-            Debug.LogWarning("Service '" + typeof(T).Name + "' does not have an implemention");
-            if ((defaultInstance = new T ()) == null) {
-              Debug.LogError("Cannot instantiate default '" + typeof(T).Name + "'");
-            }
+    public static T Instance<T>() where T : Service, new() {
+      if (!Available) {
+        if (defaultInstance == null) {
+          Debug.LogWarning("Service '" + typeof(T).Name + "' does not have an implemention");
+          if ((defaultInstance = new T ()) == null) {
+            Debug.LogError("Cannot instantiate default '" + typeof(T).Name + "'");
           }
-          return defaultInstance;
         }
-        return selector.Pick();
+        return (T)defaultInstance;
       }
+      return (T)selector.Pick();
     }
 
-    public static T Fetch(string name) {
-      return instanceDictionary [name];
+    public static T Fetch<T>(string name) where T : Service {
+      return (T)instanceDictionary [name];
     }
 
-    public static IEnumerator Register<D>(string name = null) where D : T, new() {
-      yield return Load<D>().Initialise();
+    public static IEnumerator Register<T>(string name = null) where T : Service, new() {
+      yield return Load<T>().Initialise();
     }
 
-    public static T Load<D>(string name = null) where D : T, new() {
-      T instance = new D ();
+    public static T Load<T>(string name = null) where T : Service, new() {
+      T instance = new T ();
       name = (name == null) ? instance.GetType().Name : name;
       instanceList.Add(instance);
       instanceDictionary.Add(name, instance);

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Decoupled.Analytics {
-  public class GameLog : Decoupled.Service<GameLog> {
+  public class GameLog : Decoupled.Service {
 
     public virtual void Screen(string name, string clazz) {
       Debug.Log("**** Screen '" + name + "' - " + clazz);
