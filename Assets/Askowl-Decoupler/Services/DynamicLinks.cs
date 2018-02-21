@@ -3,6 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Decoupled {
-  public class DynamicLinks : Decoupled.Service {
+  public class DynamicLinks : Decoupled.Service<DynamicLinks> {
   }
 }

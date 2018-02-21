@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 namespace Decoupled {
-  public class Social : Decoupled.Service {
+  public class Social : Decoupled.Service<Social> {
 
     public virtual bool IsReady { get { return false; } }
 

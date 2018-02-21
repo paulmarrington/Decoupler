@@ -9,7 +9,7 @@ public class TestDecoupler {
   public void DefaultServiceTest() {
     Decoupled.TestDecouplerInterface.Reset();
 
-    Decoupled.TestDecouplerInterface testDecoupler = Decoupled.Service.Instance<Decoupled.TestDecouplerInterface>();
+    Decoupled.TestDecouplerInterface testDecoupler = Decoupled.TestDecouplerInterface.Instance;
 
     testDecoupler.entry1(12);
     Assert.AreEqual(testDecoupler.entry2(), 12);
@@ -21,7 +21,7 @@ public class TestDecoupler {
   
     Decoupled.TestDecouplerInterface created = Decoupled.TestDecouplerInterface.Load<TestDecouplerService>();
   
-    Decoupled.TestDecouplerInterface testDecoupler = Decoupled.Service.Instance<Decoupled.TestDecouplerInterface>();
+    Decoupled.TestDecouplerInterface testDecoupler = Decoupled.TestDecouplerInterface.Instance;
   
     Assert.AreEqual(testDecoupler, created);
   
@@ -35,7 +35,7 @@ public class TestDecoupler {
   
     yield return TestDecouplerService.Register<TestDecouplerService>();
   
-    Decoupled.TestDecouplerInterface testDecoupler = Decoupled.Service.Instance<Decoupled.TestDecouplerInterface>();
+    Decoupled.TestDecouplerInterface testDecoupler = Decoupled.TestDecouplerInterface.Instance;
   
     testDecoupler.entry1(12);
     Assert.AreEqual(24, testDecoupler.entry2());
@@ -43,7 +43,7 @@ public class TestDecoupler {
 }
 
 namespace Decoupled {
-  public class TestDecouplerInterface : Service {
+  public class TestDecouplerInterface : Service<TestDecouplerInterface> {
     protected int number = 0;
 
     public virtual void entry1(int number) {

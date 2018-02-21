@@ -3,6 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Decoupled {
-  public class Messaging : Decoupled.Service {
+  public class Messaging : Decoupled.Service<Messaging> {
   }
 }

@@ -3,6 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Decoupled {
-  public class RemoteConfig : Decoupled.Service {
+  public class RemoteConfig : Decoupled.Service<RemoteConfig> {
   }
 }
