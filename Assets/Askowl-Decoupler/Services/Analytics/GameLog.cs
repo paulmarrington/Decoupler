@@ -22,7 +22,7 @@ namespace Decoupled.Analytics {
     }
 
     public virtual void Event(string name, params object[] nvp) {
-      Debug.Log("**** Event '" + name + "'");
+      Debug.Log("**** Event '" + name + "' -- " + string.Join(",", System.Array.ConvertAll(nvp, x => x.ToString())));
     }
 
     public virtual void JoinGroup(string groupId) {
