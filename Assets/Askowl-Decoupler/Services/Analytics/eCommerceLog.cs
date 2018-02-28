@@ -1,99 +1,127 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+// ReSharper disable UnusedMember.Global
+// ReSharper disable UnusedParameter.Global
 
 namespace Decoupled.Analytics {
+  using JetBrains.Annotations;
 
-  public class eCommerceLog : Decoupled.Service<eCommerceLog> {
-    
-    public virtual void AddPaymentInfo() {
-      Debug.Log("$$$$ Add Payment Info");
+  // ReSharper disable once InconsistentNaming
+  public sealed class eCommerceLog : Service<eCommerceLog> {
+    [UsedImplicitly]
+    public void AddPaymentInfo() { Debug.Log(message: "$$$$ Add Payment Info"); }
+
+    public void AddToCart(
+      string             id,                 string             name, string category,
+      object             quantity,           [CanBeNull] string location  = null,
+      [CanBeNull] object price       = null, [CanBeNull] string currency  = null,
+      [CanBeNull] object value       = null, [CanBeNull] string origin    = null,
+      [CanBeNull] string destination = null, [CanBeNull] string startDate = null,
+      [CanBeNull] string endDate     = null) {
+      Debug.Log(message: "$$$$ Add To Cart - " + name);
     }
 
-    public virtual void AddToCart(
-      string id, string name, string category, object quantity,
-      string location = null, object price = null, string currency = null, object value = null,
-      string origin = null, string destination = null, string startDate = null, string endDate = null) {
-      Debug.Log("$$$$ Add To Cart - " + name);
+    public void AddToWishlist(
+      string             id, string name, string category, object quantity,
+      [CanBeNull] string location = null,
+      [CanBeNull] object price    = null, [CanBeNull] string currency = null,
+      [CanBeNull] object value    = null) {
+      Debug.Log(message: "$$$$ Add To Wishlist - " + name);
     }
 
-    public virtual void AddToWishlist(
-      string id, string name, string category, object quantity,
-      string location = null, object price = null, string currency = null, object value = null) {
-      Debug.Log("$$$$ Add To Wishlist - " + name);
+    public void BeginCheckout(
+      [CanBeNull] object value              = null, [CanBeNull] string currency = null,
+      [CanBeNull] string transactionId      = null,
+      [CanBeNull] string startDate          = null, [CanBeNull] string endDate       = null,
+      [CanBeNull] object numberOfNights     = null, [CanBeNull] object numberOfRooms = null,
+      [CanBeNull] object numberOfPassengers = null,
+      [CanBeNull] string origin             = null, [CanBeNull] string destination = null,
+      [CanBeNull] string travelClass        = null) {
+      Debug.Log(message: "$$$$ Begin Checkout for " + transactionId);
     }
 
-    public virtual void BeginCheckout(
-      object value = null, string currency = null, string transactionId = null,
-      string startDate = null, string endDate = null,
-      object numberOfNights = null, object numberOfRooms = null, object numberOfPassengers = null,
-      string origin = null, string destination = null, string travelClass = null) {
-      Debug.Log("$$$$ Begin Checkout for " + transactionId);
+    public void CampaignDetails(
+      [CanBeNull] string source           = null, [CanBeNull] string medium = null,
+      [CanBeNull] string campaign         = null,
+      [CanBeNull] string term             = null, [CanBeNull] string contentType = null,
+      [CanBeNull] string adNetworkClickId = null, [CanBeNull] string cp1         = null) {
+      Debug.Log(message: "$$$$ Campaign Details for " + campaign);
     }
 
-    public virtual void CampaignDetails(
-      string source = null, string medium = null, string campaign = null,
-      string term = null, string contentType = null, string adNetworkClickId = null, string cp1 = null) {
-      Debug.Log("$$$$ Campaign Details for " + campaign);
+    public void CheckoutProgress(object step, [CanBeNull] string option = null) {
+      Debug.Log(message: "$$$$ Checkout Progress step " + step);
     }
 
-    public virtual void CheckoutProgress(object step, string option = null) {
-      Debug.Log("$$$$ Checkout Progress step " + step);
+    public void Purchase(
+      [CanBeNull] object value              = null, [CanBeNull] string currency = null,
+      [CanBeNull] string transactionId      = null,
+      [CanBeNull] string startDate          = null, [CanBeNull] string endDate       = null,
+      [CanBeNull] object numberOfNights     = null, [CanBeNull] object numberOfRooms = null,
+      [CanBeNull] object numberOfPassengers = null,
+      [CanBeNull] string origin             = null, [CanBeNull] string destination = null,
+      [CanBeNull] string travelClass        = null) {
+      Debug.Log(message: "$$$$ Purchase " + transactionId);
     }
 
-    public virtual void Purchase(
-      object value = null, string currency = null, string transactionId = null,
-      string startDate = null, string endDate = null,
-      object numberOfNights = null, object numberOfRooms = null, object numberOfPassengers = null,
-      string origin = null, string destination = null, string travelClass = null) {
-      Debug.Log("$$$$ Purchase " + transactionId);
+    public void GenerateLead(object value, string currency) {
+      Debug.Log(message: "$$$$ Generate Lead");
     }
 
-    public virtual void GenerateLead(object value, string currency) {
-      Debug.Log("$$$$ Generate Lead");
-    }
-
-    public virtual void PresentOffer(
-      string itemId, string itemName, string category, object quantity,
-      string locationId = null, object price = null, string currency = null, object value = null
+    public void PresentOffer(
+      string             itemId, string itemName, string category,
+      object             quantity,
+      [CanBeNull] string locationId = null, [CanBeNull] object price = null,
+      [CanBeNull] string currency   = null, [CanBeNull] object value = null
     ) {
-      Debug.Log("$$$$ Present Offer for " + itemName);
+      Debug.Log(message: "$$$$ Present Offer for " + itemName);
     }
 
-    public virtual void PurchaseRefund(object value = null, string currency = null, string transactionId = null) {
-      Debug.Log("$$$$ Purchase Refund for " + transactionId);
+    public void PurchaseRefund([CanBeNull] object value         = null,
+                               [CanBeNull] string currency      = null,
+                               [CanBeNull] string transactionId = null) {
+      Debug.Log(message: "$$$$ Purchase Refund for " + transactionId);
     }
 
-    public virtual void RemoveFromCart(
-      string id, string name, string category, object quantity,
-      string location = null, object price = null, string currency = null, object value = null,
-      string origin = null, string destination = null, string startDate = null, string endDate = null) {
-      Debug.Log("$$$$ Remove From Cart '" + name + "'");
+    public void RemoveFromCart(
+      string             id, string name, string category,
+      object             quantity,
+      [CanBeNull] string location  = null, [CanBeNull] object price       = null,
+      [CanBeNull] string currency  = null, [CanBeNull] object value       = null,
+      [CanBeNull] string origin    = null, [CanBeNull] string destination = null,
+      [CanBeNull] string startDate = null, [CanBeNull] string endDate     = null) {
+      Debug.Log(message: "$$$$ Remove From Cart '" + name + "'");
     }
 
-    public virtual void Search(
-      string searchTerm, 
-      string startDate = null, string endDate = null, object numberOfNights = null, object numberOfRooms = null,
-      object numberOfPassengers = null, string origin = null, string destination = null, string travelClass = null) {
-      Debug.Log("$$$$ Search '" + searchTerm + "'");
+    public void Search(
+      string             searchTerm,
+      [CanBeNull] string startDate          = null, [CanBeNull] string endDate       = null,
+      [CanBeNull] object numberOfNights     = null, [CanBeNull] object numberOfRooms = null,
+      [CanBeNull] object numberOfPassengers = null, [CanBeNull] string origin        = null,
+      [CanBeNull] string destination        = null, [CanBeNull] string travelClass   = null) {
+      Debug.Log(message: "$$$$ Search '" + searchTerm + "'");
     }
 
-    public virtual void SetCheckoutOption(int step, string option) {
-      Debug.Log("$$$$ Set Checkout Option step " + step + ", option " + option);
+    public void SetCheckoutOption(int step, string option) {
+      Debug.Log(message: "$$$$ Set Checkout Option step " + step + ", option " + option);
     }
 
-    public virtual void ViewItem(
-      string id, string name, string category,
-      object quantity = null, string location = null, object price = null, string currency = null,
-      object value = null, string origin = null, string destination = null, string startDate = null,
-      string endDate = null, string flightNumber = null, object numberOfNights = null, object numberOfRooms = null,
-      object numberOfPassengers = null, string travelClass = null, string searchTerm = null 
+    [UsedImplicitly]
+    // ReSharper disable once FunctionComplexityOverflow
+    private void ViewItem(
+      string id,                        string name,            string category,
+      object quantity           = null, string location = null, object price = null,
+      string currency           = null,
+      object value              = null, string origin = null, string destination = null,
+      string startDate          = null,
+      string endDate            = null, string flightNumber = null, object numberOfNights = null,
+      object numberOfRooms      = null,
+      object numberOfPassengers = null, string travelClass = null, string searchTerm = null
     ) {
-      Debug.Log("$$$$ View Item '" + name + "'");
+      Debug.Log(message: "$$$$ View Item '" + name + "'");
     }
 
-    public virtual void ViewItemList(string category) {
-      Debug.Log("$$$$ View Item List '" + category + "'");
+    [UsedImplicitly]
+    public void ViewItemList(string category) {
+      Debug.Log(message: "$$$$ View Item List '" + category + "'");
     }
   }
 }

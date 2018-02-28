@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿namespace Decoupled {
+  using JetBrains.Annotations;
 
-namespace Decoupled {
-  public class Invites : Decoupled.Service<Invites> {
+  [UsedImplicitly]
+  public class Invites : Service<Invites> {
   }
 }

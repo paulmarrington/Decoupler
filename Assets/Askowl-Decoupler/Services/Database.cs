@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿namespace Decoupled {
+  using JetBrains.Annotations;
 
-namespace Decoupled {
-  public class Database : Decoupled.Service<Database> {
+  [UsedImplicitly]
+  public class Database : Service<Database> {
   }
 }

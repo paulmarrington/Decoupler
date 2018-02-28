@@ -1,76 +1,84 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Decoupled.Analytics {
-  public class GameLog : Decoupled.Service<GameLog> {
+  using JetBrains.Annotations;
 
-    public virtual void Screen(string name, string clazz) {
-      Debug.Log("**** Screen '" + name + "' - " + clazz);
+  public sealed class GameLog : Service<GameLog> {
+    [UsedImplicitly]
+    public void Screen(string name, string clazz) {
+      Debug.Log(message: "**** Screen '" + name + "' - " + clazz);
     }
 
-    public virtual void AppOpen() {
-      Debug.Log("**** App Open");
+    [UsedImplicitly]
+    public void AppOpen() { Debug.Log(message: "**** App Open"); }
+
+    [UsedImplicitly]
+    public void EarnVirtualCurrency(object value, string currency) {
+      Debug.Log(message: "**** Earn Virtual Currency " + value + " " + currency);
     }
 
-    public virtual void EarnVirtualCurrency(object value, string currency) {
-      Debug.Log("**** Earn Virtual Currency " + value + " " + currency);
+    internal void Error(string message) { Debug.Log(message: "**** Error '" + message + "'"); }
+
+    internal void Event(string name, [NotNull] params object[] nvp) {
+      Debug.Log(message: "**** Event '" + name + "' -- " + string.Join(
+                           separator: ",",
+                           value: System.Array.ConvertAll(array: nvp,
+                                                          converter: x => x.ToString())));
     }
 
-    public virtual void Error(string message) {
-      Debug.Log("**** Error '" + message + "'");
+    [UsedImplicitly]
+    public void JoinGroup(string groupId) {
+      Debug.Log(message: "**** Join Group '" + groupId + "'");
     }
 
-    public virtual void Event(string name, params object[] nvp) {
-      Debug.Log("**** Event '" + name + "' -- " + string.Join(",", System.Array.ConvertAll(nvp, x => x.ToString())));
+    [UsedImplicitly]
+    public void LevelUp(object level, [CanBeNull] string character = null) {
+      Debug.Log(message: "**** Level Up to '" + level + "' for '" + character + "'");
     }
 
-    public virtual void JoinGroup(string groupId) {
-      Debug.Log("**** Join Group '" + groupId + "'");
+    [UsedImplicitly]
+    public void Login() { Debug.Log(message: "**** Login"); }
+
+    [UsedImplicitly]
+    public void PostScore(int                score, [CanBeNull] object level = null,
+                          [CanBeNull] string character = null) {
+      Debug.Log(message: "**** Post Score " + score + ", level " + level + ", character '" +
+                         character          + "'");
     }
 
-    public virtual void LevelUp(object level, string character = null) {
-      Debug.Log("**** Level Up to '" + level + "' for '" + character + "'");
+    [UsedImplicitly]
+    public void SelectContent(string contentType, string itemId) {
+      Debug.Log(message: "**** Select Content '" + itemId + "', type '" + contentType + "'");
     }
 
-    public virtual void Login() {
-      Debug.Log("**** Login");
+    [UsedImplicitly]
+    public void Share(string contentType, string itemId) {
+      Debug.Log(message: "**** Share '" + itemId + "', type '" + contentType + "'");
     }
 
-    public virtual void PostScore(int score, object level = null, string character = null) {
-      Debug.Log("**** Post Score " + score + ", level " + level + ", character '" + character + "'");
+    [UsedImplicitly]
+    public void SignUp() { Debug.Log(message: "**** Sign Up"); }
+
+    [UsedImplicitly]
+    public void SpendVirtualCurrency(object value, string currency, string item) {
+      Debug.Log(message: "**** Spend Virtual Currency " + value + " " + currency + " on '" + item +
+                         "'");
     }
 
-    public virtual void SelectContent(string contentType, string itemId) {
-      Debug.Log("**** Select Content '" + itemId + "', type '" + contentType + "'");
+    [UsedImplicitly]
+    public void TutorialBegin() { Debug.Log(message: "**** Tutorial Begin"); }
+
+    [UsedImplicitly]
+    public void TutorialComplete() { Debug.Log(message: "**** Tutorial Complete"); }
+
+    [UsedImplicitly]
+    public void UnlockAchievement(string achievementId) {
+      Debug.Log(message: "**** Unlock Achievement");
     }
 
-    public virtual void Share(string contentType, string itemId) {
-      Debug.Log("**** Share '" + itemId + "', type '" + contentType + "'");
-    }
-
-    public virtual void SignUp() {
-      Debug.Log("**** Sign Up");
-    }
-
-    public virtual void SpendVirtualCurrency(object value, string currency, string item) {
-      Debug.Log("**** Spend Virtual Currency " + value + " " + currency + " on '" + item + "'");
-    }
-
-    public virtual void TutorialBegin() {
-      Debug.Log("**** Tutorial Begin");
-    }
-
-    public virtual void TutorialComplete() {
-      Debug.Log("**** Tutorial Complete");
-    }
-
-    public virtual void UnlockAchievement(string achievementId) {
-      Debug.Log("**** Unlock Achievement");
-    }
-
-    public virtual void ViewSearchResults(string searchTerm) {
-      Debug.Log("**** View Search Results");
+    [UsedImplicitly]
+    public void ViewSearchResults(string searchTerm) {
+      Debug.Log(message: "**** View Search Results");
     }
   }
 }

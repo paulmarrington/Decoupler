@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿namespace Decoupled {
+  using JetBrains.Annotations;
 
-namespace Decoupled {
-  public class DynamicLinks : Decoupled.Service<DynamicLinks> {
+  [UsedImplicitly]
+  public class DynamicLinks : Service<DynamicLinks> {
   }
 }

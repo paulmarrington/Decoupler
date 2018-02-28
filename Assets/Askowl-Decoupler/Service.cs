@@ -1,18 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
 
 namespace Decoupled {
+  using JetBrains.Annotations;
 
   public class Service<T> where T : Service<T>, new() {
     //      : UnityEngine.Object
-    static List<T> instanceList;
-    static Dictionary<string,T> instanceDictionary;
-    static T defaultInstance = default(T);
-    static Selector<T> selector;
+    private static List<T> instanceList;
+    private static Dictionary<string,T> instanceDictionary;
+    private static T defaultInstance;
+    private static Selector<T> selector;
 
-    public static bool Available{ get { return instanceList.Count > 0; } }
+    private static bool Available{ get { return instanceList.Count > 0; } }
 
     static Service() {
       Reset();
@@ -26,10 +26,12 @@ namespace Decoupled {
       selector.Cycle();
     }
 
+    [UsedImplicitly]
     public static void Random() {
       selector.Random();
     }
 
+    [UsedImplicitly]
     public static void Exhaustive() {
       selector.Exhaustive();
     }
@@ -39,7 +41,8 @@ namespace Decoupled {
         if (!Available) {
           if (defaultInstance == default(T)) {
             Debug.LogWarning("Service '" + typeof(T).Name + "' does not have an implemention");
-            if ((defaultInstance = new T ()) == null) {
+            defaultInstance = new T();
+            if (defaultInstance == null) {
               Debug.LogError("Cannot instantiate default '" + typeof(T).Name + "'");
             }
           }
@@ -49,28 +52,32 @@ namespace Decoupled {
       }
     }
 
-    public static T Fetch(string name) {
+    [UsedImplicitly]
+    public static T Fetch([NotNull] string name) {
       return instanceDictionary [name];
     }
 
-    public static IEnumerator Register<D>(string name = null) where D : T, new() {
+    public static IEnumerator Register<D>([CanBeNull] string name = null) where D : T, new() {
       yield return Load<D>().Initialise();
     }
 
+    [NotNull]
     public static T Load<D>(string name = null) where D : T, new() {
       T instance = new D ();
-      name = (name == null) ? instance.GetType().Name : name;
+      name = name ?? instance.GetType().Name;
       instanceList.Add(instance);
       instanceDictionary.Add(name, instance);
       selector.Choices = instanceList.ToArray();
       return instance;
     }
 
-    public virtual IEnumerator Initialise() {
+    // ReSharper disable once MemberCanBePrivate.Global
+    protected IEnumerator Initialise() {
       yield return null;
     }
 
-    public virtual IEnumerator Destroy() {
+    [UsedImplicitly]
+    public IEnumerator Destroy() {
       yield return null;
     }
 
