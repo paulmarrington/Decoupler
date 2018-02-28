@@ -1,64 +1,56 @@
-﻿using UnityEngine;
-using UnityEngine.TestTools;
+﻿using UnityEngine.TestTools;
 using NUnit.Framework;
 using System.Collections;
-using System.Collections.Generic;
 
-public class TestDecoupler {
+public sealed class TestDecoupler {
   [Test]
   public void DefaultServiceTest() {
     Decoupled.TestDecouplerInterface.Reset();
 
     Decoupled.TestDecouplerInterface testDecoupler = Decoupled.TestDecouplerInterface.Instance;
 
-    testDecoupler.entry1(12);
-    Assert.AreEqual(testDecoupler.entry2(), 12);
+    testDecoupler.Entry1(12);
+    Assert.AreEqual(testDecoupler.Entry2(), 12);
   }
 
   [Test]
   public void LoadImplementedServiceTest() {
     Decoupled.TestDecouplerInterface.Reset();
-  
-    Decoupled.TestDecouplerInterface created = Decoupled.TestDecouplerInterface.Load<TestDecouplerService>();
-  
+
+    Decoupled.TestDecouplerInterface created =
+      Decoupled.TestDecouplerInterface.Load<TestDecouplerService>();
+
     Decoupled.TestDecouplerInterface testDecoupler = Decoupled.TestDecouplerInterface.Instance;
-  
+
     Assert.AreEqual(testDecoupler, created);
-  
-    testDecoupler.entry1(12);
-    Assert.AreEqual(24, testDecoupler.entry2());
+
+    testDecoupler.Entry1(12);
+    Assert.AreEqual(24, testDecoupler.Entry2());
   }
-  
+
   [UnityTest]
   public IEnumerator ControllerImplementedServiceTest() {
     Decoupled.TestDecouplerInterface.Reset();
-  
+
     yield return TestDecouplerService.Register<TestDecouplerService>();
-  
+
     Decoupled.TestDecouplerInterface testDecoupler = Decoupled.TestDecouplerInterface.Instance;
-  
-    testDecoupler.entry1(12);
-    Assert.AreEqual(24, testDecoupler.entry2());
+
+    testDecoupler.Entry1(12);
+    Assert.AreEqual(24, testDecoupler.Entry2());
   }
 }
 
 namespace Decoupled {
   public class TestDecouplerInterface : Service<TestDecouplerInterface> {
-    protected int number = 0;
+    protected int Number;
 
-    public virtual void entry1(int number) {
-      this.number = number;
-    }
+    internal virtual void Entry1(int number) { Number = number; }
 
-    public virtual int entry2() {
-      return number;
-    }
+    internal int Entry2() { return Number; }
   }
 }
 
-public class TestDecouplerService : Decoupled.TestDecouplerInterface {
-
-  public override void entry1(int number) {
-    this.number = number * 2;
-  }
+internal sealed class TestDecouplerService : Decoupled.TestDecouplerInterface {
+  internal override void Entry1(int number) { Number = number * 2; }
 }
