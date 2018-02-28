@@ -1,8 +1,3 @@
----
-redirect_from:
-  - /
----
-
 # Decoupler
 
 [TOC]
