@@ -48,7 +48,7 @@ namespace Decoupled.Analytics {
     }
 
     public void CheckoutProgress(object step, [CanBeNull] string option = null) {
-      Debug.Log(message: "$$$$ Checkout Progress step " + step);
+      Debug.Log(message: "$$$$ Checkout Progress StepSize " + step);
     }
 
     public void Purchase(
@@ -101,7 +101,7 @@ namespace Decoupled.Analytics {
     }
 
     public void SetCheckoutOption(int step, string option) {
-      Debug.Log(message: "$$$$ Set Checkout Option step " + step + ", option " + option);
+      Debug.Log(message: "$$$$ Set Checkout Option StepSize " + step + ", option " + option);
     }
 
     [UsedImplicitly]

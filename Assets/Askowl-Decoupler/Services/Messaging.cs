@@ -1,8 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿namespace Decoupled {
+  using JetBrains.Annotations;
 
-namespace Decoupled {
-  public class Messaging : Decoupled.Service<Messaging> {
-  }
+  [UsedImplicitly]
+  public class Messaging : Service<Messaging> { }
 }

@@ -9,8 +9,8 @@ public sealed class TestDecoupler {
 
     Decoupled.TestDecouplerInterface testDecoupler = Decoupled.TestDecouplerInterface.Instance;
 
-    testDecoupler.Entry1(12);
-    Assert.AreEqual(testDecoupler.Entry2(), 12);
+    testDecoupler.Entry1(number: 12);
+    Assert.AreEqual(expected: testDecoupler.Entry2(), actual: 12);
   }
 
   [Test]
@@ -22,10 +22,10 @@ public sealed class TestDecoupler {
 
     Decoupled.TestDecouplerInterface testDecoupler = Decoupled.TestDecouplerInterface.Instance;
 
-    Assert.AreEqual(testDecoupler, created);
+    Assert.AreEqual(expected: testDecoupler, actual: created);
 
-    testDecoupler.Entry1(12);
-    Assert.AreEqual(24, testDecoupler.Entry2());
+    testDecoupler.Entry1(number: 12);
+    Assert.AreEqual(expected: 24, actual: testDecoupler.Entry2());
   }
 
   [UnityTest]
@@ -36,8 +36,8 @@ public sealed class TestDecoupler {
 
     Decoupled.TestDecouplerInterface testDecoupler = Decoupled.TestDecouplerInterface.Instance;
 
-    testDecoupler.Entry1(12);
-    Assert.AreEqual(24, testDecoupler.Entry2());
+    testDecoupler.Entry1(number: 12);
+    Assert.AreEqual(expected: 24, actual: testDecoupler.Entry2());
   }
 }
 
