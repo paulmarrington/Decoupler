@@ -17,13 +17,19 @@ namespace Decoupled.Analytics {
       Debug.Log(message: "**** Earn Virtual Currency " + value + " " + currency);
     }
 
-    internal void Error(string message) { Debug.Log(message: "**** Error '" + message + "'"); }
+    // ReSharper disable once MemberCanBeMadeStatic.Global
+    public void Error(string message) { Debug.Log(message: "**** Error '" + message + "'"); }
 
-    internal void Event(string name, [NotNull] params object[] nvp) {
-      Debug.Log(message: "**** Event '" + name + "' -- " + string.Join(
-                           separator: ",",
-                           value: System.Array.ConvertAll(array: nvp,
-                                                          converter: x => x.ToString())));
+    [NotNull]
+    public string More([NotNull] params object[] list) {
+      return string.Join(separator: ",",
+                         value: System.Array.ConvertAll(array: list, converter: x => x.ToString()));
+    }
+
+    // ReSharper disable once MemberCanBeMadeStatic.Global
+    public void Event(string name, string action, string result, [CanBeNull] string csv = null) {
+      Debug.Log("**** Event '" + name + "' -- action: " + action + ", result: " + result +
+                ", more: "     + csv);
     }
 
     [UsedImplicitly]
@@ -40,8 +46,7 @@ namespace Decoupled.Analytics {
     public void Login() { Debug.Log(message: "**** Login"); }
 
     [UsedImplicitly]
-    public void PostScore(int                score, [CanBeNull] object level = null,
-                          [CanBeNull] string character = null) {
+    public void PostScore(int score, object level = null, string character = null) {
       Debug.Log(message: "**** Post Score " + score + ", level " + level + ", character '" +
                          character          + "'");
     }
