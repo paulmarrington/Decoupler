@@ -74,7 +74,7 @@ namespace Decoupled.Analytics {
     public void TutorialBegin() { Debug.Log(message: "**** Tutorial Begin"); }
 
     [UsedImplicitly]
-    public void TutorialComplete() { Debug.Log(message: "**** Tutorial Complete"); }
+    public void TutorialComplete() { Debug.Log(message: "**** Tutorial Dismissed"); }
 
     [UsedImplicitly]
     public void UnlockAchievement(string achievementId) {
