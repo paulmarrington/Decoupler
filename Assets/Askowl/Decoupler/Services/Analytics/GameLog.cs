@@ -27,9 +27,9 @@ namespace Decoupled.Analytics {
     }
 
     // ReSharper disable once MemberCanBeMadeStatic.Global
-    public void Event(string name, string action, string result, [CanBeNull] string csv = null) {
+    public void Event(string name, string action, string result, [NotNull] params object[] more) {
       Debug.Log("**** Event '" + name + "' -- action: " + action + ", result: " + result +
-                ", more: "     + csv);
+                ", more: "     + More(more));
     }
 
     [UsedImplicitly]

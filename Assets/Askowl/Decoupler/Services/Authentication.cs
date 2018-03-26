@@ -4,7 +4,6 @@ using System;
 namespace Decoupled {
   using JetBrains.Annotations;
 
-  [UsedImplicitly]
   public sealed class Authentication : Service<Authentication> {
     private sealed class User {
       // ReSharper disable NotAccessedField.Global

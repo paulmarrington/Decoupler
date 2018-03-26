@@ -1,12 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Askowl;
 
 namespace Decoupled {
   using JetBrains.Annotations;
 
   public class Service<T> where T : Service<T>, new() {
-    //      : UnityEngine.Object
     private static List<T>               instanceList;
     private static Dictionary<string, T> instanceDictionary;
     private static T                     defaultInstance;
@@ -32,22 +32,20 @@ namespace Decoupled {
 
     public static T Instance {
       get {
-        if (!Available) {
-          if (defaultInstance == default(T)) {
-            Debug.LogWarning(message: "Service '" + typeof(T).Name +
-                                      "' does not have an implemention");
+        if (Available) return selector.Pick();
 
-            defaultInstance = new T();
+        if (defaultInstance != default(T)) return defaultInstance;
 
-            if (defaultInstance == null) {
-              Debug.LogError(message: "Cannot instantiate default '" + typeof(T).Name + "'");
-            }
-          }
+        Debug.LogWarning(message: "Service '" + typeof(T).Name +
+                                  "' does not have an implemention");
 
-          return defaultInstance;
+        defaultInstance = new T();
+
+        if (defaultInstance == null) {
+          Debug.LogError(message: "Cannot instantiate default '" + typeof(T).Name + "'");
         }
 
-        return selector.Pick();
+        return defaultInstance;
       }
     }
 
@@ -68,7 +66,7 @@ namespace Decoupled {
       return instance;
     }
 
-    // ReSharper disable once MemberCanBePrivate.Global
+    [UsedImplicitly]
     protected IEnumerator Initialise() { yield return null; }
 
     [UsedImplicitly]
