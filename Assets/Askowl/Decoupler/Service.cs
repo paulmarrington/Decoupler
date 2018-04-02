@@ -1,10 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Askowl;
-
-namespace Decoupled {
+﻿namespace Decoupled {
+  using System.Collections;
+  using System.Collections.Generic;
+  using Askowl;
   using JetBrains.Annotations;
+  using UnityEngine;
 
   public class Service<T> where T : Service<T>, new() {
     private static List<T>               instanceList;
@@ -67,9 +66,9 @@ namespace Decoupled {
     }
 
     [UsedImplicitly]
-    protected IEnumerator Initialise() { yield return null; }
+    protected virtual IEnumerator Initialise() { yield return null; }
 
     [UsedImplicitly]
-    public IEnumerator Destroy() { yield return null; }
+    public virtual IEnumerator Destroy() { yield return null; }
   }
 }
