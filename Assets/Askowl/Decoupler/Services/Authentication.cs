@@ -5,8 +5,11 @@ namespace Decoupled {
   using JetBrains.Annotations;
 
   public sealed class Authentication : Service<Authentication> {
-    public event Action<string> OnGenderChange    = delegate { };
-    public event Action<int>    OnBirthYearChange = delegate { };
+    [UsedImplicitly]
+    public static event Action<string> OnGenderChange = delegate { };
+
+    [UsedImplicitly]
+    public static event Action<int> OnBirthYearChange = delegate { };
 
     private sealed class User {
       // ReSharper disable NotAccessedField.Global
@@ -38,7 +41,7 @@ namespace Decoupled {
 
     public string Gender {
       get { return user.Gender; }
-      set { OnGenderChange(user..Gender = value); }
+      set { OnGenderChange(user.Gender = value); }
     }
 
     [UsedImplicitly]

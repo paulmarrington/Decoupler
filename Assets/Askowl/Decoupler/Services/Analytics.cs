@@ -5,6 +5,16 @@
   using UnityEngine;
 
   public class Analytics : Service<Analytics> {
+    public Analytics() {
+      Authentication.OnBirthYearChange += OnBirthYearChange;
+      Authentication.OnGenderChange    += OnGenderChange;
+    }
+
+    ~Analytics() {
+      Authentication.OnBirthYearChange -= OnBirthYearChange;
+      Authentication.OnGenderChange    -= OnGenderChange;
+    }
+
     [UsedImplicitly]
     public virtual void Error(string                    name,
                               string                    message,
@@ -27,9 +37,10 @@
                          value: Array.ConvertAll(array: list, converter: x => x.ToString()));
     }
 
-    public Dictionary<string, object> ToDictionary(string                    action,
-                                                   string                    result,
-                                                   [NotNull] params object[] more) {
+    [NotNull]
+    protected Dictionary<string, object> ToDictionary(string                    action,
+                                                      string                    result,
+                                                      [NotNull] params object[] more) {
       Dictionary<string, object> dictionary = new Dictionary<string, object> {
         {"action", action}, {"result", result}
       };
@@ -53,5 +64,9 @@
     public virtual string Gender { private get; set; }
 
     public virtual int BirthYear { private get; set; }
+
+    private void OnBirthYearChange(int birthYear) { BirthYear = birthYear; }
+
+    private void OnGenderChange(string gender) { Gender = gender; }
   }
 }

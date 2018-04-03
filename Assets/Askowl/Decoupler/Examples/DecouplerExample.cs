@@ -1,13 +1,12 @@
-﻿using UnityEngine.TestTools;
+﻿using Decoupled;
 using NUnit.Framework;
-using System.Collections;
 
 public sealed class TestDecoupler {
   [Test]
   public void DefaultServiceTest() {
-    Decoupled.TestDecouplerInterface.Reset();
+    TestDecouplerInterface.Reset();
 
-    Decoupled.TestDecouplerInterface testDecoupler = Decoupled.TestDecouplerInterface.Instance;
+    TestDecouplerInterface testDecoupler = TestDecouplerInterface.Instance;
 
     testDecoupler.Entry1(number: 12);
     Assert.AreEqual(expected: testDecoupler.Entry2(), actual: 12);
@@ -15,26 +14,14 @@ public sealed class TestDecoupler {
 
   [Test]
   public void LoadImplementedServiceTest() {
-    Decoupled.TestDecouplerInterface.Reset();
+    TestDecouplerInterface.Reset();
 
-    Decoupled.TestDecouplerInterface created =
-      Decoupled.TestDecouplerInterface.Load<TestDecouplerService>();
+    TestDecouplerInterface created =
+      TestDecouplerInterface.Register<TestDecouplerService>();
 
-    Decoupled.TestDecouplerInterface testDecoupler = Decoupled.TestDecouplerInterface.Instance;
+    TestDecouplerInterface testDecoupler = TestDecouplerInterface.Instance;
 
     Assert.AreEqual(expected: testDecoupler, actual: created);
-
-    testDecoupler.Entry1(number: 12);
-    Assert.AreEqual(expected: 24, actual: testDecoupler.Entry2());
-  }
-
-  [UnityTest]
-  public IEnumerator ControllerImplementedServiceTest() {
-    Decoupled.TestDecouplerInterface.Reset();
-
-    yield return TestDecouplerService.Register<TestDecouplerService>();
-
-    Decoupled.TestDecouplerInterface testDecoupler = Decoupled.TestDecouplerInterface.Instance;
 
     testDecoupler.Entry1(number: 12);
     Assert.AreEqual(expected: 24, actual: testDecoupler.Entry2());
@@ -51,6 +38,6 @@ namespace Decoupled {
   }
 }
 
-internal sealed class TestDecouplerService : Decoupled.TestDecouplerInterface {
+internal sealed class TestDecouplerService : TestDecouplerInterface {
   internal override void Entry1(int number) { Number = number * 2; }
 }

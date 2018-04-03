@@ -1,12 +1,11 @@
 ﻿namespace Decoupled {
-  using System.Collections;
   using System.Collections.Generic;
   using Askowl;
   using JetBrains.Annotations;
   using UnityEngine;
 
   public class Service<T> where T : Service<T>, new() {
-    public static List<T> InstanceList;
+    [UsedImplicitly] public static List<T> InstanceList;
 
     private static Dictionary<string, T> instanceDictionary;
     private static T                     defaultInstance;
@@ -52,24 +51,14 @@
     [UsedImplicitly]
     public static T Fetch([NotNull] string name) { return instanceDictionary[key: name]; }
 
-    public static IEnumerator Register<TD>() where TD : T, new() {
-      yield return Load<TD>().Initialise();
-    }
-
     [NotNull]
-    public static T Load<TD>(string name = null) where TD : T, new() {
+    public static T Register<TD>(string name = null) where TD : T, new() {
       T instance = new TD();
-      name             = name ?? instance.GetType().Name;
+      name = name ?? instance.GetType().Name;
       InstanceList.Add(item: instance);
       instanceDictionary.Add(key: name, value: instance);
       selector.Choices = InstanceList.ToArray();
       return instance;
     }
-
-    [UsedImplicitly]
-    protected virtual IEnumerator Initialise() { yield return null; }
-
-    [UsedImplicitly]
-    public virtual IEnumerator Destroy() { yield return null; }
   }
 }
