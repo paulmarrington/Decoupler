@@ -49,12 +49,14 @@ Access the next registered service using the Instance selector.
 In the example, the code will cycle through all the advertising services, stopping when one display an ad or when the list has been exhausted.
 
 ### To select a named service
-All services have a name. Names are set by either specifying the name in `Register` or using the default name is the class name of the service. A service can then be retrieved by name using `Fetch`.
+All services have a name. Names are set by either specifying the name in `Register`/`Load` or using the default name is the class name of the service. A service can then be retrieved by name using `Fetch`.
 
 ```C#
   IEnumerator Start() {
     // the string name is redundant here as it is also the name of the class
     yield return Social.Register<Facebook>("Facebook");
+    // or
+    Social.Load<Facebook>("Facebook");
   }
 ```
 ```C#
@@ -86,36 +88,36 @@ All service interfaces have a static member `Available`.
 #### If it has an initialiser in an Editor directory
 There is nothing more to do.
 
-In either case, if external dependencies are needed you will see a message in the log.
+In either case, if external dependencies are needed, you will see a message in the log.
 
 ### For a new package and an existing interface
 1. Create a new project
 2. Import any unity packages required
-3. Copy the interface to the scripts folder
-
-#### Write the service interface
-4. Change the base class to be the interface (`Play: Decoupled.Service<Play>` becomes `Play: Decoupled.Analytics.Play`)
-5. Replace every occurrence of `virtual` with `override`.
-6. If necessary, add an `IEnumerator Initialise()` method to prepare the package.
-7. If necessary, add an `IEnumerator Destroy()` method to clean up. Even for `DontDestroyOnLoad` controllers, this method is guaranteed run before the app exits
-8. Implement every API method using the target package
+3. Create an API where the base class is the interface
+4. Implement the virtual methods as required (using override)
+5. Implement `Initialise` and `Destroy()` if needed
 
 A sample service would look something like this.
 ```C#
-namespace Firebase.Unity.Analytics {
-  public class Play: Decoupled.Analytics.Play {
+#if AnalyticsUnity
+  public sealed class AnalyticsUnity  : Singleton<AnalyticsUnity> {
+    private void Awake() { Analytics.Load<AnalyticsUnityService>(); }
+  }
 
-    Decoupled.Authentication auth = Decoupled.Authentication.Instance;
+  public sealed class AnalyticsUnityService  : Analytics {
+    public override void Event(string name){...}
+  }
+#endif
+```
+By using ***Askowl.DefineBuild** set a definition file in an ***Editor*** directory. Here we are deciding on the existence of a package by the existence or not of a directory.
 
-    public override IEnumerator Initialise() {
-      FirebaseAnalytics.SetAnalyticsCollectionEnabled(true);
-      yield return null;
+```C#
+  [InitializeOnLoad]
+  public sealed class DetectMyUnityPackage : DefineSymbols {
+    static DetectMyUnityPackage() {
+      bool usable = HasFolder("MyUnityPackage");
+      AddOrRemoveDefines(addDefines: usable, named: "MyUnityPackage");
     }
-    /******************************/
-    public override void AppOpen() {
-      FirebaseAnalytics.LogEvent(FirebaseAnalytics.EventAppOpen);
-    }
-    // ... and so on
   }
 }
 ```
@@ -126,7 +128,7 @@ A controller is best if the implementation has additional work to do during init
 1. Create a MonoBehaviour script
 2. Change `Start` method to return `IEnumerator` if needed.
 3. Add `DontDestroyOnLoad(gameObject);` to the `Start` Method
-4. Add `yield return ???.Register` or `Load`  to the `Start` Method
+4. Add `yield return ???.Register` in `Start` or `Load` in `Awake`
 5. Create an `IEnumerator OnDestroy()` method
 6. Add `yield return ***.Destroy()`  to the `OnDestroy` Method
 
@@ -144,8 +146,8 @@ Use the `AddDefineSymbols` class to set a preprocessor definition. Normally with
 [InitializeOnLoad]
 public class MyDefinitions : AddDefineSymbols {
   static MyDefinitions() {
-    if (HasFolder("Askowl-Lib")) {
-      AddDefines("AskowlLibExists;AskowlLib");
+    if (HasFolder("MyUnityPackage")) {
+      AddDefines("MyUnityPackage;AnotherDefine");
     }
   }
 ```
