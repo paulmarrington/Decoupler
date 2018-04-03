@@ -6,17 +6,18 @@
   using UnityEngine;
 
   public class Service<T> where T : Service<T>, new() {
-    private static List<T>               instanceList;
+    public static List<T> InstanceList;
+
     private static Dictionary<string, T> instanceDictionary;
     private static T                     defaultInstance;
     private static Selector<T>           selector;
 
-    private static bool Available { get { return instanceList.Count > 0; } }
+    private static bool Available { get { return InstanceList.Count > 0; } }
 
     static Service() { Reset(); }
 
     public static void Reset() {
-      instanceList       = new List<T>();
+      InstanceList       = new List<T>();
       instanceDictionary = new Dictionary<string, T>();
       defaultInstance    = default(T);
       selector           = new Selector<T>();
@@ -58,10 +59,10 @@
     [NotNull]
     public static T Load<TD>(string name = null) where TD : T, new() {
       T instance = new TD();
-      name = name ?? instance.GetType().Name;
-      instanceList.Add(item: instance);
+      name             = name ?? instance.GetType().Name;
+      InstanceList.Add(item: instance);
       instanceDictionary.Add(key: name, value: instance);
-      selector.Choices = instanceList.ToArray();
+      selector.Choices = InstanceList.ToArray();
       return instance;
     }
 

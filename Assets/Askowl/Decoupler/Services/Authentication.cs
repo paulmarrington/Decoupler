@@ -5,24 +5,41 @@ namespace Decoupled {
   using JetBrains.Annotations;
 
   public sealed class Authentication : Service<Authentication> {
+    public event Action<string> OnGenderChange    = delegate { };
+    public event Action<int>    OnBirthYearChange = delegate { };
+
     private sealed class User {
       // ReSharper disable NotAccessedField.Global
       // ReSharper disable NotAccessedField.Local
+      // ReSharper disable UnusedMember.Local
       internal string Name        = "guest";
       internal string Email       = "";
       internal string PhotoUrl    = "";
       internal string PhoneNumber = "";
       internal string ProviderId  = "";
       internal string UserId      = "";
+      internal string Gender      = "Unknown";
       internal bool   IsVerified  = false;
       internal bool   IsLoggedIn  = false;
+      internal int    BirthYear   = 0;
 
       internal object MetaData = null;
+      // ReSharper restore UnusedMember.Local
       // ReSharper restore NotAccessedField.Local
       // ReSharper restore NotAccessedField.Global
     }
 
-    private readonly User user = new User();
+    private User user = new User();
+
+    public int BirthYear {
+      get { return user.BirthYear; }
+      set { OnBirthYearChange(user.BirthYear = value); }
+    }
+
+    public string Gender {
+      get { return user.Gender; }
+      set { OnGenderChange(user..Gender = value); }
+    }
 
     [UsedImplicitly]
     public IEnumerator CreateUser(string                     email, string password,
@@ -52,7 +69,7 @@ namespace Decoupled {
     }
 
     [UsedImplicitly]
-    public void SignOut() { }
+    public void SignOut() { user = new User(); }
 
     [UsedImplicitly]
     public IEnumerator Anonymous([CanBeNull] Action<string> error = null) { yield return null; }
