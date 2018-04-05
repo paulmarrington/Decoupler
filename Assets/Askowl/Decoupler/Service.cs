@@ -1,4 +1,5 @@
 ﻿namespace Decoupled {
+  using System.Collections;
   using System.Collections.Generic;
   using Askowl;
   using JetBrains.Annotations;
@@ -49,7 +50,14 @@
     }
 
     [UsedImplicitly]
-    public static T Fetch([NotNull] string name) { return instanceDictionary[key: name]; }
+    public static T Fetch([NotNull] string name) {
+      return instanceDictionary.ContainsKey(name) ? instanceDictionary[key: name] : null;
+    }
+
+    [UsedImplicitly]
+    public static IEnumerator Fetch(string name, out T instance) {
+      while ((instance = Fetch(name)) == null) yield return null;
+    }
 
     [NotNull]
     public static T Register<TD>(string name = null) where TD : T, new() {
