@@ -32,15 +32,15 @@
     }
 
     [NotNull, UsedImplicitly]
-    public static string More([NotNull] params object[] list) {
+    public string More([NotNull] params object[] list) {
       return string.Join(separator: ",",
                          value: Array.ConvertAll(array: list, converter: x => x.ToString()));
     }
 
     [NotNull]
-    protected static Dictionary<string, object> ToDictionary(string                    action,
-                                                             string                    result,
-                                                             [NotNull] params object[] more) {
+    protected Dictionary<string, object> ToDictionary(string                    action,
+                                                      string                    result,
+                                                      [NotNull] params object[] more) {
       Dictionary<string, object> dictionary = new Dictionary<string, object> {
         {"action", action}, {"result", result}
       };
