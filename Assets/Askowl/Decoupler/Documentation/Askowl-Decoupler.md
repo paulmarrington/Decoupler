@@ -30,9 +30,10 @@ It works at the C# class level, meaning that it does not provide the physical se
 Always get an instance through static methods on the interface.
 
 ### For singleton services
-Access the registered service using the Instance selector.
+Access the registered service using the Instance selector. If keeping a reference, set it in Awake or later. It gives the services an opportunity to register.
 ```C#
-Decoupled.Authentication auth = Decoupled.Authentication.Instance;
+Decoupled.Authentication auth;
+void Awake() { auth = Decoupled.Authentication.Instance; }
 ```
 
 ### To cycle through a list of services
@@ -52,12 +53,9 @@ In the example, the code will cycle through all the advertising services, stoppi
 All services have a name. Names are set by either specifying the name in `Register`/`Load` or using the default name is the class name of the service. A service can then be retrieved by name using `Fetch`.
 
 ```C#
-  IEnumerator Start() {
-    // the string name is redundant here as it is also the name of the class
-    yield return Social.Register<Facebook>("Facebook");
-    // or
-    Social.Load<Facebook>("Facebook");
-  }
+[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    private static void RegisterService() { Social.Register <Facebook>(); }
+
 ```
 ```C#
   Decoupled.Social facebook = Decoupled.Social.Fetch("Facebook");
@@ -93,19 +91,17 @@ In either case, if external dependencies are needed, you will see a message in t
 ### For a new package and an existing interface
 1. Create a new project
 2. Import any unity packages required
-3. Create an API where the base class is the interface
-4. Implement the virtual methods as required (using override)
-5. Implement `Initialise` and `Destroy()` if needed
+4. Create an API where the base class is the interface
+5. Implement the virtual methods as needed (using override)
+6. Create a loader method to register this service
 
 A sample service would look something like this.
 ```C#
-#if AnalyticsUnity
-  public sealed class AnalyticsUnity  : Singleton<AnalyticsUnity> {
-    private void Awake() { Analytics.Load<AnalyticsUnityService>(); }
-  }
-
-  public sealed class AnalyticsUnityService  : Analytics {
-    public override void Event(string name){...}
+#if AnalyticsFabric
+  public sealed class AnalyticsFabric: Analytics {
+    public override void Event(string name){/* etc etc */}
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    private static void RegisterService() { Analytics.Register<AnalyticsFabric>(); }
   }
 #endif
 ```
@@ -115,63 +111,9 @@ By using ***Askowl.DefineBuild** set a definition file in an ***Editor*** direct
   [InitializeOnLoad]
   public sealed class DetectMyUnityPackage : DefineSymbols {
     static DetectMyUnityPackage() {
-      bool usable = HasFolder("MyUnityPackage");
-      AddOrRemoveDefines(addDefines: usable, named: "MyUnityPackage");
+      bool usable = HasFolder("Fabric");
+      AddOrRemoveDefines(addDefines: usable, named: "AnalyticsFabric");
     }
-  }
-}
-```
-
-#### Write the controller or a loader
-##### A Controller
-A controller is best if the implementation has additional work to do during initialisation.
-1. Create a MonoBehaviour script
-2. Change `Start` method to return `IEnumerator` if needed.
-3. Add `DontDestroyOnLoad(gameObject);` to the `Start` Method
-4. Add `yield return ???.Register` in `Start` or `Load` in `Awake`
-5. Create an `IEnumerator OnDestroy()` method
-6. Add `yield return ***.Destroy()`  to the `OnDestroy` Method
-
-##### A Loader
-For simple packages, a loader will do. It is a script in a ***Editor*** directory if a form similar to:
-
-```C#
-#if ImplementationExists
-Decoupled.TestDecouplerInterface.Load<TestDecouplerService>();
-#endif
-```
-Use the `AddDefineSymbols` class to set a preprocessor definition. Normally with will be if an external package is ready.
-
-```C#
-[InitializeOnLoad]
-public class MyDefinitions : AddDefineSymbols {
-  static MyDefinitions() {
-    if (HasFolder("MyUnityPackage")) {
-      AddDefines("MyUnityPackage;AnotherDefine");
-    }
-  }
-```
-
-Note that this script must be in an Editor directory.
-
-**Warning:** `Load` does not call the initialise method on the newly created instance.
-
-It may sound complicated, so here is an example to show how simple the controller is. And this one drives two related decoupled packages.
-
-```C#
-using Decoupled.Analytics;
-
-public class FirebaseAnalyticsController : MonoBehaviour {
-
-  IEnumerator Start() {
-    DontDestroyOnLoad(gameObject);
-    yield return Play.Register<Firebase.Unity.Analytics.Play>();
-    yield return eCommerce.Register<Firebase.Unity.Analytics.eCommerce>();
-  }
-
-  IEnumerator onDestroy() {
-    yield return Play.Instance.Destroy();
-    yield return eCommerce.Instance.Destroy();
   }
 }
 ```

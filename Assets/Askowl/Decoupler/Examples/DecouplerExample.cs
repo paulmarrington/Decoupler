@@ -4,40 +4,26 @@ using NUnit.Framework;
 public sealed class TestDecoupler {
   [Test]
   public void DefaultServiceTest() {
-    TestDecouplerInterface.Reset();
+    FirstDecouplerInterface.Reset();
 
-    TestDecouplerInterface testDecoupler = TestDecouplerInterface.Instance;
+    FirstDecouplerInterface firstDecoupler = FirstDecouplerInterface.Instance;
 
-    testDecoupler.Entry1(number: 12);
-    Assert.AreEqual(expected: testDecoupler.Entry2(), actual: 12);
+    firstDecoupler.Entry1(number: 12);
+    Assert.AreEqual(expected: firstDecoupler.Entry2(), actual: 12);
   }
 
   [Test]
   public void LoadImplementedServiceTest() {
-    TestDecouplerInterface.Reset();
+    FirstDecouplerInterface.Reset();
 
-    TestDecouplerInterface created =
-      TestDecouplerInterface.Register<TestDecouplerService>();
+    FirstDecouplerInterface created =
+      FirstDecouplerInterface.Register<FirstDecouplerService>();
 
-    TestDecouplerInterface testDecoupler = TestDecouplerInterface.Instance;
+    FirstDecouplerInterface firstDecoupler = FirstDecouplerInterface.Instance;
 
-    Assert.AreEqual(expected: testDecoupler, actual: created);
+    Assert.AreEqual(expected: firstDecoupler, actual: created);
 
-    testDecoupler.Entry1(number: 12);
-    Assert.AreEqual(expected: 24, actual: testDecoupler.Entry2());
+    firstDecoupler.Entry1(number: 12);
+    Assert.AreEqual(expected: 24, actual: firstDecoupler.Entry2());
   }
-}
-
-namespace Decoupled {
-  public class TestDecouplerInterface : Service<TestDecouplerInterface> {
-    protected int Number;
-
-    internal virtual void Entry1(int number) { Number = number; }
-
-    internal int Entry2() { return Number; }
-  }
-}
-
-internal sealed class TestDecouplerService : TestDecouplerInterface {
-  internal override void Entry1(int number) { Number = number * 2; }
 }
