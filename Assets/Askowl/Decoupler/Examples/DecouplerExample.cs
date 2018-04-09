@@ -1,4 +1,5 @@
-﻿using Decoupled;
+﻿#if UNITY_EDITOR
+using Decoupled;
 using NUnit.Framework;
 
 public sealed class TestDecoupler {
@@ -27,3 +28,4 @@ public sealed class TestDecoupler {
     Assert.AreEqual(expected: 24, actual: firstDecoupler.Entry2());
   }
 }
+#endif

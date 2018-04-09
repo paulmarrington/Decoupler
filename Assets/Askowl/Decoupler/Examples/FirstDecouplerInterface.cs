@@ -1,4 +1,5 @@
-﻿namespace Decoupled {
+﻿#if UNITY_EDITOR
+namespace Decoupled {
   public class FirstDecouplerInterface : Service<FirstDecouplerInterface> {
     protected int Number;
 
@@ -7,3 +8,4 @@
     internal int Entry2() { return Number; }
   }
 }
+#endif
