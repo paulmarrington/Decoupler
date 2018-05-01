@@ -1,42 +1,45 @@
-﻿namespace Decoupled {
+﻿using System;
+using JetBrains.Annotations;
+
+namespace Decoupled {
   using System.Collections.Generic;
-  using Askowl;
-  using JetBrains.Annotations;
   using UnityEngine;
 
+  /// <summary>
+  /// Base class for decoupled interfaces. Provides constant services to register and access service networks.
+  /// </summary>
+  /// <typeparam name="T">use `public class Analytics : Service&lt;Analytics>{}` to define a service</typeparam>
   public class Service<T> where T : Service<T>, new() {
-    [UsedImplicitly] public static List<T> InstanceList;
+    /// <summary>
+    /// Name for this concrete service - generated from the concrete interface class name
+    /// </summary>
+    [UsedImplicitly]
+    public string Name { get; private set; }
 
-    private static Dictionary<string, T> instanceDictionary;
-    private static T                     defaultInstance;
-    private static Selector<T>           selector;
+    private static readonly List<T> InstanceList = new List<T>();
+
+    private static T defaultInstance;
 
     private static bool Available { get { return InstanceList.Count > 0; } }
 
-    static Service() { Reset(); }
-
+    /// <summary>
+    /// Used by testing framework between tests
+    /// </summary>
     public static void Reset() {
-      InstanceList       = new List<T>();
-      instanceDictionary = new Dictionary<string, T>();
-      defaultInstance    = default(T);
-      selector           = new Selector<T>();
-      selector.Cycle();
+      InstanceList.Clear();
+      defaultInstance = default(T);
     }
 
-    [UsedImplicitly]
-    public static void Random() { selector.Random(); }
-
-    [UsedImplicitly]
-    public static void Exhaustive() { selector.Exhaustive(); }
-
+    /// <summary>
+    /// Used to access a decoupled instance of the service - or a default one if none are registered
+    /// </summary>
     public static T Instance {
       get {
-        if (Available) return selector.Pick();
+        if (Available) return InstanceList[0];
 
         if (defaultInstance != default(T)) return defaultInstance;
 
-        Debug.LogWarning(message: "Service '" + typeof(T).Name +
-                                  "' does not have an implemention");
+        Debug.LogWarningFormat("Service '{0}' does not have an implemention", typeof(T).Name);
 
         defaultInstance = new T();
 
@@ -48,17 +51,46 @@
       }
     }
 
+    /// <summary>
+    /// A rare form of service interface will have more than one service and the application will
+    /// refer to it by name if needed. An examples is `Authentication` where there may be a login button
+    /// if and only if the service has been included in the build - which may well be platform dependent.
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
     [UsedImplicitly]
-    public static T Fetch([NotNull] string name) { return instanceDictionary[key: name]; }
+    public static T Named(string name) {
+      for (int i = 0; i < InstanceList.Count; i++) {
+        if (InstanceList[i].Name == name) return InstanceList[i];
+      }
 
-    [NotNull]
-    public static T Register<TD>(string name = null) where TD : T, new() {
-      T instance = new TD();
-      name = name ?? instance.GetType().Name;
-      InstanceList.Add(item: instance);
-      instanceDictionary.Add(key: name, value: instance);
-      selector.Choices = InstanceList.ToArray();
-      return instance;
+      return null;
+    }
+
+    /// <summary>
+    /// Another type of service is have multiple instances and we will need to do something with all of them.
+    /// It could be anything from display a list of names for user selection or call a method on some or all of them.
+    /// `Social` is one of these where we may be connected to multiple social networks and send a message to some.
+    /// </summary>
+    /// <param name="action"></param>
+    [UsedImplicitly]
+    public static void ForEach(Action<T> action) {
+      for (int i = 0; i < InstanceList.Count; i++) action(InstanceList[i]);
+    }
+
+    /// <summary>
+    /// Used to register a service implementation. Typically called within a `#if` set by service discovery by Unity editor code
+    /// </summary>
+    /// <typeparam name="TD">Type of the concrete service interface to register</typeparam>
+    /// <returns>a reference to the instance</returns>
+    public static void Register<TD>() where TD : T, new() {
+      if (Available) {
+        Debug.LogWarningFormat("More than one implementation for service '{0}'", typeof(T).Name);
+      }
+
+      TD service = new TD();
+      service.Name = typeof(TD).Name;
+      InstanceList.Add(service);
     }
   }
 }

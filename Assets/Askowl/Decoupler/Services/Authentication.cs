@@ -4,6 +4,9 @@ using System;
 namespace Decoupled {
   using JetBrains.Annotations;
 
+  /// <summary>
+  /// Decoupled interface for authentication services. This is once case here a game may have more than one service active.
+  /// </summary>
   public sealed class Authentication : Service<Authentication> {
     [UsedImplicitly]
     public static event Action<string> OnGenderChange = delegate { };
