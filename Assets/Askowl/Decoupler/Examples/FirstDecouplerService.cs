@@ -1,4 +1,4 @@
-﻿#if UNITY_EDITOR
+﻿#if UNITY_EDITOR && AskowlDecoupler
 using Decoupled;
 
 internal sealed class FirstDecouplerService : FirstDecouplerInterface {
