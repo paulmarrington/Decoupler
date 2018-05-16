@@ -8,7 +8,8 @@ namespace Decoupled {
   /// <summary>
   /// Base class for decoupled interfaces. Provides constant services to register and access service networks.
   /// </summary>
-  /// <typeparam name="T">use `public class Analytics : Service&lt;Analytics>{}` to define a service</typeparam>
+  /// <remarks><a href="http://decoupler.marrington.net#for-a-new-interface">More...</a></remarks>
+  /// <typeparam name="T">use `public class MyService : Service&lt;MyService>{}` to define a service</typeparam>
   public class Service<T> where T : Service<T>, new() {
     /// <summary>
     /// Name for this concrete service - generated from the concrete interface class name
@@ -33,6 +34,7 @@ namespace Decoupled {
     /// <summary>
     /// Used to access a decoupled instance of the service - or a default one if none are registered
     /// </summary>
+    /// <remarks><a href="http://decoupler.marrington.net#for-singleton-services">More...</a></remarks>
     public static T Instance {
       get {
         if (Available) return InstanceList[0];
@@ -56,6 +58,7 @@ namespace Decoupled {
     /// refer to it by name if needed. An examples is `Authentication` where there may be a login button
     /// if and only if the service has been included in the build - which may well be platform dependent.
     /// </summary>
+    /// <remarks><a href="http://decoupler.marrington.net#to-select-a-named-service">More...</a></remarks>
     /// <param name="name"></param>
     /// <returns></returns>
     [UsedImplicitly]
@@ -72,6 +75,7 @@ namespace Decoupled {
     /// It could be anything from display a list of names for user selection or call a method on some or all of them.
     /// `Social` is one of these where we may be connected to multiple social networks and send a message to some.
     /// </summary>
+    /// <remarks><a href="http://decoupler.marrington.net#send-to-all-services">More...</a></remarks>
     /// <param name="action"></param>
     [UsedImplicitly]
     public static void ForEach(Action<T> action) {
@@ -81,6 +85,7 @@ namespace Decoupled {
     /// <summary>
     /// Used to register a service implementation. Typically called within a `#if` set by service discovery by Unity editor code
     /// </summary>
+    /// <remarks><a href="http://decoupler.marrington.net#for-a-new-package-and-an-existing-interface">More...</a></remarks>
     /// <typeparam name="TD">Type of the concrete service interface to register</typeparam>
     /// <returns>a reference to the instance</returns>
     public static void Register<TD>() where TD : T, new() {
@@ -88,8 +93,7 @@ namespace Decoupled {
         Debug.LogWarningFormat("More than one implementation for service '{0}'", typeof(T).Name);
       }
 
-      TD service = new TD();
-      service.Name = typeof(TD).Name;
+      TD service = new TD {Name = typeof(TD).Name};
       InstanceList.Add(service);
     }
   }

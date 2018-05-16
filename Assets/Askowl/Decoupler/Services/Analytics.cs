@@ -9,6 +9,7 @@
   /// <summary>
   /// Analytics decoupled interface. Concrete implementations may use Unity, Firebase or a host of others.
   /// </summary>
+  /// <remarks><a href="http://decoupler.marrington.net#decoupledanalytics">More...</a></remarks>
   public class Analytics : Service<Analytics> {
     /// <summary>
     /// Default constructor registers interest in Authentication events.
