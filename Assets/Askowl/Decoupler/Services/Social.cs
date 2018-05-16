@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿// Copyright 2018 (C) paul@marrington.net http://www.askowl.net/unity-packages
+
+using System.Collections;
 
 namespace Decoupled {
   using JetBrains.Annotations;

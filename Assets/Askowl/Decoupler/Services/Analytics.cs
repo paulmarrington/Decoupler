@@ -1,4 +1,6 @@
-﻿namespace Decoupled {
+﻿// Copyright 2018 (C) paul@marrington.net http://www.askowl.net/unity-packages
+
+namespace Decoupled {
   using System;
   using System.Collections.Generic;
   using JetBrains.Annotations;
@@ -11,19 +13,6 @@
   /// </summary>
   /// <remarks><a href="http://decoupler.marrington.net#decoupledanalytics">More...</a></remarks>
   public class Analytics : Service<Analytics> {
-    /// <summary>
-    /// Default constructor registers interest in Authentication events.
-    /// </summary>
-    public Analytics() {
-      Authentication.OnBirthYearChange += OnBirthYearChange;
-      Authentication.OnGenderChange    += OnGenderChange;
-    }
-
-    ~Analytics() {
-      Authentication.OnBirthYearChange -= OnBirthYearChange;
-      Authentication.OnGenderChange    -= OnGenderChange;
-    }
-
     /// <summary>
     /// Errors are specific events that most services deal with in a way that gives them more attention.
     /// </summary>
@@ -94,19 +83,5 @@
 
       return dictionary;
     }
-
-    /// <summary>
-    /// Gender of the player - as provided by the Authentication service.
-    /// </summary>
-    protected virtual string Gender { [UsedImplicitly] get; private set; }
-
-    /// <summary>
-    /// Year of birth of the player - as provided by the Authentication service.
-    /// </summary>
-    protected virtual int BirthYear { [UsedImplicitly] get; private set; }
-
-    private void OnBirthYearChange(int birthYear) { BirthYear = birthYear; }
-
-    private void OnGenderChange(string gender) { Gender = gender; }
   }
 }
