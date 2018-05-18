@@ -62,7 +62,7 @@ namespace Decoupled {
     /// <param name="name"></param>
     /// <returns></returns>
     [UsedImplicitly]
-    public static T Named(string name) {
+    public static T NamedInstance(string name) {
       for (int i = 0; i < InstanceList.Count; i++) {
         if (InstanceList[i].Name == name) return InstanceList[i];
       }

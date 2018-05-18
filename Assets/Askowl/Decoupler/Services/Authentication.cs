@@ -2,6 +2,7 @@
 
 using System.Collections;
 using System;
+using Object = UnityEngine.Object;
 
 namespace Decoupled {
   using JetBrains.Annotations;
@@ -12,11 +13,7 @@ namespace Decoupled {
   /// </summary>
   /// <remarks><a href="http://decoupler.marrington.net#decoupledauthentication">More...</a></remarks>
   public sealed class Authentication : Service<Authentication> {
-    private sealed class User {
-      // ReSharper disable NotAccessedField.Global
-      // ReSharper disable NotAccessedField.Local
-      // ReSharper disable UnusedMember.Local
-
+    public class User {
       internal string Name        = "guest";
       internal string Email       = "";
       internal string PhotoUrl    = "";
@@ -28,13 +25,9 @@ namespace Decoupled {
       internal bool   IsLoggedIn  = false;
       internal int    BirthYear   = 0;
       internal object MetaData    = null;
-
-      // ReSharper restore UnusedMember.Local
-      // ReSharper restore NotAccessedField.Local
-      // ReSharper restore NotAccessedField.Global
     }
 
-    private User user = new User();
+    private AuthenticationAsset user = CustomAsset.Base.Instance<AuthenticationAsset>();
 
     [UsedImplicitly]
     public IEnumerator CreateUser(string         email, string password,
@@ -45,10 +38,8 @@ namespace Decoupled {
 
     [UsedImplicitly]
     public IEnumerator UpdateProfile(string         displayName,
-                                     string         photoUrl = null,
-                                     Action<string> error    = null) {
-      user.Name     = displayName;
-      user.PhotoUrl = photoUrl;
+                                     Action<string> error = null) {
+      user.Name = displayName;
       yield return null;
     }
 
@@ -62,7 +53,10 @@ namespace Decoupled {
     public IEnumerator SignIn(object credential, Action<string> error = null) { yield return null; }
 
     [UsedImplicitly]
-    public void SignOut() { user = new User(); }
+    public void SignOut() {
+      Object.Destroy(user);
+      user = CustomAsset.Base.Instance<AuthenticationAsset>();
+    }
 
     [UsedImplicitly]
     public IEnumerator Anonymous(Action<string> error = null) { yield return null; }
@@ -106,5 +100,21 @@ namespace Decoupled {
                                    Action<string> error = null) {
       yield return null;
     }
+  }
+
+  /// <inheritdoc />
+  /// <summary>
+  /// Contains valuable information recorded when a player logs in.
+  /// </summary>
+  public class AuthenticationAsset : CustomAsset.OfType<Authentication.User> {
+    /// <summary>
+    /// Name of the logged in player (often email) - defaults to guest.
+    /// </summary>
+    public string Name { get { return Value.Name; } set { Set(() => Value.Name = value); } }
+
+    /// <summary>
+    /// Email address of the logged in player - defaults to empty.
+    /// </summary>
+    public string Email { get { return Value.Email; } set { Set(() => Value.Email = value); } }
   }
 }

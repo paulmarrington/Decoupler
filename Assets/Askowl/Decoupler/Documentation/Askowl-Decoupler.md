@@ -1,4 +1,4 @@
-# Decoupler
+# [Askowl Decoupler](http://www.askowl.net/unity-decoupler-package)
 
 [TOC]
 
@@ -20,23 +20,25 @@ First and foremost, the Askowl Decoupler is a way to decouple your app from pack
 
 It works at the C# class level, meaning that it does not provide the physical separation. That is provided by the Unity packages when needed. In approach, it acts very much like a C# Interface.
 
-## What does the Askowl Decoupler give me?
+## What does the Askowl Decoupler give me?w
 1. You can build and test your app while waiting for supporting Unity packages to be complete.
 2. You can choose between unity packages without changing your app code. Changing from Google Analytics to Unity Analytics to Fabric is as simple as getting or writing the connector code.
 3. You can provide a standard interface to a related area. For social media, the interface could support FaceBook, Twitter, Youtube and others. You could then send a command to one, some or all of them. Think of this regarding posting to multiple platforms.
 4. You can have more than one service then cycle through them or select one at random. For advertising, you can move to a new platform if the current one cannot serve you an ad.
 
-## How do I use a decoupled package?
+## Decoupling Packages
+
+### How do I use a decoupled package?
 Always get an instance through static methods on the interface.
 
-### For singleton services
+#### For singleton services
 Access the registered service using the Instance selector. If keeping a reference, set it in Awake or later. It gives the services an opportunity to register.
 ```C#
 Decoupled.Authentication auth;
 void Awake() { auth = Decoupled.Authentication.Instance; }
 ```
 
-### To cycle through a list of services
+#### To cycle through a list of services
 Access the next registered service using the Instance selector.
 ```C#
         Adze.Server server = Adze.Server.Instance;
@@ -49,8 +51,8 @@ Access the next registered service using the Instance selector.
 ```
 In the example, the code will cycle through all the advertising services, stopping when one display an ad or when the list has been exhausted.
 
-### To select a named service
-All services have a name. Names are set by either specifying the name in `Register`/`Load` or using the default name is the class name of the service. A service can then be retrieved by name using `Fetch`.
+#### To select a named service
+All services have a name. Names are set by either specifying the name in `Register`/`Load` or using the default name is the class name of the service. A service can then be retrieved by name using `Named`.
 
 ```C#
 [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
@@ -58,10 +60,17 @@ All services have a name. Names are set by either specifying the name in `Regist
 
 ```
 ```C#
-  Decoupled.Social facebook = Decoupled.Social.Fetch("Facebook");
+  Decoupled.Social facebook = Decoupled.Social.Named("Facebook");
 ```
 
-### To choose a service randomly
+#### Send to All Services
+Another type of service is to have multiple instances, and we will need to do something with all of them. It could be anything from display a list of names for user selection or call a method on some or all of them. `Social` is one of these where we may be connected to multiple social networks and send a message to some.
+
+```C#
+Decoupled.Social.ForEach((svs) => svs.Send(myMessage));
+```
+
+#### To choose a service randomly
 `Random()` and `Exhaustive()` are static methods on the interface. Random selection can cause a perceived imbalance with short lists. Exhaustive is also a random picker, but it ensures all choices are exhausted before starting again.
 
 ```C#
@@ -69,26 +78,26 @@ All services have a name. Names are set by either specifying the name in `Regist
   Decoupled.Social.Exhaustive();
 ```
 
-### How do I know if there is a service implemented
+#### How do I know if there is a service implemented
 All service interfaces have a static member `Available`.
 
 ```C#
   if (!Decoupled.Social.Available) Debug.Log("Oops");
 ```
 
-## How much work do I need to do to implement a decoupler?
-### For an already written decoupled package
-#### If it comes with a controller or *prefab*
+### How much work do I need to do to implement a decoupler?
+#### For an already written decoupled package
+##### If it comes with a controller or *prefab*
 1. Create an empty gameObject in the first scene of your game
 2. Drag the controller code or *prefab* to the gameObject
 3. Fill any requirements in the controller from the Unity editor
 4. Run the app. The decoupled package will replace the default placeholder
-#### If it has an initialiser in an Editor directory
+##### If it has an initialiser in an Editor directory
 There is nothing more to do.
 
 In either case, if external dependencies are needed, you will see a message in the log.
 
-### For a new package and an existing interface
+#### For a new package and an existing interface
 1. Create a new project
 2. Import any unity packages required
 4. Create an API where the base class is the interface
@@ -118,7 +127,7 @@ By using ***Askowl.DefineBuild** set a definition file in an ***Editor*** direct
 }
 ```
 
-### For a new interface
+#### For a new interface
 The decoupler interface is not an Interface in the Java/C# sense. It is a base class. It provides decoupling support as well as default functionality.
 
 If the decoupler interface is for a new package you are writing, then the methods are a matter for software design. If it is an existing package, then the contents will reflect the functionality you want to access. It can be just the parts you need or if for distribution, it may be exhaustive. For an example of the latter, look at ***Askowl-Decoupler/Services/Analytics***. There are multiple classes here to represent different aspects of the analytics requirement.
@@ -167,3 +176,22 @@ namespace Decoupled {
 In a service that will talk to a server, the yield will wait for a response. This example also shows an inner data class. Each application will have to fill it from server supplied data.
 
 It may seem like a lot of work, but it is quite simple. Writing an interface is a matter of learning what is available and deciding what is required.
+
+### Built-In Interfaces
+To use a decoupled service, you will need to have an interface class. Often these will be provided with packages that need them, but for commonly needed ones, we have included them in Askowl Decoupler.
+
+* <!--[Analytics](Analytics.md)-->
+* <!--[Authentication](Authentication.md)-->
+* <!--[Database](Database.md)-->
+* <!--[DynamicLinks](DynamicLinks.md)-->
+* <!--[Invites](Invites.md)-->
+* <!--[Messaging](Messaging.md)-->
+* <!--[RemoteConfig](RemoteConfig.md)-->
+* <!--[Social](Social.md)-->
+* <!--[Storage](Storage.md)-->
+
+## Decoupling Components
+
+### How do I use a decoupled components?
+### Built-In Interfaces
+### Decoupled.TextComponent
