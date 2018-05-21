@@ -13,20 +13,6 @@ namespace Decoupled {
   /// </summary>
   /// <remarks><a href="http://decoupler.marrington.net#decoupledauthentication">More...</a></remarks>
   public sealed class Authentication : Service<Authentication> {
-    public class User {
-      internal string Name        = "guest";
-      internal string Email       = "";
-      internal string PhotoUrl    = "";
-      internal string PhoneNumber = "";
-      internal string ProviderId  = "";
-      internal string UserId      = "";
-      internal string Gender      = "Unknown";
-      internal bool   IsVerified  = false;
-      internal bool   IsLoggedIn  = false;
-      internal int    BirthYear   = 0;
-      internal object MetaData    = null;
-    }
-
     private AuthenticationAsset user = CustomAsset.Base.Instance<AuthenticationAsset>();
 
     [UsedImplicitly]
@@ -78,8 +64,9 @@ namespace Decoupled {
     public IEnumerator DeleteUser(Action<string> error = null) { yield return null; }
 
     [UsedImplicitly]
-    public IEnumerator ProvidersFor(string         email, Action<string[]> providers,
-                                    Action<string> error = null) {
+    public IEnumerator ProvidersFor(string           email,
+                                    Action<string[]> providers,
+                                    Action<string>   error = null) {
       yield return null;
     }
 
@@ -89,7 +76,8 @@ namespace Decoupled {
     }
 
     [UsedImplicitly]
-    public IEnumerator VerifyPhoneNumber(string         number, Action<string> setId,
+    public IEnumerator VerifyPhoneNumber(string         number,
+                                         Action<string> setId,
                                          Action<string> error = null) {
       yield return null;
     }
@@ -100,21 +88,35 @@ namespace Decoupled {
                                    Action<string> error = null) {
       yield return null;
     }
-  }
 
-  /// <inheritdoc />
-  /// <summary>
-  /// Contains valuable information recorded when a player logs in.
-  /// </summary>
-  public class AuthenticationAsset : CustomAsset.OfType<Authentication.User> {
-    /// <summary>
-    /// Name of the logged in player (often email) - defaults to guest.
-    /// </summary>
-    public string Name { get { return Value.Name; } set { Set(() => Value.Name = value); } }
+    public class User {
+      internal string Name        = "guest";
+      internal string Email       = "";
+      internal string PhotoUrl    = "";
+      internal string PhoneNumber = "";
+      internal string ProviderId  = "";
+      internal string UserId      = "";
+      internal string Gender      = "Unknown";
+      internal bool   IsVerified  = false;
+      internal bool   IsLoggedIn  = false;
+      internal int    BirthYear   = 0;
+      internal object MetaData    = null;
+    }
 
+    /// <inheritdoc />
     /// <summary>
-    /// Email address of the logged in player - defaults to empty.
+    /// Contains valuable information recorded when a player logs in.
     /// </summary>
-    public string Email { get { return Value.Email; } set { Set(() => Value.Email = value); } }
+    public class AuthenticationAsset : CustomAsset.OfType<User> {
+      /// <summary>
+      /// Name of the logged in player (often email) - defaults to guest.
+      /// </summary>
+      public string Name { get { return Value.Name; } set { Set(() => Value.Name = value); } }
+
+      /// <summary>
+      /// Email address of the logged in player - defaults to empty.
+      /// </summary>
+      public string Email { get { return Value.Email; } set { Set(() => Value.Email = value); } }
+    }
   }
 }

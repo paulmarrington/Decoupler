@@ -11,7 +11,7 @@ namespace Decoupled {
   /// <summary>
   /// Analytics decoupled interface. Concrete implementations may use Unity, Firebase or a host of others.
   /// </summary>
-  /// <remarks><a href="http://decoupler.marrington.net#decoupledanalytics">More...</a></remarks>
+  /// <remarks><a href="http://analytics.marrington.net">More...</a></remarks>
   public class Analytics : Service<Analytics> {
     /// <summary>
     /// Errors are specific events that most services deal with in a way that gives them more attention.

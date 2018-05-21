@@ -9,7 +9,7 @@ namespace Decoupled.Editor {
   [InitializeOnLoad]
   public class TextMeshProDefinition : DefineSymbols {
     static TextMeshProDefinition() {
-      AddOrRemoveDefines(HasFolder("TextMesh Pro"), "TextMeshPro;notUnityText");
+      AddOrRemoveDefines(HasFolder("TextMesh Pro"), "TextMeshPro");
     }
   }
 }
