@@ -1,6 +1,10 @@
 plugins:
   - jekyll-redirect-from
-  - jekyll-remote-theme
 
 theme: jekyll-theme-slate
+
+markdown: kramdown
 highlighter: rouge
+kramdown:
+  input: GFM
+  hard_wrap: false
