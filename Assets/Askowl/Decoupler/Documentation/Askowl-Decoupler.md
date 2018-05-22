@@ -1,15 +1,13 @@
-# [Askowl Decoupler](http://www.askowl.net/unity-decoupler-package)
-
-## Executive Summary
+# [Executive Summary](http://www.askowl.net/unity-decoupler-package)
 The Askowl Decoupler is here to provide an interface between your code and Unity packages. Take analytics packages as an example. There are dozens of them. With Askowl Analytics you can switch between them depending on which you have installed. You can also choose at platform build time. Not all analytics packages support XBox or Web apps. The same logic works for databases, social networks, authentication and many others.
 
 The decoupler also provides some support for components and prefabs. As an example, UI Text processing can use the built-in Unity components or those offered by TextMesh Pro. By using a decoupling element, the MonoBehaviour that uses them doesn't know the difference. You can even choose between them for each GameObject.
 
-* Will be replaced with the ToC, excluding the "Contents" header[TOC]{:toc}
+* {:toc}
 
 > Read the code in the Examples Folder.
 
-## Introduction
+# Introduction
 Decoupling software components and systems have been a focus for many decades. In the 80s we talked about software black boxes. You didn't care what was inside, just on the inputs and outputs.
 
 Microsoft had much fun in the 90's designing and implementing COM and DCOM. I still think of this as the high point in design for supporting decoupled interfaces.
@@ -20,30 +18,30 @@ Despite this, programmers have continued to create tightly coupled systems even 
 
 Consider a simple example. I have an app that uses a Google Maps API to translate coordinates into a description "Five miles south-west of Gundagai". My app is running on an iPhone calling into a cloud of Google servers. The hardware is different and remote, and they both use completely different software systems. However, my app won't run, or at least perform correctly, without Google. Worse still if I am using a Google library, it won't even compile without a copy.
 
-## What is the Askowl Decoupler
+# What is the Askowl Decoupler
 First and foremost, the Askowl Decoupler is a way to decouple your app from packages in the Unity3D ecosystem.
 
 It works at the C# class level, meaning that it does not provide the physical separation. That is provided by the Unity packages when needed. In approach, it acts very much like a C# Interface.
 
-## What does the Askowl Decoupler give me?
+# What does the Askowl Decoupler give me?
 1. You can build and test your app while waiting for supporting Unity packages to be complete.
 2. You can choose between unity packages without changing your app code. Changing from Google Analytics to Unity Analytics to Fabric is as simple as getting or writing the connector code.
 3. You can provide a standard interface to a related area. For social media, the interface could support FaceBook, Twitter, Youtube and others. You could then send a command to one, some or all of them. Think of this regarding posting to multiple platforms.
 4. You can have more than one service then cycle through them or select one at random. For advertising, you can move to a new platform if the current one cannot serve you an ad.
 
-## Decoupling Packages
+# Decoupling Packages
 
-### How do I use a decoupled package?
+## How do I use a decoupled package?
 Always get an instance through static methods on the interface.
 
-#### For singleton services
+### For singleton services
 Access the registered service using the Instance selector. If keeping a reference, set it in Awake or later. It gives the services an opportunity to register.
 ```C#
 Decoupled.Authentication auth;
 void Awake() { auth = Decoupled.Authentication.Instance; }
 ```
 
-#### To cycle through a list of services
+### To cycle through a list of services
 Access the next registered service using the Instance selector.
 ```C#
         Adze.Server server = Adze.Server.Instance;
@@ -56,7 +54,7 @@ Access the next registered service using the Instance selector.
 ```
 In the example, the code will cycle through all the advertising services, stopping when one display an ad or when the list has been exhausted.
 
-#### To select a named service
+### To select a named service
 All services have a name. Names are set by either specifying the name in `Register`/`Load` or using the default name is the class name of the service. A service can then be retrieved by name using `Named`.
 
 ```C#
@@ -68,14 +66,14 @@ All services have a name. Names are set by either specifying the name in `Regist
   Decoupled.Social facebook = Decoupled.Social.Named("Facebook");
 ```
 
-#### Send to All Services
+### Send to All Services
 Another type of service is to have multiple instances, and we need to do something with all of them. It could be anything from display a list of names for user selection or call a method on some or all of them. `Social` is one of these where we may be connected to multiple social networks and send a message to some.
 
 ```C#
 Decoupled.Social.ForEach((svs) => svs.Send(myMessage));
 ```
 
-#### To choose a service randomly
+### To choose a service randomly
 `Random()` and `Exhaustive()` are static methods on the interface. Random selection can cause a perceived imbalance with short lists. Exhaustive is also a random picker, but it ensures all choices are exhausted before starting again.
 
 ```C#
@@ -83,26 +81,26 @@ Decoupled.Social.ForEach((svs) => svs.Send(myMessage));
   Decoupled.Social.Exhaustive();
 ```
 
-#### How do I know if there is a service implemented
+### How do I know if there is a service implemented
 All service interfaces have a static member `Available`.
 
 ```C#
   if (!Decoupled.Social.Available) Debug.Log("Oops");
 ```
 
-### How much work do I need to do to implement a decoupler?
-#### For an already written decoupled package
-##### If it comes with a controller or *prefab*
+## How much work do I need to do to implement a decoupler?
+### For an already written decoupled package
+#### If it comes with a controller or *prefab*
 1. Create an empty gameObject in the first scene of your game
 2. Drag the controller code or *prefab* to the gameObject
 3. Fill any requirements in the controller from the Unity editor
 4. Run the app. The decoupled package replaces the default placeholder
-##### If it has an initialiser in an Editor directory
+#### If it has an initialiser in an Editor directory
 There is nothing more to do.
 
 In either case, if external dependencies are needed, the log provides what is needed.
 
-#### For a new package and an existing interface
+### For a new package and an existing interface
 1. Create a new project
 2. Import any unity packages required
 4. Create an API where the base class is the interface
@@ -132,7 +130,7 @@ By using ***Askowl.DefineBuild** set a definition file in an ***Editor*** direct
 }
 ```
 
-#### For a new interface
+### For a new interface
 The decoupler interface is not an Interface in the Java/C# sense. It is a base class. It provides decoupling support as well as default functionality.
 
 If the decoupler interface is for a new package you are writing, then the methods are a matter for software design. If it is an existing package, then the contents reflect the functionality you want to access. It can be just the parts you need or if for distribution, it may be exhaustive. For an example of the latter, look at ***Askowl-Decoupler/Services/Analytics***. There are multiple classes here to represent different aspects of the analytics requirement.
@@ -182,7 +180,7 @@ In a service that talks to a server, the yield waits for a response. This exampl
 
 It may seem like much work, but it is quite simple. Writing an interface is a matter of learning what is available and deciding what is required.
 
-### Built-In Interfaces
+## Built-In Interfaces
 To use a decoupled service, you need to have an interface class. Often these are provided with packages that need them, but for commonly needed ones, we have included them in Askowl Decoupler.
 
 * [Analytics](http://analytics.marrington.net)
@@ -195,10 +193,10 @@ To use a decoupled service, you need to have an interface class. Often these are
 * [Social](http://social.marrington.net)
 * [Storage](http://storage.marrington.net)
 
-## Decoupling Components
+# Decoupling Components
 Decoupling means providing a familiar code interface to components of similar functionality. Two examples that come to mind are UI Text components and Cameras.
 
-### How do I use decoupled components?
+## How do I use decoupled components?
 Drag the decoupled component into the inspector for your game object. It is bright enough to work out and load the component it needs. When you have a choice, load a component first, and the decoupler uses it. If the decoupler already exists, select *Reset* to have it pick up and changes.
 
 <img src="Textual.png" width="50%">
@@ -213,7 +211,7 @@ void OnEnable() { messages = GetComponent<Textual>(); }
 void ChangeMessage(string newMsg) { messages.text = newMsg; }
 ```
 
-### Creating Decoupled Components
+## Creating Decoupled Components
 Given a choice between two systems, you need to create four classes - one for the interface, one for each of the systems and one to tell the editor which to load.
 
 So that the last may be first, the class to create a compiler definition needs to be in an Editor folder.
@@ -287,8 +285,8 @@ This time the code only exists if we have defined the variable ***TextMeshPro***
 
 What happens when you don't have TextMesh Pro installed? When you attach a ***Textual*** component, it won't find a compatible concrete component, so it creates one using ```defaultComponent```.
 
-### Built-In Interfaces
-#### Decoupled.Textual
+## Built-In Interfaces
+### Decoupled.Textual
 Add the component `Textual` to the inspector for your game object. It loads the Unity Text object unless you have installed the TextMesh Pro package.
 
 ```C#
