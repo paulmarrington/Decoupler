@@ -1,3 +1,4 @@
 plugins:
   - jekyll-redirect-from
+markdown: kramdown
 remote_theme: TaylanTatli/Moon
