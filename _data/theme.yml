@@ -1,5 +1,5 @@
 # Theme Skin
-skin: steel # default, night, plum, sea, soft, steel
+skin: soft # default, night, plum, sea, soft, steel
 
 # Theme Text
 t:
@@ -33,6 +33,6 @@ google_fonts:
 # Create a custom list to override the default setting of including links to all
 # pages that have a `title`. Add raw page paths in the order you'd like.
 
-navigation_pages:
-  - about.md
-  - cv.md
+#navigation_pages:
+#  - about.md
+#  - cv.md
