@@ -205,7 +205,7 @@ Decoupling means providing a familiar code interface to components of similar fu
 ## How do I use decoupled components?
 Drag the decoupled component into the inspector for your game object. It is bright enough to work out and load the component it needs. When you have a choice, load a component first, and the decoupler uses it. If the decoupler already exists, select *Reset* to have it pick up and changes.
 
-<img src="Textual.png" width="50%">
+[Textual component in Unity3D Inspector](Textual.png)
 
 In this example, the *TextMesh Pro* package exists. The decoupler recognises it and adds the correct component when ***Textual*** is loaded or reset. If I wanted to use the built-in UI Text component instead, I could have added it first or removed the TextMesh Pro and added the UI Text component. ***Textual*** won't override your choice.
 
