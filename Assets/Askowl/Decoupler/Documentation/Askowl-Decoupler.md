@@ -124,7 +124,7 @@ A sample service would look something like this.
   }
 #endif
 ```
-By using ***Askowl.DefineBuild** set a definition file in an ***Editor*** directory. Here we are deciding on the existence of a package by the existence or not of a directory.
+By using ***Askowl.DefineBuild*** set a definition file in an ***Editor*** directory. Here we are deciding on the existence of a package by the existence or not of a directory.
 
 ```c#
   [InitializeOnLoad]
