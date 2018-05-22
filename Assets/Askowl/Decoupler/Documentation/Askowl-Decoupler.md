@@ -40,7 +40,7 @@ Always get an instance through static methods on the interface.
 
 ### For singleton services
 Access the registered service using the Instance selector. If keeping a reference, set it in Awake or later. It gives the services an opportunity to register.
-```C#
+```c#
 Decoupled.Authentication auth;
 void Awake() { auth = Decoupled.Authentication.Instance; }
 ```
@@ -67,21 +67,21 @@ All services have a name. Names are set by either specifying the name in `Regist
 
 ```
 
-```C#
+```c#
   Decoupled.Social facebook = Decoupled.Social.Named("Facebook");
 ```
 
 ### Send to All Services
 Another type of service is to have multiple instances, and we need to do something with all of them. It could be anything from display a list of names for user selection or call a method on some or all of them. `Social` is one of these where we may be connected to multiple social networks and send a message to some.
 
-```C#
+```c#
 Decoupled.Social.ForEach((svs) => svs.Send(myMessage));
 ```
 
 ### To choose a service randomly
 `Random()` and `Exhaustive()` are static methods on the interface. Random selection can cause a perceived imbalance with short lists. Exhaustive is also a random picker, but it ensures all choices are exhausted before starting again.
 
-```C#
+```c#
   Decoupled.Social.Random();
   Decoupled.Social.Exhaustive();
 ```
@@ -89,7 +89,7 @@ Decoupled.Social.ForEach((svs) => svs.Send(myMessage));
 ### How do I know if there is a service implemented
 All service interfaces have a static member `Available`.
 
-```C#
+```c#
   if (!Decoupled.Social.Available) Debug.Log("Oops");
 ```
 
@@ -114,7 +114,7 @@ In either case, if external dependencies are needed, the log provides what is ne
 6. Create a loader method to register this service
 
 A sample service would look something like this.
-```C#
+```c#
 #if AnalyticsFabric
   public sealed class AnalyticsFabric: Analytics {
     public override void Event(string name){/* etc etc */}
@@ -125,7 +125,7 @@ A sample service would look something like this.
 ```
 By using ***Askowl.DefineBuild** set a definition file in an ***Editor*** directory. Here we are deciding on the existence of a package by the existence or not of a directory.
 
-```C#
+```c#
   [InitializeOnLoad]
   public sealed class DetectMyUnityPackage : DefineSymbols {
     static DetectMyUnityPackage() {
@@ -141,7 +141,7 @@ The decoupler interface is not an Interface in the Java/C# sense. It is a base c
 
 If the decoupler interface is for a new package you are writing, then the methods are a matter for software design. If it is an existing package, then the contents reflect the functionality you want to access. It can be just the parts you need or if for distribution, it may be exhaustive. For an example of the latter, look at ***Askowl-Decoupler/Services/Analytics***. There are multiple classes here to represent different aspects of the analytics requirement.
 
-```C#
+```c#
 namespace Decoupled.Analytics {
   public class Play : Decoupled.Service<Play> {
 
@@ -156,7 +156,7 @@ Most interface methods do nothing. Since analytics is a form of logging, it is b
 
 Often when the interface is for remote services, results are asynchronous.
 
-```C#
+```c#
 namespace Decoupled {
   public class Authentication: Decoupled.Service<Authentication> {
 
@@ -211,7 +211,7 @@ In this example, the *TextMesh Pro* package exists. The decoupler recognises it 
 
 To change the text content, use the Textual component decouples your code from the underlying implementation.
 
-```C#
+```c#
 Textual messages;
 void OnEnable() { messages = GetComponent<Textual>(); }
 void ChangeMessage(string newMsg) { messages.text = newMsg; }
@@ -222,7 +222,7 @@ Given a choice between two systems, you need to create four classes - one for th
 
 So that the last may be first, the class to create a compiler definition needs to be in an Editor folder.
 
-```C#
+```c#
   [InitializeOnLoad]
   public class TextMeshProDefinition : DefineSymbols {
     static TextMeshProDefinition() {
@@ -233,7 +233,7 @@ So that the last may be first, the class to create a compiler definition needs t
 
 Now we can create the interface as a partial class.
 
-```C#
+```c#
   public partial class Textual : ComponentDecoupler<Textual> {
     public interface Interface {
       string text { get; set; }
@@ -253,7 +253,7 @@ Let's deconstruct this.
 
 The second class it the default component. It should either be a stub or a native component that comes with Unity.
 
-```C#
+```c#
   public partial class Textual {
     [RuntimeInitializeOnLoadMethod]
     private static void UnityTextInitialise() {
@@ -267,7 +267,7 @@ We could have placed this in the interface, but it is cleaner separated. It uses
 
 Now we can replicate this for another component.
 
-```C#
+```c#
 #if TextMeshPro
 using TMPro;
 using UnityEngine;
@@ -295,7 +295,7 @@ What happens when you don't have TextMesh Pro installed? When you attach a ***Te
 ### Decoupled.Textual
 Add the component `Textual` to the inspector for your game object. It loads the Unity Text object unless you have installed the TextMesh Pro package.
 
-```C#
+```c#
 Textual helpText;
 void OnEnable() { helpText = GetComponent<Textual>(); }
 void ShowHelp(string txt) { helpText.text = txt; }
