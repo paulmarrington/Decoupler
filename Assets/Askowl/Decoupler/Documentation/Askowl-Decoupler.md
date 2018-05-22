@@ -1,9 +1,13 @@
+---
+title: Askowl Decoupler for Unity3D
+---
 # [Executive Summary](http://www.askowl.net/unity-decoupler-package)
 The Askowl Decoupler is here to provide an interface between your code and Unity packages. Take analytics packages as an example. There are dozens of them. With Askowl Analytics you can switch between them depending on which you have installed. You can also choose at platform build time. Not all analytics packages support XBox or Web apps. The same logic works for databases, social networks, authentication and many others.
 
 The decoupler also provides some support for components and prefabs. As an example, UI Text processing can use the built-in Unity components or those offered by TextMesh Pro. By using a decoupling element, the MonoBehaviour that uses them doesn't know the difference. You can even choose between them for each GameObject.
 
-* {:toc}
+* Table of Contents
+{:toc}
 
 > Read the code in the Examples Folder.
 
@@ -95,6 +99,7 @@ All service interfaces have a static member `Available`.
 2. Drag the controller code or *prefab* to the gameObject
 3. Fill any requirements in the controller from the Unity editor
 4. Run the app. The decoupled package replaces the default placeholder
+
 #### If it has an initialiser in an Editor directory
 There is nothing more to do.
 

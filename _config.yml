@@ -1,2 +1,6 @@
 plugins:
   - jekyll-redirect-from
+  - jekyll-remote-theme
+
+theme: jekyll-theme-slate
+show_downloads: false
