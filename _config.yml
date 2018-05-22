@@ -5,7 +5,6 @@ theme: jekyll-theme-slate
 
 markdown: kramdown
 highlighter: rouge
-image_path: _layouts
 kramdown:
   input: GFM
   hard_wrap: false
