@@ -1,4 +1,5 @@
 ---
+title: Askowl Decoupler for Unity3D
 ---
 # [Executive Summary](http://www.askowl.net/unity-decoupler-package)
 The Askowl Decoupler is here to provide an interface between your code and Unity packages. Take analytics packages as an example. There are dozens of them. With Askowl Analytics you can switch between them depending on which you have installed. You can also choose at platform build time. Not all analytics packages support XBox or Web apps. The same logic works for databases, social networks, authentication and many others.
