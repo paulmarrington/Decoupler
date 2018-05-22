@@ -47,7 +47,7 @@ void Awake() { auth = Decoupled.Authentication.Instance; }
 
 ### To cycle through a list of services
 Access the next registered service using the Instance selector.
-```C#
+```c#
         Adze.Server server = Adze.Server.Instance;
         int cycleIndex = server.CycleIndex;
         do {
@@ -61,7 +61,7 @@ In the example, the code will cycle through all the advertising services, stoppi
 ### To select a named service
 All services have a name. Names are set by either specifying the name in `Register`/`Load` or using the default name is the class name of the service. A service can then be retrieved by name using `Named`.
 
-```C#
+```csharp
 [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void RegisterService() { Social.Register <Facebook>(); }
 
