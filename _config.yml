@@ -1,4 +1,4 @@
 plugins:
   - jekyll-redirect-from
 
-theme: jekyll-theme-cayman
+remote_theme: mmistakes/minimal-mistakes
