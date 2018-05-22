@@ -1,3 +1,5 @@
 plugins:
   - jekyll-redirect-from
   - jekyll-remote-theme
+
+remote_theme: "mmistakes/minimal-mistakes"
