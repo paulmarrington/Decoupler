@@ -2,4 +2,4 @@ plugins:
   - jekyll-redirect-from
   - jekyll-remote-theme
 
-remote_theme: "jekyll.github.io/minima"
+remote_theme: "mmistakes/jekyll-theme-basically-basic"
