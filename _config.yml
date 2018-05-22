@@ -1,4 +1,3 @@
 plugins:
   - jekyll-redirect-from
-markdown: kramdown
-remote_theme: TaylanTatli/Moon
+remote_theme: mmistakes/minimal-mistakes
