@@ -3,7 +3,7 @@ The Askowl Decoupler is here to provide an interface between your code and Unity
 
 The decoupler also provides some support for components and prefabs. As an example, UI Text processing can use the built-in Unity components or those offered by TextMesh Pro. By using a decoupling element, the MonoBehaviour that uses them doesn't know the difference. You can even choose between them for each GameObject.
 
-1 Table of Contents
+1. Table of Contents
 {:toc}
 
 > Read the code in the Examples Folder.
