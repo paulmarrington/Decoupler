@@ -94,7 +94,7 @@ All service interfaces have a static member `Available`.
   if (!Decoupled.Social.Available) Debug.Log("Oops");
 ```
 
-## How much work do I need to do to implement a decoupler?
+## How much work to implement a decoupler?
 ### For an already written decoupled package
 #### If it comes with a controller or *prefab*
 1. Create an empty gameObject in the first scene of your game
@@ -102,7 +102,7 @@ All service interfaces have a static member `Available`.
 3. Fill any requirements in the controller from the Unity editor
 4. Run the app. The decoupled package replaces the default placeholder
 
-#### If it has an initialiser in an Editor directory
+#### An initialiser in an Editor directory?
 There is nothing more to do.
 
 In either case, if external dependencies are needed, the log provides what is needed.
