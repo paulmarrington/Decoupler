@@ -1,5 +1,6 @@
 ﻿#if TextMeshPro
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 
 namespace Decoupled {
@@ -7,10 +8,10 @@ namespace Decoupled {
   public partial class Textual {
     private TextMeshProUGUI tmpText;
 
-    [RuntimeInitializeOnLoadMethod]
+    [RuntimeInitializeOnLoadMethod, InitializeOnLoadMethod]
     private static void TextMeshProInitialise() {
       // ReSharper disable once SuspiciousTypeConversion.Global
-      initialisers += (my) => interfaceData = interfaceData ?? my.GetComponent<TextMeshProUGUI>();
+      Initialisers += (my) => InterfaceData = InterfaceData ?? my.GetComponent<TextMeshProUGUI>();
     }
   }
 }
