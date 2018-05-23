@@ -94,7 +94,7 @@ All service interfaces have a static member `Available`.
 ```
 
 ## Implementing a decoupler?
-### An already written decoupled package
+### Already written decoupled package?
 #### Has a controller or *prefab*?
 1. Create an empty gameObject in the first scene of your game
 2. Drag the controller code or *prefab* to the gameObject
@@ -106,7 +106,7 @@ There is nothing more to do.
 
 In either case, if external dependencies are needed, the log provides what is needed.
 
-### New package and an existing interface?
+### New package and existing interface?
 1. Create a new project
 2. Import any unity packages required
 4. Create an API where the base class is the interface
