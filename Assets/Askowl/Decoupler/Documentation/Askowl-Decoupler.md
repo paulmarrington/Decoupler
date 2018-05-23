@@ -87,27 +87,27 @@ Decoupled.Social.ForEach((svs) => svs.Send(myMessage));
   Decoupled.Social.Exhaustive();
 ```
 
-### How do I know if there is a service implemented
+### Is there is a service implemented?
 All service interfaces have a static member `Available`.
 
 ```c#
   if (!Decoupled.Social.Available) Debug.Log("Oops");
 ```
 
-## How much work to implement a decoupler?
-### For an already written decoupled package
-#### If it comes with a controller or *prefab*
+## Implementing a decoupler?
+### An already written decoupled package
+#### Has a controller or *prefab*?
 1. Create an empty gameObject in the first scene of your game
 2. Drag the controller code or *prefab* to the gameObject
 3. Fill any requirements in the controller from the Unity editor
 4. Run the app. The decoupled package replaces the default placeholder
 
-#### An initialiser in an Editor directory?
+#### Initialiser in an Editor directory?
 There is nothing more to do.
 
 In either case, if external dependencies are needed, the log provides what is needed.
 
-### For a new package and an existing interface
+### New package and an existing interface?
 1. Create a new project
 2. Import any unity packages required
 4. Create an API where the base class is the interface
