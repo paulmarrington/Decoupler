@@ -24,18 +24,20 @@ h6 {font-size: 16px}
 code {overflow: auto}
   
 ul#markdown-toc {
-  float: right;
-  width: 40%;
+  float: left;
+  max-width: 300px;
   background: #eee;
   font-size: 0.8em;
   padding: 1em 2em;
   margin: 0 0 0.5em 0.5em;
-}
-ul#markdown-toc {
-  padding: 0;
+  list-style: none;
+  padding: 0.5em 1.5em;
+  margin: 0 1em 0 0;
+  border: 1px solid #ddd
 }
 ul#markdown-toc li {
   margin: 0 0 0.25em 0;
+  list-style: none;
 }
 ul#markdown-toc a {
   text-decoration: none;
@@ -45,14 +47,22 @@ ul#markdown-toc a:active {
   text-decoration: underline;
 }
 
-h1:target,h2:target,h3:target,h4:target,h5:target,h6:target, {
-  animation: highlight 1s ease;
-}
-
 @keyframes highlight {
   from { background: yellow; }
   to { background: white; }
 }
+
+h1:target,h2:target,h3:target,h4:target,h5:target,h6:target {
+  animation: highlight 1s ease;
+}
+
+  hr {
+    height: 1px;
+    margin-bottom: 5px;
+    border: none;
+    background: url("/images/bg_hr.png") repeat-x center
+}
+
 </style>
 {% seo %}
   </head>
