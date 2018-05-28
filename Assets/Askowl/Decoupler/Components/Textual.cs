@@ -16,7 +16,6 @@ namespace Decoupled {
     /// <summary>
     /// Interface for Textual Objects
     /// </summary>
-    [UsedImplicitly]
     public interface Interface {
       // ReSharper disable once InconsistentNaming
       /// <summary>
@@ -25,22 +24,23 @@ namespace Decoupled {
       string text { get; set; }
     }
 
-    private static Interface Backer { get { return (Interface) InterfaceData; } }
-
-    /// <inheritdoc />
-    protected override Type DefaultComponent { get { return typeof(Text); } }
+    private Interface backer { get { return componentInterface as Interface; } }
 
     /// <summary>
     /// Get and set text in backing component
     /// </summary>
-    public string text { [UsedImplicitly] get { return Backer.text; } set { Backer.text = value; } }
+    // ReSharper disable once InconsistentNaming
+    public string text { [UsedImplicitly] get { return backer.text; } set { backer.text = value; } }
   }
 
   public partial class Textual {
-    [RuntimeInitializeOnLoadMethod, InitializeOnLoadMethod]
-    private static void UnityTextInitialise() {
-      // ReSharper disable once SuspiciousTypeConversion.Global
-      Initialisers += (my) => InterfaceData = InterfaceData ?? my.GetComponent<Text>() as Interface;
+    private class UnityTextInterface : ComponentInterface, Interface {
+      private Text UnityText { get { return Component as Text; } }
+
+      public string text { get { return UnityText.text; } set { UnityText.text = value; } }
     }
+
+    [RuntimeInitializeOnLoadMethod, InitializeOnLoadMethod]
+    private static void UnityTextInitialise() { Instantiate<UnityTextInterface, Text>(false); }
   }
 }
