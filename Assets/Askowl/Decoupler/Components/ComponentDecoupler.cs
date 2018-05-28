@@ -1,6 +1,8 @@
 ﻿// Copyright 2018 (C) paul@marrington.net http://www.askowl.net/unity-packages
 
 using System;
+using System.Collections.Generic;
+using UnityEditor.iOS;
 using UnityEngine;
 
 namespace Decoupled {
@@ -22,6 +24,8 @@ namespace Decoupled {
     /// </summary>
     protected static event Action<T> Initialisers = delegate { };
 
+    private static HashSet<Type> interfaces = new HashSet<Type>();
+
     /// <summary>
     /// Interface created in concrete classes to provide decoupled component access
     /// </summary>
@@ -32,7 +36,7 @@ namespace Decoupled {
     /// </summary>
     private Type defaultComponent;
 
-    private void Awake() { Reset(); }
+    private void Start() { Reset(); }
 
     /// <summary>
     /// Called when component is loaded or reset from the Inspector menu
@@ -56,6 +60,11 @@ namespace Decoupled {
     /// <typeparam name="TC">Type of component we are playing with</typeparam>
     protected static void Instantiate<TI, TC>(bool primary)
       where TC : Component where TI : ComponentInterface, new() {
+      Type type = typeof(TI);
+      if (interfaces.Contains(type)) return;
+
+      interfaces.Add(type);
+
       Initialisers += (textual) => {
         if (textual.ComponentInterface != null) return;
 

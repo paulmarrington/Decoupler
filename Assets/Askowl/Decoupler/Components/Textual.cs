@@ -23,7 +23,7 @@ namespace Decoupled {
     /// Get and set text in backing component
     /// </summary>
     // ReSharper disable once InconsistentNaming
-    public string text { [UsedImplicitly] get { return Backer.text; } set { Backer.text = value; } }
+    public string text { get { return Backer.text; } set { Backer.text = value; } }
   }
 
   public partial class Textual {
