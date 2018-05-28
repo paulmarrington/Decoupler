@@ -7,21 +7,15 @@ using UnityEngine;
 
 namespace Decoupled {
   public partial class Textual {
-    private class TextMeshProUguiInterface : Interface {
-      private TextMeshProUGUI uiText;
+    private class TextMeshProUguiInterface : ComponentInterface, TextualInterface {
+      private TextMeshProUGUI TmpText { get { return Component as TextMeshProUGUI; } }
 
-      public string text { get { return uiText.text; } set { uiText.text = value; } }
-
-      public static Interface Instance(Textual textual) {
-        TextMeshProUGUI uiText = textual.GetComponent<TextMeshProUGUI>();
-        textual.DefaultComponent = typeof(TextMeshProUGUI);
-        return (uiText == null) ? null : new TextMeshProUguiInterface {uiText = uiText};
-      }
+      public string text { get { return TmpText.text; } set { TmpText.text = value; } }
     }
 
     [RuntimeInitializeOnLoadMethod, InitializeOnLoadMethod]
-    private static void TextMeshProInitialise() {
-      Initialisers += (textual) => textual.backer = TextMeshProUguiInterface.Instance(textual);
+    private static void TextMeshProUguiInitialise() {
+      Instantiate<TextMeshProUguiInterface, TextMeshProUGUI>(primary: true);
     }
   }
 }
