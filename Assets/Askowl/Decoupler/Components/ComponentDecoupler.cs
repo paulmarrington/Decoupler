@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using UnityEditor.iOS;
 using UnityEngine;
 
 namespace Decoupled {
@@ -24,7 +23,8 @@ namespace Decoupled {
     /// </summary>
     protected static event Action<T> Initialisers = delegate { };
 
-    private static HashSet<Type> interfaces = new HashSet<Type>();
+    // ReSharper disable once StaticMemberInGenericType
+    private static readonly HashSet<Type> Interfaces = new HashSet<Type>();
 
     /// <summary>
     /// Interface created in concrete classes to provide decoupled component access
@@ -61,9 +61,9 @@ namespace Decoupled {
     protected static void Instantiate<TI, TC>(bool primary)
       where TC : Component where TI : ComponentInterface, new() {
       Type type = typeof(TI);
-      if (interfaces.Contains(type)) return;
+      if (Interfaces.Contains(type)) return;
 
-      interfaces.Add(type);
+      Interfaces.Add(type);
 
       Initialisers += (textual) => {
         if (textual.ComponentInterface != null) return;

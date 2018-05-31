@@ -33,7 +33,10 @@ namespace Decoupled {
       public string text { get { return UnityText.text; } set { UnityText.text = value; } }
     }
 
-    [RuntimeInitializeOnLoadMethod, InitializeOnLoadMethod]
+#if UNITY_EDITOR
+    [InitializeOnLoadMethod]
+#endif
+    [RuntimeInitializeOnLoadMethod]
     private static void UnityTextInitialise() { Instantiate<UnityTextInterface, Text>(false); }
   }
 }
