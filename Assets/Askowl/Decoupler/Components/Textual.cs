@@ -34,6 +34,7 @@ namespace Decoupled {
     }
 
 #if UNITY_EDITOR
+    // ReSharper disable once ArrangeAttributes
     [InitializeOnLoadMethod]
 #endif
     [RuntimeInitializeOnLoadMethod]

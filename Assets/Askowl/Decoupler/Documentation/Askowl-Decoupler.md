@@ -1,15 +1,15 @@
 ---
 title: Askowl Decoupler for Unity3D
-description: Decoupling software components and systems
 ---
-* Table of Contents
-{:toc}
 # [Executive Summary](http://www.askowl.net/unity-decoupler-package)
 The Askowl Decoupler is here to provide an interface between your code and Unity packages. Take analytics packages as an example. There are dozens of them. With Askowl Analytics you can switch between them depending on which you have installed. You can also choose at platform build time. Not all analytics packages support XBox or Web apps. The same logic works for databases, social networks, authentication and many others.
 
 The decoupler also provides some support for components and prefabs. As an example, UI Text processing can use the built-in Unity components or those offered by TextMesh Pro. By using a decoupling element, the MonoBehaviour that uses them doesn't know the difference. You can even choose between them for each GameObject.
 
-> *Hint:* Read the code in the Examples Folder.
+* Table of Contents
+{:toc}
+
+> Read the code in the Examples Folder.
 
 # Introduction
 Decoupling software components and systems have been a focus for many decades. In the 80s we talked about software black boxes. You didn't care what was inside, just on the inputs and outputs.
@@ -86,27 +86,27 @@ Decoupled.Social.ForEach((svs) => svs.Send(myMessage));
   Decoupled.Social.Exhaustive();
 ```
 
-### Is there is a service implemented?
+### How do I know if there is a service implemented
 All service interfaces have a static member `Available`.
 
 ```c#
   if (!Decoupled.Social.Available) Debug.Log("Oops");
 ```
 
-## Implementing a decoupler?
-### Already written decoupled package?
-#### Has a controller or *prefab*?
+## How much work do I need to do to implement a decoupler?
+### For an already written decoupled package
+#### If it comes with a controller or *prefab*
 1. Create an empty gameObject in the first scene of your game
 2. Drag the controller code or *prefab* to the gameObject
 3. Fill any requirements in the controller from the Unity editor
 4. Run the app. The decoupled package replaces the default placeholder
 
-#### Initialiser in an Editor directory?
+#### If it has an initialiser in an Editor directory
 There is nothing more to do.
 
 In either case, if external dependencies are needed, the log provides what is needed.
 
-### New package and existing interface?
+### For a new package and an existing interface
 1. Create a new project
 2. Import any unity packages required
 4. Create an API where the base class is the interface
@@ -123,7 +123,7 @@ A sample service would look something like this.
   }
 #endif
 ```
-By using ***Askowl.DefineBuild*** set a definition file in an ***Editor*** directory. Here we are deciding on the existence of a package by the existence or not of a directory.
+By using ***Askowl.DefineBuild** set a definition file in an ***Editor*** directory. Here we are deciding on the existence of a package by the existence or not of a directory.
 
 ```c#
   [InitializeOnLoad]
@@ -205,7 +205,7 @@ Decoupling means providing a familiar code interface to components of similar fu
 ## How do I use decoupled components?
 Drag the decoupled component into the inspector for your game object. It is bright enough to work out and load the component it needs. When you have a choice, load a component first, and the decoupler uses it. If the decoupler already exists, select *Reset* to have it pick up and changes.
 
-<img src="Textual.png" width="75%;">
+<img src="Textual.png" width="50%">
 
 In this example, the *TextMesh Pro* package exists. The decoupler recognises it and adds the correct component when ***Textual*** is loaded or reset. If I wanted to use the built-in UI Text component instead, I could have added it first or removed the TextMesh Pro and added the UI Text component. ***Textual*** won't override your choice.
 
@@ -220,7 +220,7 @@ void ChangeMessage(string newMsg) { messages.text = newMsg; }
 ## Creating Decoupled Components
 Given a choice between two systems, you need to create four classes - one for the interface, one for each of the systems and one to tell the editor which to load.
 
-So that the last may be first, the class to create a compiler definition needs to be in an Editor folder.
+So that the last may be first, the class to create a compiler definition needs to be in an Editor folder. It eradicates compiler errors.
 
 ```c#
   [InitializeOnLoad]
@@ -234,62 +234,63 @@ So that the last may be first, the class to create a compiler definition needs t
 Now we can create the interface as a partial class.
 
 ```c#
-  public partial class Textual : ComponentDecoupler<Textual> {
-    public interface Interface {
-      string text { get; set; }
-    }
-    private static Interface Backer { get { return (Interface) interfaceData; } }
-
-    protected override Type defaultComponent { get { return typeof(Text); } }
-
+  internal interface TextualInterface {
+    string text { get; set; }
+  }
+  public partial class Textual : ComponentDecoupler<Textual>, TextualInterface {
+    private TextualInterface Backer { get { return ComponentInterface as TextualInterface; } }
+    // required by TextualInterface
     public string text { get { return Backer.text; } set { Backer.text = value; } }
   }
 ```
 Let's deconstruct this.
 * First we create an interface for all the properties and methods we want to expose.
-* Next we add a property for retrieving an instance of the interface from the underlying generic data reference.
-* Your class needs to create a function that returns the default type. The base system adds a component of this type if none of the free types is on the GameObject.
-* Lastly we need to place all the properties and methods onto the outer class for seamless use.
+* Next we add a property, `Backer`,  for retrieving an instance of the interface from the underlying generic data reference.
+* Lastly we need to place all the properties and methods onto the outer class for seamless use. The interface enforces this.
 
 The second class it the default component. It should either be a stub or a native component that comes with Unity.
 
 ```c#
   public partial class Textual {
-    [RuntimeInitializeOnLoadMethod]
-    private static void UnityTextInitialise() {
-      // ReSharper disable once SuspiciousTypeConversion.Global
-      initialisers += (my) => interfaceData = interfaceData ?? (Interface) my.GetComponent<Text>();
+    private class UnityTextInterface : ComponentInterface, TextualInterface {
+      private Text UnityText { get { return Component as Text; } }
+
+      public string text { get { return UnityText.text; } set { UnityText.text = value; } }
     }
+#if UNITY_EDITOR
+    [InitializeOnLoadMethod]
+#endif
+    [RuntimeInitializeOnLoadMethod]
+    private static void UnityTextInitialise() { Instantiate<UnityTextInterface, Text>(primary: false); }
   }
 ```
 
-We could have placed this in the interface, but it is cleaner separated. It uses an attribute that causes a static function to execute on component load. In this method, we add to an event list. The function added is called when a component activates within a game object. Its responsibility is to set the interface data to a concrete instance of the Interface structure. It leaves the interface data as null if it cannot help.
+We could have placed this in the first partial, but it is cleaner separated. It uses a attributes that causes a static function, `UnityTextInitialise`, to execute on component load. You can skip the `[InitializeOnLoadMethod]` attribute if you don't require the editor to load the primary choice.
 
 Now we can replicate this for another component.
 
 ```c#
-#if TextMeshPro
-using TMPro;
-using UnityEngine;
-
-namespace Decoupled {
-  [RequireComponent(typeof(TextMeshProUGUI))]
   public partial class Textual {
-    private TextMeshProUGUI tmpText;
+    private class TextMeshProUguiInterface : ComponentInterface, TextualInterface {
+      private TextMeshProUGUI TmpText { get { return Component as TextMeshProUGUI; } }
 
+      public string text { get { return TmpText.text; } set { TmpText.text = value; } }
+    }
+
+
+#if UNITY_EDITOR
+    [InitializeOnLoadMethod]
+#endif
     [RuntimeInitializeOnLoadMethod]
-    private static void TextMeshProInitialise() {
-      // ReSharper disable once SuspiciousTypeConversion.Global
-      initialisers += (my) => interfaceData = interfaceData ?? my.GetComponent<TextMeshProUGUI>();
+    private static void TextMeshProUguiInitialise() {
+      Instantiate<TextMeshProUguiInterface, TextMeshProUGUI>(primary: true);
     }
   }
-}
-#endif
 ```
 
-This time the code only exists if we have defined the variable ***TextMeshPro***. Since we know we want to use this component if it is available, we use the require component attribute. When you drop ***Textual*** into your game object you also get a TextMeshProGUI component.
+This time the code only exists if we have defined the variable ***TextMeshPro***. Since we know we want to use this component if it is available, we use the primary parameter. When you drop ***Textual*** into your game object you also get a TextMeshProGUI component.
 
-What happens when you don't have TextMesh Pro installed? When you attach a ***Textual*** component, it won't find a compatible concrete component, so it creates one using ```defaultComponent```.
+What happens when you don't have TextMesh Pro installed? When you attach a ***Textual*** component, it won't find a compatible concrete component, so it uses what it can file - `Text`.
 
 ## Built-In Interfaces
 ### Decoupled.Textual
