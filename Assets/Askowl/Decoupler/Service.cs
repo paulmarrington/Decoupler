@@ -14,7 +14,7 @@ namespace Decoupled {
     /// <summary>
     /// Name for this concrete service - generated from the concrete interface class name
     /// </summary>
-    [UsedImplicitly]
+    
     public string Name { get; private set; }
 
     private static readonly List<T> InstanceList = new List<T>();
@@ -61,7 +61,7 @@ namespace Decoupled {
     /// <remarks><a href="http://decoupler.marrington.net#to-select-a-named-service">More...</a></remarks>
     /// <param name="name"></param>
     /// <returns></returns>
-    [UsedImplicitly]
+    
     public static T NamedInstance(string name) {
       for (int i = 0; i < InstanceList.Count; i++) {
         if (InstanceList[i].Name == name) return InstanceList[i];
@@ -77,7 +77,7 @@ namespace Decoupled {
     /// </summary>
     /// <remarks><a href="http://decoupler.marrington.net#send-to-all-services">More...</a></remarks>
     /// <param name="action"></param>
-    [UsedImplicitly]
+    
     public static void ForEach(Action<T> action) {
       for (int i = 0; i < InstanceList.Count; i++) action(InstanceList[i]);
     }

@@ -19,7 +19,7 @@ namespace Decoupled {
     /// <param name="name">Name for component in which the error occurred</param>
     /// <param name="message">Detailed error message</param>
     /// <param name="more">Additional information that make be useful</param>
-    [UsedImplicitly]
+    
     public virtual void Error(string          name,
                               string          message,
                               params object[] more) {
@@ -33,7 +33,7 @@ namespace Decoupled {
     /// <param name="action">What is going to happen next</param>
     /// <param name="result">The result of the action on the game</param>
     /// <param name="more">Additional information that make be useful</param>
-    [UsedImplicitly]
+    
     public virtual void Event(string          name,
                               string          action,
                               string          result,
@@ -60,7 +60,7 @@ namespace Decoupled {
     /// <param name="result">Results parameter as provided by <see cref="Event"/></param>
     /// <param name="more">More parameter list as provided by <see cref="Event"/></param>
     /// <returns>A dictionary with string keys</returns>
-    [UsedImplicitly]
+    
     public static Dictionary<string, object> ToDictionary(string          action,
                                                           string          result,
                                                           params object[] more) {

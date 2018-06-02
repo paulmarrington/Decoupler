@@ -15,74 +15,74 @@ namespace Decoupled {
   public sealed class Authentication : Service<Authentication> {
     private AuthenticationAsset user = CustomAsset.Base.Instance<AuthenticationAsset>();
 
-    [UsedImplicitly]
+    
     public IEnumerator CreateUser(string         email, string password,
                                   Action<string> error = null) {
       user.Name = user.Email = email;
       yield return null;
     }
 
-    [UsedImplicitly]
+    
     public IEnumerator UpdateProfile(string         displayName,
                                      Action<string> error = null) {
       user.Name = displayName;
       yield return null;
     }
 
-    [UsedImplicitly]
+    
     public IEnumerator SignIn(string         email, string password,
                               Action<string> error = null) {
       yield return null;
     }
 
-    [UsedImplicitly]
+    
     public IEnumerator SignIn(object credential, Action<string> error = null) { yield return null; }
 
-    [UsedImplicitly]
+    
     public void SignOut() {
       Object.Destroy(user);
       user = CustomAsset.Base.Instance<AuthenticationAsset>();
     }
 
-    [UsedImplicitly]
+    
     public IEnumerator Anonymous(Action<string> error = null) { yield return null; }
 
-    [UsedImplicitly]
+    
     public IEnumerator LinkWith(object credential, Action<string> error = null) {
       yield return null;
     }
 
-    [UsedImplicitly]
+    
     public IEnumerator Reload(Action<string> error = null) { yield return null; }
 
-    [UsedImplicitly]
+    
     public IEnumerator GetToken(Action<string> setToken, Action<string> error = null) {
       yield return null;
     }
 
-    [UsedImplicitly]
+    
     public IEnumerator DeleteUser(Action<string> error = null) { yield return null; }
 
-    [UsedImplicitly]
+    
     public IEnumerator ProvidersFor(string           email,
                                     Action<string[]> providers,
                                     Action<string>   error = null) {
       yield return null;
     }
 
-    [UsedImplicitly]
+    
     public IEnumerator PasswordReset(string email, Action<string> error = null) {
       yield return null;
     }
 
-    [UsedImplicitly]
+    
     public IEnumerator VerifyPhoneNumber(string         number,
                                          Action<string> setId,
                                          Action<string> error = null) {
       yield return null;
     }
 
-    [UsedImplicitly]
+    
     public IEnumerator PhoneSignIn(string         phoneAuthVerificationId,
                                    string         receivedCode,
                                    Action<string> error = null) {

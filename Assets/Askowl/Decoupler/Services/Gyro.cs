@@ -77,5 +77,3 @@ namespace Decoupled {
     public virtual float UpdateInterval { get { return 1; } set { } }
   }
 }
-
-}

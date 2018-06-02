@@ -15,14 +15,14 @@ namespace Decoupled {
     /// Return true if the interface is ready to use. There is often a delay between logging in and being able to use the interfaces
     /// </summary>
     /// <remarks><a href="http://decoupler.marrington.net#decoupledsocial">More...</a></remarks>
-    [UsedImplicitly]
+    
     public bool IsReady { get { return false; } }
 
     /// <summary>
     /// Returns true if player has signed in successfully to the network.
     /// </summary>
     /// <remarks><a href="http://decoupler.marrington.net#decoupledsocial">More...</a></remarks>
-    [UsedImplicitly]
+    
     public bool IsSignedIn { get { return false; } }
 
     /// <summary>
@@ -30,7 +30,7 @@ namespace Decoupled {
     /// </summary>
     /// <remarks><a href="http://decoupler.marrington.net#decoupledsocial">More...</a></remarks>
     /// <returns></returns>
-    [UsedImplicitly]
+    
     public IEnumerator Ready() {
       while (!IsReady) yield break;
     }
@@ -40,7 +40,7 @@ namespace Decoupled {
     /// </summary>
     /// <remarks><a href="http://decoupler.marrington.net#decoupledsocial">More...</a></remarks>
     /// <returns></returns>
-    [UsedImplicitly]
+    
     public IEnumerator SignedIn() {
       while (!IsSignedIn) yield break;
     }
