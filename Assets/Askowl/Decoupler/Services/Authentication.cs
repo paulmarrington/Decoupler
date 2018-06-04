@@ -5,8 +5,6 @@ using System;
 using Object = UnityEngine.Object;
 
 namespace Decoupled {
-  using JetBrains.Annotations;
-
   /// <inheritdoc />
   /// <summary>
   /// Decoupled interface for authentication services. This is once case here a game may have more than one service active.
@@ -15,74 +13,60 @@ namespace Decoupled {
   public sealed class Authentication : Service<Authentication> {
     private AuthenticationAsset user = CustomAsset.Base.Instance<AuthenticationAsset>();
 
-    
     public IEnumerator CreateUser(string         email, string password,
                                   Action<string> error = null) {
       user.Name = user.Email = email;
       yield return null;
     }
 
-    
     public IEnumerator UpdateProfile(string         displayName,
                                      Action<string> error = null) {
       user.Name = displayName;
       yield return null;
     }
 
-    
     public IEnumerator SignIn(string         email, string password,
                               Action<string> error = null) {
       yield return null;
     }
 
-    
     public IEnumerator SignIn(object credential, Action<string> error = null) { yield return null; }
 
-    
     public void SignOut() {
       Object.Destroy(user);
       user = CustomAsset.Base.Instance<AuthenticationAsset>();
     }
 
-    
     public IEnumerator Anonymous(Action<string> error = null) { yield return null; }
 
-    
     public IEnumerator LinkWith(object credential, Action<string> error = null) {
       yield return null;
     }
 
-    
     public IEnumerator Reload(Action<string> error = null) { yield return null; }
 
-    
     public IEnumerator GetToken(Action<string> setToken, Action<string> error = null) {
       yield return null;
     }
 
-    
     public IEnumerator DeleteUser(Action<string> error = null) { yield return null; }
 
-    
     public IEnumerator ProvidersFor(string           email,
                                     Action<string[]> providers,
                                     Action<string>   error = null) {
       yield return null;
     }
 
-    
     public IEnumerator PasswordReset(string email, Action<string> error = null) {
       yield return null;
     }
 
-    
     public IEnumerator VerifyPhoneNumber(string         number,
                                          Action<string> setId,
                                          Action<string> error = null) {
       yield return null;
     }
 
-    
     public IEnumerator PhoneSignIn(string         phoneAuthVerificationId,
                                    string         receivedCode,
                                    Action<string> error = null) {
@@ -111,12 +95,12 @@ namespace Decoupled {
       /// <summary>
       /// Name of the logged in player (often email) - defaults to guest.
       /// </summary>
-      public string Name { get { return Value.Name; } set { Set(() => Value.Name = value); } }
+      public string Name { get { return Value.Name; } set { Set(ref Value.Name, value); } }
 
       /// <summary>
       /// Email address of the logged in player - defaults to empty.
       /// </summary>
-      public string Email { get { return Value.Email; } set { Set(() => Value.Email = value); } }
+      public string Email { get { return Value.Email; } set { Set(ref Value.Email, value); } }
     }
   }
 }
