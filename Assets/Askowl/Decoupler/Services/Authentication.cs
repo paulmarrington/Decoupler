@@ -101,6 +101,8 @@ namespace Decoupled {
       /// Email address of the logged in player - defaults to empty.
       /// </summary>
       public string Email { get { return Value.Email; } set { Set(ref Value.Email, value); } }
+
+      public override bool Equals(User other) { return Value.Email == other.Email; }
     }
   }
 }
