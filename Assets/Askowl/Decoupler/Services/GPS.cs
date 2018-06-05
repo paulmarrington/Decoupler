@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using JetBrains.Annotations;
 using UnityEngine;
 
 namespace Decoupled {
@@ -26,25 +25,23 @@ namespace Decoupled {
     /// <summary>
     /// Set true if the code is running on a device with GPS, the user has enabled GPS access and we have started the GPS tracking.
     /// </summary>
-    
+    // ReSharper disable once UnusedMember.Global
     public bool Running { get { return false; } }
 
     /// <summary>
     /// Set true if we do not have access to the GPS or its initialisation failed
     /// </summary>
-    
     public bool Failed { get { return true; } }
 
     /// <summary>
     /// If all is good start the GPS tracking position. Remember that this eats battery.
     /// </summary>
-    
+    // ReSharper disable once UnusedMember.Global
     public void StartTracking() { }
 
     /// <summary>
     /// Coroutine that checks for changes to coordinates at set intervals. This will trigger an event for any who are listening.
     /// </summary>
-    
     public IEnumerator StartPolling() {
       while (Initialising) {
         yield return pollingInterval;
@@ -71,7 +68,7 @@ namespace Decoupled {
     /// Start a coroutine to poll the GPS on the given MonoBehaviour.
     /// </summary>
     /// <param name="monoBehaviour">The MonoBehaviour that owns the polling coroutine</param>
-    
+    // ReSharper disable once UnusedMember.Global
     public void StartPolling(MonoBehaviour monoBehaviour) {
       monoBehaviour.StartCoroutine(StartPolling());
     }
@@ -79,43 +76,43 @@ namespace Decoupled {
     /// <summary>
     /// Turns off GPS tracking - saving battery.
     /// </summary>
-    
+    // ReSharper disable once UnusedMember.Global
     public void StopTracking() { }
 
     /// <summary>
     /// Latitude of the last GPS read
     /// </summary>
-    
+    // ReSharper disable once UnusedMember.Global
     public float Latitude { get { return Location.Latitude; } }
 
     /// <summary>
     /// Longitude of the last GPS read
     /// </summary>
-    
+    // ReSharper disable once UnusedMember.Global
     public float Longitude { get { return Location.Longitude; } }
 
     /// <summary>
     /// Altitude of the last GPS read
     /// </summary>
-    
+    // ReSharper disable once UnusedMember.Global
     public float Altitude { get { return Location.AltitudeInMeters; } }
 
     /// <summary>
     /// Timestamp of the last GPS read
     /// </summary>
-    
+    // ReSharper disable once UnusedMember.Global
     public double Timestamp { get { return Location.Timestamp; } }
 
     /// <summary>
     /// Horizontal accuracy in metres
     /// </summary>
-    
+    // ReSharper disable once UnusedMember.Global
     public float HorizontalAccuracy { get { return Location.HorizontalAccuracyInMetres; } }
 
     /// <summary>
     /// Vertical accuracy in metres
     /// </summary>
-    
+    // ReSharper disable once UnusedMember.Global
     public float VerticalAccuracy { get { return Location.VerticalAccuracyInMetres; } }
   }
 }

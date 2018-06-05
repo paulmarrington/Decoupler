@@ -102,7 +102,7 @@ namespace Decoupled {
       /// </summary>
       public string Email { get { return Value.Email; } set { Set(ref Value.Email, value); } }
 
-      public override bool Equals(User other) { return Value.Email == other.Email; }
+      protected override bool Equals(User other) { return Value.Email == other.Email; }
     }
   }
 }
