@@ -1,5 +1,1 @@
----
-redirect_to:
-  - /Assets/Askowl/Decoupler/Documentation/Askowl-Decoupler
----
-
+redirect_to:\n  - /Assets/Askowl/Decoupler/Documentation/Askowl-Decoupler
