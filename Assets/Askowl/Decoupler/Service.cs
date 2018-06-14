@@ -1,5 +1,4 @@
 ﻿using System;
-using JetBrains.Annotations;
 
 namespace Decoupled {
   using System.Collections.Generic;
@@ -10,7 +9,7 @@ namespace Decoupled {
   /// </summary>
   /// <remarks><a href="http://decoupler.marrington.net#for-a-new-interface">More...</a></remarks>
   /// <typeparam name="T">use `public class MyService : Service&lt;MyService>{}` to define a service</typeparam>
-  public class Service<T> : CustomAsset.OfType<T> where T : Service<T>, new() {
+  public class Service<T> where T : Service<T>, new() {
     /// <summary>
     /// Name for this concrete service - generated from the concrete interface class name
     /// </summary>
@@ -60,7 +59,6 @@ namespace Decoupled {
     /// <remarks><a href="http://decoupler.marrington.net#to-select-a-named-service">More...</a></remarks>
     /// <param name="name"></param>
     /// <returns></returns>
-
     public static T NamedInstance(string name) {
       for (int i = 0; i < InstanceList.Count; i++) {
         if (InstanceList[i].Name == name) return InstanceList[i];
@@ -76,7 +74,6 @@ namespace Decoupled {
     /// </summary>
     /// <remarks><a href="http://decoupler.marrington.net#send-to-all-services">More...</a></remarks>
     /// <param name="action"></param>
-
     public static void ForEach(Action<T> action) {
       for (int i = 0; i < InstanceList.Count; i++) action(InstanceList[i]);
     }
@@ -92,12 +89,8 @@ namespace Decoupled {
         Debug.LogWarningFormat("More than one implementation for service '{0}'", typeof(T).Name);
       }
 
-//      TD service1 = new TD {Name = typeof(TD).Name};
-      TD service = CreateInstance<TD>();
-      service.Name = typeof(TD).Name;
+      TD service = new TD {Name = typeof(TD).Name};
       InstanceList.Add(service);
     }
-
-    protected override bool Equals(T other) { throw new NotImplementedException(); }
   }
 }

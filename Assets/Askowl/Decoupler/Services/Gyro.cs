@@ -1,28 +1,57 @@
-﻿using System.Collections;
-using JetBrains.Annotations;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 
 namespace Decoupled {
+  /// <inheritdoc />
+  /// <summary>
+  /// Interface to a device gyroscope.
+  /// </summary>
   public class Gyro : Service<Gyro> {
-    [SerializeField, Tooltip("larger for more stability, smaller for faster following")]
-    private float minimumChange = 0.01f;
+    /// <summary>
+    /// Configuration data for the gyroscope - set by MonoBehaviour, CustomAsset or ScriptableObject
+    /// </summary>
+    [Serializable]
+    public class Setup {
+      [SerializeField, Tooltip("larger for more stability, smaller for faster following")]
+      internal float MinimumChange = 0.01f;
+    }
 
-    protected WaitForSecondsRealtime pollingInterval;
-    protected Quaternion             lastReading;
+    private Setup setup;
+
+    /// <summary>
+    /// Used to access a decoupled instance of the service - or a default one if none are registered
+    /// </summary>
+    /// <param name="gyroSetup">Serialisable data to set in MonoBehaviour or CustomAsset/ScriptableObject</param>
+    public static Gyro Instance(Setup gyroSetup) {
+      var gyro = Service<Gyro>.Instance;
+      gyro.setup = gyroSetup;
+      return gyro;
+    }
+
+    /// <summary>
+    /// Amount of time between gyroscope checks (in seconds
+    /// </summary>
+    protected WaitForSecondsRealtime PollingInterval;
+
+    /// <summary>
+    /// Used to compare to see if we have a change to report
+    /// </summary>
+    protected Quaternion LastReading;
 
     /// <summary>
     /// Coroutine that checks for changes to coordinates at set intervals. This will trigger an event for any who are listening.
     /// </summary>
     public IEnumerator StartPolling() {
       while (!Failed) {
-        float change = Mathf.Abs(Quaternion.Dot(Attitude, lastReading)) - 1;
+        float change = Mathf.Abs(Quaternion.Dot(Attitude, LastReading)) - 1;
 
-        if (change > minimumChange) {
-          lastReading = Attitude;
+        if (change > setup.MinimumChange) {
+          LastReading = Attitude;
           Changed();
         }
 
-        yield return pollingInterval;
+        yield return PollingInterval;
       }
     }
 
@@ -34,8 +63,14 @@ namespace Decoupled {
       monoBehaviour.StartCoroutine(StartPolling());
     }
 
+    /// <summary>
+    /// Called on change so we can act on it
+    /// </summary>
     protected virtual void Changed() { }
 
+    /// <summary>
+    /// Set if Gyro failed to initialise
+    /// </summary>
     public virtual bool Failed { get { return true; } }
 
     /// <summary>
@@ -66,14 +101,14 @@ namespace Decoupled {
     /// <summary>
     ///   <para>Sets or retrieves the enabled status of this gyroscope.</para>
     /// </summary>
-    public virtual bool Enabled { get { return false; } set { } }
+    public virtual bool Enabled { get; set; }
 
     /// <summary>
     ///   <para>Sets or retrieves gyroscope interval in seconds.</para>
     /// </summary>
     public virtual float UpdateInterval {
       get { return 1; }
-      set { pollingInterval = new WaitForSecondsRealtime(value); }
+      set { PollingInterval = new WaitForSecondsRealtime(value); }
     }
   }
 }

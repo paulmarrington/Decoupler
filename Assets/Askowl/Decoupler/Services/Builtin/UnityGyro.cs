@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using JetBrains.Annotations;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Askowl.Mars {
   /// <inheritdoc />
@@ -10,6 +8,7 @@ namespace Askowl.Mars {
   public class UnityGyro : Decoupled.Gyro {
     private Gyroscope gyro;
 
+    /// <inheritdoc />
     public UnityGyro() {
       if (!SystemInfo.supportsGyroscope) return;
 

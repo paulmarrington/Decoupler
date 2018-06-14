@@ -21,24 +21,42 @@ namespace Decoupled {
       internal float  HorizontalAccuracyInMetres;
     }
 
-    [SerializeField] private float desiredAccuracyInMeters  = 1;
-    [SerializeField] private float updateDistanceInMeters   = 0.25f;
-    [SerializeField] private float pollingIntervalInSeconds = 1;
+    /// <summary>
+    /// Configuration data for the GPS - set by MonoBehaviour, CustomAsset or ScriptableObject
+    /// </summary>
+    [Serializable]
+    public class Setup {
+      [SerializeField] internal float DesiredAccuracyInMeters  = 1;
+      [SerializeField] internal float UpdateDistanceInMeters   = 0.25f;
+      [SerializeField] internal float PollingIntervalInSeconds = 1;
+    }
+
+    private Setup setup;
+
+    /// <summary>
+    /// Used to access a decoupled instance of the service - or a default one if none are registered
+    /// </summary>
+    /// <param name="gyroSetup">Serialisable data to set in MonoBehaviour or CustomAsset/ScriptableObject</param>
+    public static GPS Instance(Setup gpsSetup) {
+      var gps = Service<GPS>.Instance;
+      gps.setup = gpsSetup;
+      return gps;
+    }
 
     /// <summary>
     /// Set in Unity inspector, but GPS really controls accuracy
     /// </summary>
-    public float DesiredAccuracyInMeters { get { return desiredAccuracyInMeters; } }
+    public float DesiredAccuracyInMeters { get { return setup.DesiredAccuracyInMeters; } }
 
     /// <summary>
     /// Set int he Unity inspector, but GPS decides whether to take notice
     /// </summary>
-    public float UpdateDistanceInMeters { get { return updateDistanceInMeters; } }
+    public float UpdateDistanceInMeters { get { return setup.UpdateDistanceInMeters; } }
 
     /// <summary>
     /// Set in Unity inspector. How often do we read the GPS. No point in exceeding the GPS ability.
     /// </summary>
-    public float PollingIntervalInSeconds { get { return pollingIntervalInSeconds; } }
+    public float PollingIntervalInSeconds { get { return setup.PollingIntervalInSeconds; } }
 
     protected internal WaitForSecondsRealtime PollingInterval;
     protected internal LocationData           Location = new LocationData();

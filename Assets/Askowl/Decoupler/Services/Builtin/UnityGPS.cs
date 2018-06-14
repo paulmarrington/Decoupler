@@ -5,21 +5,13 @@ namespace Askowl.Mars {
   /// <summary>
   /// Provide access to updates in position from the phone/device GPS
   /// </summary>
-  [CreateAssetMenu(menuName = "Custom Assets/GPS")]
   public class UnityGps : Decoupled.GPS {
     private readonly LocationService deviceLocaton = Input.location;
 
     /// <inheritdoc />
-    protected override void OnEnable() {
-      base.OnEnable();
+    public UnityGps() {
       PollingInterval = new WaitForSecondsRealtime(PollingIntervalInSeconds);
       StartTracking();
-    }
-
-    /// <inheritdoc />
-    protected override void OnDisable() {
-      StopTracking();
-      base.OnDisable();
     }
 
     /// <inheritdoc />
