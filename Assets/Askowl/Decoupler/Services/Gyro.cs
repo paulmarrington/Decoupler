@@ -13,7 +13,6 @@ namespace Decoupled {
     /// <summary>
     /// Coroutine that checks for changes to coordinates at set intervals. This will trigger an event for any who are listening.
     /// </summary>
-    // ReSharper disable once MemberCanBePrivate.Global
     public IEnumerator StartPolling() {
       while (!Failed) {
         float change = Mathf.Abs(Quaternion.Dot(Attitude, lastReading)) - 1;
@@ -37,9 +36,7 @@ namespace Decoupled {
 
     protected virtual void Changed() { }
 
-    public bool Failed { get { return true; } }
-
-    public bool Ready { get { return false; } }
+    public virtual bool Failed { get { return true; } }
 
     /// <summary>
     ///   <para>Returns rotation rate as measured by the device's gyroscope.</para>
@@ -74,6 +71,9 @@ namespace Decoupled {
     /// <summary>
     ///   <para>Sets or retrieves gyroscope interval in seconds.</para>
     /// </summary>
-    public virtual float UpdateInterval { get { return 1; } set { } }
+    public virtual float UpdateInterval {
+      get { return 1; }
+      set { pollingInterval = new WaitForSecondsRealtime(value); }
+    }
   }
 }

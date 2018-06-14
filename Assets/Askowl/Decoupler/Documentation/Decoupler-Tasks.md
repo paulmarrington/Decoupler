@@ -1,13 +1,14 @@
 # Package-Decoupler
 ## Release 2018-06
 
-* [ ] account for package manager changes
-* [ ] implement HasPackage
-* [ ] rebuild and get working
-* [ ] review tests
+* [x] account for package manager changes
+* [x] implement HasPackage
+* [x] rebuild and get working
+* [x] review tests
 
 ## Release 2018-??
 
+* [ ] merge in Analytics
 * [ ] Add webcam,gps and gyro
   * [ ] add docx
   * [ ] update documentation
