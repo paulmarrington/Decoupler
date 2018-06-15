@@ -7,27 +7,10 @@ namespace Decoupled {
   /// <summary>
   /// Interface to a device gyroscope.
   /// </summary>
+  [Serializable]
   public class Gyro : Service<Gyro> {
-    /// <summary>
-    /// Configuration data for the gyroscope - set by MonoBehaviour, CustomAsset or ScriptableObject
-    /// </summary>
-    [Serializable]
-    public class Setup {
-      [SerializeField, Tooltip("larger for more stability, smaller for faster following")]
-      internal float MinimumChange = 0.01f;
-    }
-
-    private Setup setup;
-
-    /// <summary>
-    /// Used to access a decoupled instance of the service - or a default one if none are registered
-    /// </summary>
-    /// <param name="gyroSetup">Serialisable data to set in MonoBehaviour or CustomAsset/ScriptableObject</param>
-    public static Gyro Instance(Setup gyroSetup) {
-      var gyro = Service<Gyro>.Instance;
-      gyro.setup = gyroSetup;
-      return gyro;
-    }
+    [SerializeField, Tooltip("larger for more stability, smaller for faster following")]
+    private float minimumChange = 0.01f;
 
     /// <summary>
     /// Amount of time between gyroscope checks (in seconds
@@ -46,7 +29,7 @@ namespace Decoupled {
       while (!Failed) {
         float change = Mathf.Abs(Quaternion.Dot(Attitude, LastReading)) - 1;
 
-        if (change > setup.MinimumChange) {
+        if (change > minimumChange) {
           LastReading = Attitude;
           Changed();
         }

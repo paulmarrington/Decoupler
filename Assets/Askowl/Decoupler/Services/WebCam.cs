@@ -6,37 +6,24 @@ namespace Decoupled {
   /// <summary>
   /// Decoupled interface to the device camera.
   /// </summary>
+  [Serializable]
   public class WebCam : Service<WebCam> {
     /// <summary>
     /// Configuration data for the webcam - set by MonoBehaviour, CustomAsset or ScriptableObject
     /// </summary>
-    [Serializable]
-    public class Setup {
-      [SerializeField] internal bool UseFrontFacing = false;
-      [SerializeField] internal bool IsFullScreen   = true;
-    }
+    [SerializeField] private bool useFrontFacing = false;
 
-    private Setup setup;
-
-    /// <summary>
-    /// Used to access a decoupled instance of the service - or a default one if none are registered
-    /// </summary>
-    /// <param name="webCamSetup">Serialisable data to set in MonoBehaviour or CustomAsset/ScriptableObject</param>
-    public static WebCam Instance(Setup webCamSetup) {
-      var webCam = Service<WebCam>.Instance;
-      webCam.setup = webCamSetup;
-      return webCam;
-    }
+    [SerializeField] private bool isFullScreen = true;
 
     /// <summary>
     /// Set in Unity inspector. Only applicable on devices with opposing cameras
     /// </summary>
-    public bool UseFrontFacing { get { return setup.UseFrontFacing; } }
+    public bool UseFrontFacing { get { return useFrontFacing; } }
 
     /// <summary>
     /// Set in Unity inspector. If not true the application will need to set Width and Height
     /// </summary>
-    public bool IsFullScreen { get { return setup.IsFullScreen; } }
+    public bool IsFullScreen { get { return isFullScreen; } }
 
     /// <summary>
     /// True if the camera is on and available. Can be used to turn camera on and off
