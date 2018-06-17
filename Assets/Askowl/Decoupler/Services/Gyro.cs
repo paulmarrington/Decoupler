@@ -54,7 +54,7 @@ namespace Decoupled {
     /// <summary>
     /// Set if Gyro failed to initialise
     /// </summary>
-    public virtual bool Offline { get { return true; } }
+    public virtual bool Offline { get { return false; } }
 
     /// <summary>
     ///   <para>Returns rotation rate as measured by the device's gyroscope.</para>

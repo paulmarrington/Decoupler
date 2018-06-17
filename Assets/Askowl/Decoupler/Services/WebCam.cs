@@ -1,4 +1,5 @@
 ﻿using System;
+using Askowl;
 using UnityEngine;
 
 namespace Decoupled {
@@ -23,6 +24,7 @@ namespace Decoupled {
     /// Call in implementation constructor
     /// </summary>
     protected override void Initialise() {
+      if (Texture == null) Texture = Components.Find<Texture>("Main Camera");
       if (Offline) return;
 
       if (IsFullScreen) {
