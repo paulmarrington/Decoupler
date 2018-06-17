@@ -18,6 +18,7 @@ namespace Decoupled {
     public bool    Offline { get; protected set; }
     public Texture Texture { get; protected set; }
 
+    /// <inheritdoc />
     /// <summary>
     /// Call in implementation constructor
     /// </summary>
