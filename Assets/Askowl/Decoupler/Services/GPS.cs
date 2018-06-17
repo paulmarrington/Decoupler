@@ -2,6 +2,49 @@
 using System.Collections;
 using UnityEngine;
 
+namespace Askowl {
+  [CreateAssetMenu(menuName = "Custom Assets/Gyroscope")]
+  public class GPS : CustomAsset.OfType<Decoupled.GPS> {
+    [SerializeField, Tooltip("larger for more stability, smaller for faster following")]
+    private float minimumChange = 0.01f;
+
+    [SerializeField] private float updateIntervalInSeconds = 0;
+
+    /// <summary>
+    /// Set if Gyro failed to initialise
+    /// </summary>
+    public bool Offline { get { return Value.Offline; } }
+
+    /// <summary>
+    /// Amount of time between gyroscope checks (in seconds
+    /// </summary>
+    protected WaitForSecondsRealtime PollingInterval;
+
+    protected virtual void OnEnable() {
+      base.OnEnable();
+      Value          = Decoupled.GPS.Instance;
+      UpdateInterval = updateIntervalInSeconds;
+    }
+
+
+    /// <summary>
+    /// Start a coroutine to poll the gyroscope on the given MonoBehaviour.
+    /// </summary>
+    /// <param name="monoBehaviour">The MonoBehaviour that owns the polling coroutine</param>
+    public virtual void Start(MonoBehaviour monoBehaviour) {
+      if (!Offline) monoBehaviour.StartCoroutine(StartPolling());
+    }
+
+    protected override bool Equals(Decoupled.GPS other) {
+      Decoupled.GPS.LocationData before = other.LastLocation, now = Value.Location;
+
+      return ((Math.Abs(now.Latitude         - before.Latitude)         > 0.000005f) ||
+              (Math.Abs(now.Longitude        - before.Longitude)        > 0.000005f) ||
+              (Math.Abs(now.AltitudeInMeters - before.AltitudeInMeters) > 0.25f));
+    }
+  }
+}
+
 namespace Decoupled {
   // ReSharper disable once InconsistentNaming
   /// <inheritdoc />
@@ -40,6 +83,8 @@ namespace Decoupled {
     /// Set in Unity inspector. How often do we read the GPS. No point in exceeding the GPS ability.
     /// </summary>
     public float PollingIntervalInSeconds { get { return pollingIntervalInSeconds; } }
+
+    public LocationData LastLocation { get { return lastLocation; } }
 
     protected internal WaitForSecondsRealtime PollingInterval;
     protected internal LocationData           Location = new LocationData();
