@@ -22,6 +22,16 @@ namespace Decoupled {
     /// </summary>
     protected Quaternion LastReading;
 
+    /// <inheritdoc />
+    /// <summary>
+    /// Call in implementation constructor
+    /// </summary>
+    protected override void Initialise() {
+      if (Offline) return;
+
+      Enabled = true;
+    }
+
     /// <summary>
     /// Coroutine that checks for changes to coordinates at set intervals. This will trigger an event for any who are listening.
     /// </summary>
@@ -42,8 +52,8 @@ namespace Decoupled {
     /// Start a coroutine to poll the GPS on the given MonoBehaviour.
     /// </summary>
     /// <param name="monoBehaviour">The MonoBehaviour that owns the polling coroutine</param>
-    public void StartPolling(MonoBehaviour monoBehaviour) {
-      monoBehaviour.StartCoroutine(StartPolling());
+    public virtual void Start(MonoBehaviour monoBehaviour) {
+      if (!Offline) monoBehaviour.StartCoroutine(StartPolling());
     }
 
     /// <summary>
@@ -54,7 +64,7 @@ namespace Decoupled {
     /// <summary>
     /// Set if Gyro failed to initialise
     /// </summary>
-    public virtual bool Offline { get { return false; } }
+    public virtual bool Offline { get { return true; } }
 
     /// <summary>
     ///   <para>Returns rotation rate as measured by the device's gyroscope.</para>

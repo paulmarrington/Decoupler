@@ -65,9 +65,9 @@ namespace Decoupled {
     /// Coroutine that checks for changes to coordinates at set intervals. This will trigger an event for any who are listening.
     /// </summary>
     public IEnumerator StartPolling() {
-      while (Initialising) {
-        yield return PollingInterval;
-      }
+      if (Offline) yield break;
+
+      while (Initialising) yield return PollingInterval;
 
       while (!Offline) {
         UpdateLocation();
@@ -97,8 +97,8 @@ namespace Decoupled {
     /// Start a coroutine to poll the GPS on the given MonoBehaviour.
     /// </summary>
     /// <param name="monoBehaviour">The MonoBehaviour that owns the polling coroutine</param>
-    public void StartPolling(MonoBehaviour monoBehaviour) {
-      monoBehaviour.StartCoroutine(StartPolling());
+    public virtual void Start(MonoBehaviour monoBehaviour) {
+      if (!Offline) monoBehaviour.StartCoroutine(StartPolling());
     }
 
     /// <summary>
