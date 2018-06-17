@@ -54,7 +54,7 @@ namespace Decoupled {
     /// <summary>
     /// Set true if we do not have access to the GPS or its initialisation failed
     /// </summary>
-    public virtual bool Failed { get { return true; } }
+    public virtual bool Offline { get { return true; } }
 
     /// <summary>
     /// If all is good start the GPS tracking position. Remember that this eats battery.
@@ -69,7 +69,7 @@ namespace Decoupled {
         yield return PollingInterval;
       }
 
-      while (!Failed) {
+      while (!Offline) {
         UpdateLocation();
 
         if ((Math.Abs(Location.Latitude         - lastLocation.Latitude)         > 0.000005f) ||

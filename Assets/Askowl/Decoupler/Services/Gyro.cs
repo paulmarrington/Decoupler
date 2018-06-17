@@ -26,7 +26,7 @@ namespace Decoupled {
     /// Coroutine that checks for changes to coordinates at set intervals. This will trigger an event for any who are listening.
     /// </summary>
     public IEnumerator StartPolling() {
-      while (!Failed) {
+      while (!Offline) {
         float change = Mathf.Abs(Quaternion.Dot(Attitude, LastReading)) - 1;
 
         if (change > minimumChange) {
@@ -54,7 +54,7 @@ namespace Decoupled {
     /// <summary>
     /// Set if Gyro failed to initialise
     /// </summary>
-    public virtual bool Failed { get { return true; } }
+    public virtual bool Offline { get { return true; } }
 
     /// <summary>
     ///   <para>Returns rotation rate as measured by the device's gyroscope.</para>

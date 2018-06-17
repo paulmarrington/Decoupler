@@ -15,6 +15,21 @@ namespace Decoupled {
 
     [SerializeField] private bool isFullScreen = true;
 
+    public bool    Offline { get; protected set; }
+    public Texture Texture { get; protected set; }
+
+    /// <summary>
+    /// Call in implementation constructor
+    /// </summary>
+    protected override void Initialise() {
+      if (Offline) return;
+
+      if (IsFullScreen) {
+        Width  = Screen.width;
+        Height = Screen.height;
+      }
+    }
+
     /// <summary>
     /// Set in Unity inspector. Only applicable on devices with opposing cameras
     /// </summary>

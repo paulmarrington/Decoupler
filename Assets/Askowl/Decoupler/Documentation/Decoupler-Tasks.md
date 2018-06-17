@@ -8,7 +8,7 @@
 
 ## Release 2018-??
 
-* [ ] merge in Analytics
+* [ ] Doc: Initialise virtual call to do just that
 * [ ] Add webcam,gps and gyro
   * [ ] add docx
   * [ ] update documentation

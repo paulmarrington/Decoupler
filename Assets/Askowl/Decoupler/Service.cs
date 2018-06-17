@@ -52,6 +52,11 @@ namespace Decoupled {
     }
 
     /// <summary>
+    /// Override to initialise service when it is created.
+    /// </summary>
+    protected virtual void Initialise() { }
+
+    /// <summary>
     /// A rare form of service interface will have more than one service and the application will
     /// refer to it by name if needed. An examples is `Authentication` where there may be a login button
     /// if and only if the service has been included in the build - which may well be platform dependent.
@@ -91,6 +96,7 @@ namespace Decoupled {
 
       TD service = new TD {Name = typeof(TD).Name};
       InstanceList.Add(service);
+      service.Initialise();
     }
   }
 }
