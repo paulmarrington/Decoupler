@@ -2,6 +2,7 @@
 ## Release 2018-??
 
 * [ ] Doc: Initialise virtual call to do just that
+* [ ] Doc: RegisterDefault added
 * [ ] Add webcam,gps and gyro
   * [ ] add docx
   * [ ] update documentation

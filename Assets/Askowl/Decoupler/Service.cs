@@ -45,6 +45,8 @@ namespace Decoupled {
 
         if (defaultInstance == null) {
           Debug.LogError(message: "Cannot instantiate default '" + typeof(T).Name + "'");
+        } else {
+          defaultInstance.Initialise();
         }
 
         return defaultInstance;
@@ -81,6 +83,18 @@ namespace Decoupled {
     /// <param name="action"></param>
     public static void ForEach(Action<T> action) {
       for (int i = 0; i < InstanceList.Count; i++) action(InstanceList[i]);
+    }
+
+    /// <summary>
+    /// Used to register a service implementation. Typically called within a `#if` set by service discovery by Unity editor code
+    /// </summary>
+    /// <remarks><a href="http://decoupler.marrington.net#for-a-new-package-and-an-existing-interface">More...</a></remarks>
+    /// <typeparam name="TD">Type of the concrete service interface to register</typeparam>
+    /// <returns>a reference to the instance</returns>
+    public static void RegisterDefault<TD>() where TD : T, new() {
+      if (Available) return;
+
+      defaultInstance = new TD {Name = typeof(TD).Name};
     }
 
     /// <summary>
