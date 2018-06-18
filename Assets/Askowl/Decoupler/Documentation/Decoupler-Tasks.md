@@ -1,11 +1,4 @@
 # Package-Decoupler
-## Release 2018-06
-
-* [x] account for package manager changes
-* [x] implement HasPackage
-* [x] rebuild and get working
-* [x] review tests
-
 ## Release 2018-??
 
 * [ ] Doc: Initialise virtual call to do just that
@@ -17,3 +10,12 @@
 * [ ] Update documentation
 * [ ] Update docx links
 * [ ] Wix
+
+## ~~Release 2018-06~~
+
+- [x] account for package manager changes
+- [x] implement HasPackage
+- [x] rebuild and get working
+- [x] review tests
+
+## 
