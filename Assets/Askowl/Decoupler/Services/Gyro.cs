@@ -1,65 +1,37 @@
-﻿using System;
-using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Askowl {
+  /// <inheritdoc />
+  /// <summary>
+  /// Gyro custom asset
+  /// </summary>
   [CreateAssetMenu(menuName = "Custom Assets/Gyroscope")]
   public class Gyro : CustomAsset.OfType<Decoupled.Gyro> {
     [SerializeField, Tooltip("larger for more stability, smaller for faster following")]
     private float minimumChange = 0.01f;
 
-    [SerializeField] private float updateIntervalInSeconds = 1;
-
     /// <summary>
-    ///   <para>Sets or retrieves gyroscope interval in seconds.</para>
+    /// Different name for Value
     /// </summary>
-    public virtual float UpdateInterval {
-      get { return updateIntervalInSeconds; }
-      set { PollingInterval = new WaitForSecondsRealtime(updateIntervalInSeconds = value); }
-    }
+    public Decoupled.Gyro Device;
 
-    /// <summary>
-    /// Set if Gyro failed to initialise
-    /// </summary>
-    public bool Offline { get { return Value.Offline; } }
+    private Quaternion lastReading;
 
-    /// <summary>
-    ///   <para>Returns the attitude (ie, orientation in space) of the device.</para>
-    /// </summary>
-    public Quaternion Attitude { get { return Value.Attitude; } }
-
-    /// <summary>
-    /// Amount of time between gyroscope checks (in seconds
-    /// </summary>
-    protected WaitForSecondsRealtime PollingInterval;
-
-    protected virtual void OnEnable() {
+    /// <inheritdoc />
+    protected override void OnEnable() {
       base.OnEnable();
-      Value          = Decoupled.Gyro.Instance;
-      UpdateInterval = updateIntervalInSeconds;
+      Device = Value = Decoupled.Gyro.Instance;
     }
 
-    /// <summary>
-    /// Coroutine that checks for changes to coordinates at set intervals. This will trigger an event for any who are listening.
-    /// </summary>
-    public IEnumerator StartPolling() {
-      while (!Offline) {
-        if (!Equals(Value)) Changed();
-
-        yield return PollingInterval;
-      }
+    /// <inheritdoc />
+    protected override void Changed(string memberName = null) {
+      lastReading = Value.Attitude;
+      base.Changed(memberName);
     }
 
-    /// <summary>
-    /// Start a coroutine to poll the gyroscope on the given MonoBehaviour.
-    /// </summary>
-    /// <param name="monoBehaviour">The MonoBehaviour that owns the polling coroutine</param>
-    public virtual void Start(MonoBehaviour monoBehaviour) {
-      if (!Offline) monoBehaviour.StartCoroutine(StartPolling());
-    }
-
+    /// <inheritdoc />
     protected override bool Equals(Decoupled.Gyro other) {
-      float change = Mathf.Abs(Quaternion.Dot(Value.Attitude, other.LastReading)) - 1;
+      float change = Mathf.Abs(Quaternion.Dot(other.Attitude, lastReading)) - 1;
       return (change <= minimumChange);
     }
   }
@@ -72,11 +44,6 @@ namespace Decoupled {
   /// </summary>
 //  [Serializable]
   public class Gyro : Service<Gyro> {
-    /// <summary>
-    /// Used to compare to see if we have a change to report
-    /// </summary>
-    public Quaternion LastReading;
-
     /// <inheritdoc />
     /// <summary>
     /// Call in implementation constructor

@@ -1,7 +1,28 @@
 ﻿using System;
-using Askowl;
 using UnityEngine;
-using UnityEngine.UI;
+
+namespace Askowl {
+  /// <inheritdoc />
+  /// <summary>
+  /// WebCam custom asset
+  /// </summary>
+  [CreateAssetMenu(menuName = "Custom Assets/WebCam")]
+  public class WebCam : CustomAsset.OfType<Decoupled.WebCam> {
+    /// <summary>
+    /// Different name for Value
+    /// </summary>
+    public Decoupled.WebCam Device;
+
+    /// <inheritdoc />
+    protected override void OnEnable() {
+      base.OnEnable();
+      Device = Value = Decoupled.WebCam.Instance;
+    }
+
+    /// <inheritdoc />
+    protected override bool Equals(Decoupled.WebCam other) { return true; }
+  }
+}
 
 namespace Decoupled {
   /// <inheritdoc />
@@ -15,9 +36,19 @@ namespace Decoupled {
     /// </summary>
     [SerializeField] private bool useFrontFacing = false;
 
+    /// <summary>
+    /// Configuration data for the webcam - set by MonoBehaviour, CustomAsset or ScriptableObject
+    /// </summary>
     [SerializeField] private bool isFullScreen = true;
 
-    public bool    Offline { get; protected set; }
+    /// <summary>
+    /// Is the webcam available and in a position to be used
+    /// </summary>
+    public bool Offline { get; protected set; }
+
+    /// <summary>
+    /// The texture the camera will write to
+    /// </summary>
     public Texture Texture { get; protected set; }
 
     /// <inheritdoc />

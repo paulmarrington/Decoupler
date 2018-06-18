@@ -1,46 +1,41 @@
 ﻿using System;
-using System.Collections;
 using UnityEngine;
 
 namespace Askowl {
-  [CreateAssetMenu(menuName = "Custom Assets/Gyroscope")]
+  /// <inheritdoc />
+  /// <summary>
+  /// GPS Custom Asset
+  /// </summary>
+  [CreateAssetMenu(menuName = "Custom Assets/GPS")]
+  // ReSharper disable once InconsistentNaming
   public class GPS : CustomAsset.OfType<Decoupled.GPS> {
-    [SerializeField, Tooltip("larger for more stability, smaller for faster following")]
-    private float minimumChange = 0.01f;
-
-    [SerializeField] private float updateIntervalInSeconds = 0;
-
     /// <summary>
-    /// Set if Gyro failed to initialise
+    /// Different name for Value
     /// </summary>
-    public bool Offline { get { return Value.Offline; } }
+    public Decoupled.GPS Device;
 
-    /// <summary>
-    /// Amount of time between gyroscope checks (in seconds
-    /// </summary>
-    protected WaitForSecondsRealtime PollingInterval;
+    private Decoupled.GPS.LocationData lastLocation = new Decoupled.GPS.LocationData();
 
-    protected virtual void OnEnable() {
+    /// <inheritdoc />
+    protected override void OnEnable() {
       base.OnEnable();
-      Value          = Decoupled.GPS.Instance;
-      UpdateInterval = updateIntervalInSeconds;
+      Device = Value = Decoupled.GPS.Instance;
     }
 
-
-    /// <summary>
-    /// Start a coroutine to poll the gyroscope on the given MonoBehaviour.
-    /// </summary>
-    /// <param name="monoBehaviour">The MonoBehaviour that owns the polling coroutine</param>
-    public virtual void Start(MonoBehaviour monoBehaviour) {
-      if (!Offline) monoBehaviour.StartCoroutine(StartPolling());
+    /// <inheritdoc />
+    protected override void Changed(string memberName = null) {
+      lastLocation = Value.Location;
+      base.Changed(memberName);
     }
 
+    /// <inheritdoc />
     protected override bool Equals(Decoupled.GPS other) {
-      Decoupled.GPS.LocationData before = other.LastLocation, now = Value.Location;
+      Value.UpdateLocation();
+      Decoupled.GPS.LocationData now = other.Location;
 
-      return ((Math.Abs(now.Latitude         - before.Latitude)         > 0.000005f) ||
-              (Math.Abs(now.Longitude        - before.Longitude)        > 0.000005f) ||
-              (Math.Abs(now.AltitudeInMeters - before.AltitudeInMeters) > 0.25f));
+      return ((Math.Abs(now.Latitude         - lastLocation.Latitude)         > 0.000005f) ||
+              (Math.Abs(now.Longitude        - lastLocation.Longitude)        > 0.000005f) ||
+              (Math.Abs(now.AltitudeInMeters - lastLocation.AltitudeInMeters) > 0.25f));
     }
   }
 }
@@ -53,9 +48,8 @@ namespace Decoupled {
   /// </summary>
   [Serializable]
   public class GPS : Service<GPS> {
-    [SerializeField] private float desiredAccuracyInMeters  = 1;
-    [SerializeField] private float updateDistanceInMeters   = 0.25f;
-    [SerializeField] private float pollingIntervalInSeconds = 1;
+    [SerializeField] private float desiredAccuracyInMeters = 1;
+    [SerializeField] private float updateDistanceInMeters  = 0.25f;
 
     /// <summary>
     /// Device independant location storage
@@ -79,17 +73,7 @@ namespace Decoupled {
     /// </summary>
     public float UpdateDistanceInMeters { get { return updateDistanceInMeters; } }
 
-    /// <summary>
-    /// Set in Unity inspector. How often do we read the GPS. No point in exceeding the GPS ability.
-    /// </summary>
-    public float PollingIntervalInSeconds { get { return pollingIntervalInSeconds; } }
-
-    public LocationData LastLocation { get { return lastLocation; } }
-
-    protected internal WaitForSecondsRealtime PollingInterval;
-    protected internal LocationData           Location = new LocationData();
-
-    private LocationData lastLocation = new LocationData();
+    protected internal LocationData Location = new LocationData();
 
     /// <summary>
     /// Set true if the code is running on a device with GPS, the user has enabled GPS access and we have started the GPS tracking.
@@ -107,44 +91,15 @@ namespace Decoupled {
     public virtual void StartTracking() { }
 
     /// <summary>
-    /// Coroutine that checks for changes to coordinates at set intervals. This will trigger an event for any who are listening.
-    /// </summary>
-    public IEnumerator StartPolling() {
-      if (Offline) yield break;
-
-      while (Initialising) yield return PollingInterval;
-
-      while (!Offline) {
-        UpdateLocation();
-
-        if ((Math.Abs(Location.Latitude         - lastLocation.Latitude)         > 0.000005f) ||
-            (Math.Abs(Location.Longitude        - lastLocation.Longitude)        > 0.000005f) ||
-            (Math.Abs(Location.AltitudeInMeters - lastLocation.AltitudeInMeters) > 0.25f)) {
-          lastLocation = Location;
-        }
-
-        yield return PollingInterval;
-      }
-    }
-
-    /// <summary>
     /// Copy from device location structure into the device independent one.
     /// Translate where needed - especially timestamp
     /// </summary>
-    protected virtual void UpdateLocation() { }
+    public virtual void UpdateLocation() { }
 
     /// <summary>
     /// Continue to return false until the GPS comes on-line
     /// </summary>
     public virtual bool Initialising { get { return false; } }
-
-    /// <summary>
-    /// Start a coroutine to poll the GPS on the given MonoBehaviour.
-    /// </summary>
-    /// <param name="monoBehaviour">The MonoBehaviour that owns the polling coroutine</param>
-    public virtual void Start(MonoBehaviour monoBehaviour) {
-      if (!Offline) monoBehaviour.StartCoroutine(StartPolling());
-    }
 
     /// <summary>
     /// Turns off GPS tracking - saving battery.
