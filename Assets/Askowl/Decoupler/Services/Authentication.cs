@@ -2,6 +2,7 @@
 
 using System.Collections;
 using System;
+using CustomAsset.Mutable;
 using Object = UnityEngine.Object;
 
 namespace Decoupled {
@@ -11,22 +12,21 @@ namespace Decoupled {
   /// </summary>
   /// <remarks><a href="http://decoupler.marrington.net#decoupledauthentication">More...</a></remarks>
   public sealed class Authentication : Service<Authentication> {
-    private AuthenticationAsset user = CustomAsset.Base.Instance<AuthenticationAsset>();
+    private AuthenticationAsset user = AuthenticationAsset.Instance("Guest");
 
     public IEnumerator CreateUser(string         email, string password,
                                   Action<string> error = null) {
+      user      = AuthenticationAsset.Instance(email);
       user.Name = user.Email = email;
       yield return null;
     }
 
-    public IEnumerator UpdateProfile(string         displayName,
-                                     Action<string> error = null) {
+    public IEnumerator UpdateProfile(string displayName, Action<string> error = null) {
       user.Name = displayName;
       yield return null;
     }
 
-    public IEnumerator SignIn(string         email, string password,
-                              Action<string> error = null) {
+    public IEnumerator SignIn(string email, string password, Action<string> error = null) {
       yield return null;
     }
 
@@ -34,7 +34,7 @@ namespace Decoupled {
 
     public void SignOut() {
       Object.Destroy(user);
-      user = CustomAsset.Base.Instance<AuthenticationAsset>();
+      user = AuthenticationAsset.Instance("Guest");
     }
 
     public IEnumerator Anonymous(Action<string> error = null) { yield return null; }
@@ -91,18 +91,33 @@ namespace Decoupled {
     /// <summary>
     /// Contains valuable information recorded when a player logs in.
     /// </summary>
-    public class AuthenticationAsset : CustomAsset.OfType<User> {
+    public class AuthenticationAsset : OfType<User> {
+      public static AuthenticationAsset Instance(string name) {
+        return CustomAsset.Mutable.OfType<User>.Instance(name) as AuthenticationAsset;
+      }
+
       /// <summary>
       /// Name of the logged in player (often email) - defaults to guest.
       /// </summary>
-      public string Name { get { return Value.Name; } set { Set(ref Value.Name, value); } }
+      public string Name {
+        get { return Value.Name; }
+        set {
+          if (FieldSetters.Set(ref Value.Name, value)) Emitter.Fire();
+        }
+      }
 
       /// <summary>
       /// Email address of the logged in player - defaults to empty.
       /// </summary>
-      public string Email { get { return Value.Email; } set { Set(ref Value.Email, value); } }
+      public string Email { get { return Value.Email; } set { Sett(ref Value.Email, value); } }
 
-      protected override bool Equals(User other) { return Value.Email == other.Email; }
+      protected bool Equals(User other) { return Value.Email == other.Email; }
     }
+  }
+
+  public static class TestSett {
+    public static void Sett(this Authentication.AuthenticationAsset emitter,
+                            ref  string                             field,
+                            string                                  from) { }
   }
 }
