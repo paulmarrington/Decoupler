@@ -18,9 +18,6 @@ namespace Askowl {
       base.OnEnable();
       Device = Value = Decoupled.WebCam.Instance;
     }
-
-    /// <inheritdoc />
-    protected override bool Equals(Decoupled.WebCam other) { return true; }
   }
 }
 
@@ -120,5 +117,9 @@ namespace Decoupled {
     /// Stops the camera
     /// </summary>
     public virtual void Stop() { }
+
+    public override bool Equals(object other) { return other == this; }
+
+    public override int GetHashCode() { return ToString().GetHashCode(); }
   }
 }

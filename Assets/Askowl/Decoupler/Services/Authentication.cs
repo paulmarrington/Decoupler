@@ -85,6 +85,13 @@ namespace Decoupled {
       internal bool   IsLoggedIn  = false;
       internal int    BirthYear   = 0;
       internal object MetaData    = null;
+
+      public override bool Equals(object other) {
+        var one = other as User;
+        return (one != null) && string.Equals(Email, one.Email);
+      }
+
+      public override int GetHashCode() { return (Email != null ? Email.GetHashCode() : 0); }
     }
 
     /// <inheritdoc />
@@ -92,8 +99,8 @@ namespace Decoupled {
     /// Contains valuable information recorded when a player logs in.
     /// </summary>
     public class AuthenticationAsset : OfType<User> {
-      public new static AuthenticationAsset Instance(string name) {
-        return CustomAsset.Mutable.OfType<User>.Instance(name) as AuthenticationAsset;
+      public static AuthenticationAsset Instance(string name) {
+        return Instance<AuthenticationAsset>(name);
       }
 
       /// <summary>
@@ -105,8 +112,6 @@ namespace Decoupled {
       /// Email address of the logged in player - defaults to empty.
       /// </summary>
       public string Email { get { return Value.Email; } set { this.Set(ref Value.Email, value); } }
-
-      protected override bool Equals(User other) { return Value.Email == other.Email; }
     }
   }
 }

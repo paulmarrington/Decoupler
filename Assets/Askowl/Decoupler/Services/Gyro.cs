@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Askowl {
   /// <inheritdoc />
@@ -7,15 +8,10 @@ namespace Askowl {
   /// </summary>
   [CreateAssetMenu(menuName = "Custom Assets/Gyroscope")]
   public class Gyro : CustomAsset.Mutable.OfType<Decoupled.Gyro> {
-    [SerializeField, Tooltip("larger for more stability, smaller for faster following")]
-    private float minimumChange = 0.01f;
-
     /// <summary>
     /// Different name for Value
     /// </summary>
     public Decoupled.Gyro Device;
-
-    private Quaternion lastReading;
 
     /// <inheritdoc />
     protected override void OnEnable() {
@@ -24,16 +20,7 @@ namespace Askowl {
     }
 
     /// <inheritdoc />
-    protected void Changed() {
-      lastReading = Value.Attitude;
-      base.Emitter.Fire();
-    }
-
-    /// <inheritdoc />
-    protected override bool Equals(Decoupled.Gyro other) {
-      float change = Mathf.Abs(Quaternion.Dot(other.Attitude, lastReading)) - 1;
-      return (change <= minimumChange);
-    }
+    protected void Changed() { Emitter.Fire(); }
   }
 }
 
@@ -42,8 +29,11 @@ namespace Decoupled {
   /// <summary>
   /// Interface to a device gyroscope.
   /// </summary>
-//  [Serializable]
+  [Serializable]
   public class Gyro : Service<Gyro> {
+    [SerializeField, Tooltip("larger for more stability, smaller for faster following")]
+    private float minimumChange = 0.01f;
+
     /// <inheritdoc />
     /// <summary>
     /// Call in implementation constructor
@@ -88,5 +78,17 @@ namespace Decoupled {
     ///   <para>Sets or retrieves the enabled status of this gyroscope.</para>
     /// </summary>
     public virtual bool Enabled { get; set; }
+
+    private Quaternion lastReading;
+
+    /// <inheritdoc />
+    public override bool Equals(object other) {
+      float change = Mathf.Abs(Quaternion.Dot(Attitude, lastReading)) - 1;
+      lastReading = Attitude;
+      return (change <= minimumChange);
+    }
+
+    /// <inheritdoc />
+    public override int GetHashCode() { return Attitude.GetHashCode(); }
   }
 }

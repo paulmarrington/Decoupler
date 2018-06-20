@@ -14,28 +14,13 @@ namespace Askowl {
     /// </summary>
     public Decoupled.GPS Device;
 
-    private Decoupled.GPS.LocationData lastLocation = new Decoupled.GPS.LocationData();
-
     /// <inheritdoc />
     protected override void OnEnable() {
       base.OnEnable();
       Device = Value = Decoupled.GPS.Instance;
     }
 
-    protected void Changed() {
-      lastLocation = Value.Location;
-      Emitter.Fire();
-    }
-
-    /// <inheritdoc />
-    protected override bool Equals(Decoupled.GPS other) {
-      Value.UpdateLocation();
-      Decoupled.GPS.LocationData now = other.Location;
-
-      return ((Math.Abs(now.Latitude         - lastLocation.Latitude)         > 0.000005f) ||
-              (Math.Abs(now.Longitude        - lastLocation.Longitude)        > 0.000005f) ||
-              (Math.Abs(now.AltitudeInMeters - lastLocation.AltitudeInMeters) > 0.25f));
-    }
+    protected void Changed() { Emitter.Fire(); }
   }
 }
 
@@ -62,6 +47,8 @@ namespace Decoupled {
       internal float  HorizontalAccuracyInMetres;
     }
 
+    protected internal LocationData Location = new LocationData();
+
     /// <summary>
     /// Set in Unity inspector, but GPS really controls accuracy
     /// </summary>
@@ -71,8 +58,6 @@ namespace Decoupled {
     /// Set int he Unity inspector, but GPS decides whether to take notice
     /// </summary>
     public float UpdateDistanceInMeters { get { return updateDistanceInMeters; } }
-
-    protected internal LocationData Location = new LocationData();
 
     /// <summary>
     /// Set true if the code is running on a device with GPS, the user has enabled GPS access and we have started the GPS tracking.
@@ -134,5 +119,17 @@ namespace Decoupled {
     /// Vertical accuracy in metres
     /// </summary>
     public float VerticalAccuracy { get { return Location.VerticalAccuracyInMetres; } }
+
+    /// <inheritdoc />
+    public override bool Equals(object other) {
+      var lastLocation = Location;
+      UpdateLocation();
+
+      return ((Math.Abs(Latitude  - lastLocation.Latitude)         > 0.000005f) ||
+              (Math.Abs(Longitude - lastLocation.Longitude)        > 0.000005f) ||
+              (Math.Abs(Altitude  - lastLocation.AltitudeInMeters) > 0.25f));
+    }
+
+    public override int GetHashCode() { return Location.GetHashCode(); }
   }
 }
