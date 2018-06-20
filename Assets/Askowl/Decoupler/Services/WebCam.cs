@@ -7,7 +7,7 @@ namespace Askowl {
   /// WebCam custom asset
   /// </summary>
   [CreateAssetMenu(menuName = "Custom Assets/WebCam")]
-  public class WebCam : CustomAsset.OfType<Decoupled.WebCam> {
+  public class WebCam : CustomAsset.Mutable.OfType<Decoupled.WebCam> {
     /// <summary>
     /// Different name for Value
     /// </summary>

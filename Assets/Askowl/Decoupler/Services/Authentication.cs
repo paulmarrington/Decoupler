@@ -99,25 +99,14 @@ namespace Decoupled {
       /// <summary>
       /// Name of the logged in player (often email) - defaults to guest.
       /// </summary>
-      public string Name {
-        get { return Value.Name; }
-        set {
-          if (FieldSetters.Set(ref Value.Name, value)) Emitter.Fire();
-        }
-      }
+      public string Name { get { return Value.Name; } set { this.Set(ref Value.Name, value); } }
 
       /// <summary>
       /// Email address of the logged in player - defaults to empty.
       /// </summary>
-      public string Email { get { return Value.Email; } set { Sett(ref Value.Email, value); } }
+      public string Email { get { return Value.Email; } set { this.Set(ref Value.Email, value); } }
 
       protected bool Equals(User other) { return Value.Email == other.Email; }
     }
-  }
-
-  public static class TestSett {
-    public static void Sett(this Authentication.AuthenticationAsset emitter,
-                            ref  string                             field,
-                            string                                  from) { }
   }
 }

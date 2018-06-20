@@ -8,7 +8,7 @@ namespace Askowl {
   /// </summary>
   [CreateAssetMenu(menuName = "Custom Assets/GPS")]
   // ReSharper disable once InconsistentNaming
-  public class GPS : CustomAsset.OfType<Decoupled.GPS> {
+  public class GPS : CustomAsset.Mutable.OfType<Decoupled.GPS> {
     /// <summary>
     /// Different name for Value
     /// </summary>
@@ -17,15 +17,11 @@ namespace Askowl {
     private Decoupled.GPS.LocationData lastLocation = new Decoupled.GPS.LocationData();
 
     /// <inheritdoc />
-    protected override void OnEnable() {
-      base.OnEnable();
-      Device = Value = Decoupled.GPS.Instance;
-    }
+    protected void OnEnable() { Device = Value = Decoupled.GPS.Instance; }
 
-    /// <inheritdoc />
-    protected override void Changed(string memberName = null) {
+    protected void Changed() {
       lastLocation = Value.Location;
-      base.Changed(memberName);
+      Emitter.Fire();
     }
 
     /// <inheritdoc />

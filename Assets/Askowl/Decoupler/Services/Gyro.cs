@@ -6,7 +6,7 @@ namespace Askowl {
   /// Gyro custom asset
   /// </summary>
   [CreateAssetMenu(menuName = "Custom Assets/Gyroscope")]
-  public class Gyro : CustomAsset.OfType<Decoupled.Gyro> {
+  public class Gyro : CustomAsset.Mutable.OfType<Decoupled.Gyro> {
     [SerializeField, Tooltip("larger for more stability, smaller for faster following")]
     private float minimumChange = 0.01f;
 
@@ -24,9 +24,9 @@ namespace Askowl {
     }
 
     /// <inheritdoc />
-    protected override void Changed(string memberName = null) {
+    protected void Changed() {
       lastReading = Value.Attitude;
-      base.Changed(memberName);
+      base.Emitter.Fire();
     }
 
     /// <inheritdoc />
