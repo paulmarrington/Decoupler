@@ -92,7 +92,7 @@ namespace Decoupled {
     /// Contains valuable information recorded when a player logs in.
     /// </summary>
     public class AuthenticationAsset : OfType<User> {
-      public static AuthenticationAsset Instance(string name) {
+      public new static AuthenticationAsset Instance(string name) {
         return CustomAsset.Mutable.OfType<User>.Instance(name) as AuthenticationAsset;
       }
 
@@ -106,7 +106,7 @@ namespace Decoupled {
       /// </summary>
       public string Email { get { return Value.Email; } set { this.Set(ref Value.Email, value); } }
 
-      protected bool Equals(User other) { return Value.Email == other.Email; }
+      protected override bool Equals(User other) { return Value.Email == other.Email; }
     }
   }
 }

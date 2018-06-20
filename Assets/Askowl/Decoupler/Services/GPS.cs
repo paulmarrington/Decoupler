@@ -17,7 +17,10 @@ namespace Askowl {
     private Decoupled.GPS.LocationData lastLocation = new Decoupled.GPS.LocationData();
 
     /// <inheritdoc />
-    protected void OnEnable() { Device = Value = Decoupled.GPS.Instance; }
+    protected override void OnEnable() {
+      base.OnEnable();
+      Device = Value = Decoupled.GPS.Instance;
+    }
 
     protected void Changed() {
       lastLocation = Value.Location;
