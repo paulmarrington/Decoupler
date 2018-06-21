@@ -6,7 +6,7 @@ namespace Askowl {
   /// <summary>
   /// Gyro custom asset
   /// </summary>
-  [CreateAssetMenu(menuName = "Custom Assets/Gyroscope")]
+  [CreateAssetMenu(menuName = "Custom Assets/Device/Gyroscope")]
   public class Gyro : CustomAsset.Mutable.OfType<Decoupled.Gyro>, IPolling {
     /// <summary>
     /// Different name for Value

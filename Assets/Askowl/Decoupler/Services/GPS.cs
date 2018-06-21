@@ -6,7 +6,7 @@ namespace Askowl {
   /// <summary>
   /// GPS Custom Asset
   /// </summary>
-  [CreateAssetMenu(menuName = "Custom Assets/GPS")]
+  [CreateAssetMenu(menuName = "Custom Assets/Device/GPS")]
   // ReSharper disable once InconsistentNaming
   public class GPS : CustomAsset.Mutable.OfType<Decoupled.GPS>, IPolling {
     /// <summary>
