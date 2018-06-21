@@ -8,7 +8,7 @@ namespace Askowl {
   /// </summary>
   [CreateAssetMenu(menuName = "Custom Assets/GPS")]
   // ReSharper disable once InconsistentNaming
-  public class GPS : CustomAsset.Mutable.OfType<Decoupled.GPS> {
+  public class GPS : CustomAsset.Mutable.OfType<Decoupled.GPS>, IPolling {
     /// <summary>
     /// Different name for Value
     /// </summary>
@@ -20,7 +20,7 @@ namespace Askowl {
       Device = Value = Decoupled.GPS.Instance;
     }
 
-    protected void Changed() { Emitter.Fire(); }
+    public void Poll() { Emitter.Fire(); }
   }
 }
 
