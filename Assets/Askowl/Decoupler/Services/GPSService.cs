@@ -1,29 +1,6 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Askowl {
-  /// <inheritdoc />
-  /// <summary>
-  /// GPS Custom Asset
-  /// </summary>
-  [CreateAssetMenu(menuName = "Custom Assets/Device/GPS")]
-  // ReSharper disable once InconsistentNaming
-  public class GPS : CustomAsset.Mutable.OfType<Decoupled.GPS>, IPolling {
-    /// <summary>
-    /// Different name for Value
-    /// </summary>
-    public Decoupled.GPS Device;
-
-    /// <inheritdoc />
-    protected override void OnEnable() {
-      base.OnEnable();
-      Device = Value = Decoupled.GPS.Instance;
-    }
-
-    public void Poll() { Emitter.Fire(); }
-  }
-}
-
 namespace Decoupled {
   // ReSharper disable once InconsistentNaming
   /// <inheritdoc />
@@ -31,7 +8,7 @@ namespace Decoupled {
   /// Decoupled interface to device GPS
   /// </summary>
   [Serializable]
-  public class GPS : Service<GPS> {
+  public class GPSService : Service<GPSService> {
     [SerializeField] private float desiredAccuracyInMeters = 1;
     [SerializeField] private float updateDistanceInMeters  = 0.25f;
 
@@ -130,6 +107,8 @@ namespace Decoupled {
               (Math.Abs(Altitude  - lastLocation.AltitudeInMeters) > 0.25f));
     }
 
+    /// <inheritdoc />
+    // ReSharper disable once NonReadonlyMemberInGetHashCode
     public override int GetHashCode() { return Location.GetHashCode(); }
   }
 }

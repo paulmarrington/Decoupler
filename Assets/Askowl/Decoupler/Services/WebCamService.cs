@@ -98,8 +98,10 @@ namespace Decoupled {
     /// </summary>
     public virtual void Stop() { }
 
+    /// <inheritdoc />
     public override bool Equals(object other) { return other == this; }
 
+    /// <inheritdoc />
     public override int GetHashCode() { return ToString().GetHashCode(); }
   }
 }

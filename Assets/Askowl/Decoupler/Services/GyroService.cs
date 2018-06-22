@@ -1,36 +1,13 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Askowl {
-  /// <inheritdoc />
-  /// <summary>
-  /// Gyro custom asset
-  /// </summary>
-  [CreateAssetMenu(menuName = "Custom Assets/Device/Gyroscope")]
-  public class Gyro : CustomAsset.Mutable.OfType<Decoupled.Gyro>, IPolling {
-    /// <summary>
-    /// Different name for Value
-    /// </summary>
-    public Decoupled.Gyro Device;
-
-    /// <inheritdoc />
-    protected override void OnEnable() {
-      base.OnEnable();
-      Device = Value = Decoupled.Gyro.Instance;
-    }
-
-    /// <inheritdoc />
-    public void Poll() { Emitter.Fire(); }
-  }
-}
-
 namespace Decoupled {
   /// <inheritdoc />
   /// <summary>
   /// Interface to a device gyroscope.
   /// </summary>
   [Serializable]
-  public class Gyro : Service<Gyro> {
+  public class GyroService : Service<GyroService> {
     [SerializeField, Tooltip("larger for more stability, smaller for faster following")]
     private float minimumChange = 0.01f;
 
