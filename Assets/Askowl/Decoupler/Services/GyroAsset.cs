@@ -1,10 +1,9 @@
-﻿using Askowl;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace CustomAsset.Mutable {
-  /// <inheritdoc cref="Gyro" />
+  /// <inheritdoc cref="Decoupled.GyroService" />
   [CreateAssetMenu(menuName = "Custom Assets/Device/Gyroscope"), ValueName("Device")]
-  public class GyroAsset : OfType<Decoupled.GyroService>, IPolling {
+  public class GyroAsset : OfType<Decoupled.GyroService> {
     /// <see cref="OfType{T}.Value"/>
     public Decoupled.GyroService Device { get { return Value; } set { Value = value; } }
 
@@ -13,8 +12,5 @@ namespace CustomAsset.Mutable {
       base.OnEnable();
       Device = Decoupled.GyroService.Instance;
     }
-
-    /// <inheritdoc />
-    public void Poll() { Emitter.Fire(); }
   }
 }
