@@ -36,10 +36,7 @@ namespace Decoupled {
     public static T Instance {
       get {
         if (Available) return InstanceList[0];
-
         if (defaultInstance != default(T)) return defaultInstance;
-
-        //Debug.LogWarningFormat("Service '{0}' does not have an implemention", typeof(T).Name);
 
         defaultInstance = new T();
 
