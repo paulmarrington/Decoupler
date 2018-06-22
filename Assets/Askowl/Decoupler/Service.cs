@@ -39,7 +39,7 @@ namespace Decoupled {
 
         if (defaultInstance != default(T)) return defaultInstance;
 
-        Debug.LogWarningFormat("Service '{0}' does not have an implemention", typeof(T).Name);
+        //Debug.LogWarningFormat("Service '{0}' does not have an implemention", typeof(T).Name);
 
         defaultInstance = new T();
 

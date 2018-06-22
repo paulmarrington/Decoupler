@@ -1,16 +1,14 @@
-﻿using UnityEngine;
+﻿using Decoupled;
+using UnityEngine;
 
 namespace CustomAsset.Mutable {
   /// <inheritdoc cref="Decoupled.GyroService" />
   [CreateAssetMenu(menuName = "Custom Assets/Device/Gyroscope"), ValueName("Device")]
-  public class GyroAsset : OfType<Decoupled.GyroService> {
+  public class GyroAsset : OfType<GyroService> {
     /// <see cref="OfType{T}.Value"/>
-    public Decoupled.GyroService Device { get { return Value; } set { Value = value; } }
+    public GyroService Device { get { return Value; } set { Value = value; } }
 
     /// <inheritdoc />
-    protected override void OnEnable() {
-      base.OnEnable();
-      Device = Decoupled.GyroService.Instance;
-    }
+    public override GyroService Initialise() { return Device = GyroService.Instance; }
   }
 }

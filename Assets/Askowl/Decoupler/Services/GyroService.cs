@@ -24,7 +24,12 @@ namespace Decoupled {
     /// <summary>
     /// Set if Gyro failed to initialise
     /// </summary>
-    public virtual bool Offline { get { return true; } }
+    public virtual bool Offline {
+      get {
+        Debug.LogWarningFormat("**** GyroService:29 true={0}", true); //#DM#//
+        return true;
+      }
+    }
 
     /// <summary>
     ///   <para>Returns rotation rate as measured by the device's gyroscope.</para>
