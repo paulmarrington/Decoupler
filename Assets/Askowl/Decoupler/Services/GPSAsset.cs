@@ -7,7 +7,7 @@ namespace CustomAsset.Mutable {
 // ReSharper disable once InconsistentNaming
   public class GPSAsset : OfType<GPSService> {
     /// <see cref="OfType{T}.Value"/>
-    public GPSService Device { get { return Value; } set { UnconditionalSet(value); } }
+    public GPSService Device { get { return Value; } set { Value = value; } }
 
     /// <inheritdoc />
     public override GPSService Initialise() { return Device = GPSService.Instance; }

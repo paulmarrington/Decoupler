@@ -1,13 +1,11 @@
 ﻿// Copyright 2018 (C) paul@marrington.net http://www.askowl.net/unity-packages
 
-using JetBrains.Annotations;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Decoupled {
   internal interface TextualInterface {
-    // ReSharper disable once InconsistentNaming
     string text { get; set; }
   }
 
