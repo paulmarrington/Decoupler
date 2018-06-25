@@ -8,7 +8,12 @@ namespace CustomAsset.Mutable {
     /// <see cref="OfType{T}.Value"/>
     public GyroService Device { get { return Value; } set { Value = value; } }
 
+    public static bool Ready { get; private set; }
+
     /// <inheritdoc />
-    public override GyroService Initialise() { return Device = GyroService.Instance; }
+    public override GyroService Initialise() {
+      Device = GyroService.Instance;
+      return Device;
+    }
   }
 }

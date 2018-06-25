@@ -14,9 +14,7 @@ namespace Decoupled {
     /// <inheritdoc />
     /// Call in implementation constructor
     protected override void Initialise() {
-      if (Offline) return;
-
-      Enabled = true;
+      Enabled = true; // Tell the gyroscope to start spinning :)
     }
 
     /// Set if Gyro failed to initialise
