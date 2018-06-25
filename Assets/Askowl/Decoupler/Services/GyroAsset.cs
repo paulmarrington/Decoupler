@@ -8,12 +8,35 @@ namespace CustomAsset.Mutable {
     /// <see cref="OfType{T}.Value"/>
     public GyroService Device { get { return Value; } set { Value = value; } }
 
-    public static bool Ready { get; private set; }
+    private float settleTime;
+    private bool  settled;
+    private float calibrationAngleY;
+    private Quaternion rotation;
+
+    public bool Ready {
+      get {
+        if (settled) return true;
+        if (Time.realtimeSinceStartup < settleTime) return false;
+
+        rotation = Quaternion.Euler(x: 90, y: 180, z: 180);
+        float webcamAngleY = (Device.Attitude * rotation).eulerAngles.y;
+        calibrationAngleY -= webcamAngleY;
+        return (settled = true);
+      }
+    }
+
+    public Quaternion Attitude {
+      get {
+        return Device.Attitude * rotation;
+      }
+    }
 
     /// <inheritdoc />
     public override GyroService Initialise() {
-      Device = GyroService.Instance;
-      return Device;
+      settleTime = Time.realtimeSinceStartup + 1;
+      return Device = GyroService.Instance;
     }
+
+    public void Calibrate(float unityCameraAngleY) { calibrationAngleY = unityCameraAngleY; }
   }
 }
