@@ -74,14 +74,15 @@ namespace Decoupled {
     public virtual int Height { get; set; }
 
     /// <summary>
-    /// Returns an clockwise angle (in degrees), which can be used to rotate a polygon so camera contents are shown in correct orientation.
+    /// Returns an clockwise angle (in degrees), which can be used to rotate a polygon so camera
+    /// contents are shown in correct orientation. Only in 90 degree steps.
     /// </summary>
     public virtual int RotationAngle { get { return 0; } }
 
     /// <summary>
     /// Returns true if the texture image is vertically flipped.
     /// </summary>
-    public virtual int VerticalMirror { get { return 1; } }
+    public virtual bool VerticalMirror { get { return false; } }
 
     /// <summary>
     /// Did the video buffer update this frame?
