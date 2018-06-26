@@ -9,8 +9,8 @@ namespace Decoupled {
   /// </summary>
   [Serializable]
   public class CompassService : Service<CompassService> {
-    [SerializeField, Tooltip("larger for more stability, smaller for faster following")]
-    private float minimumChange = 0.1f;
+    [SerializeField, Tooltip("Not too small or there will be jitter")]
+    private float minimumChange = 0.2f;
 
     private float  lastReading;
     private double lastTimestamp;
