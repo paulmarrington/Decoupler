@@ -10,7 +10,7 @@ namespace CustomAsset.Mutable {
 
     private float      settleTime;
     private bool       settled;
-    private Quaternion rotation;
+    private Quaternion magneticHeading;
 
     public bool Ready {
       get {
@@ -20,14 +20,16 @@ namespace CustomAsset.Mutable {
         return (settled = true);
       }
     }
-
-    public Quaternion MagneticHeading {
-      get {
-        if (!Device.Equals(null)) rotation = Quaternion.Euler(0, -Device.MagneticHeading, 0);
-        return rotation;
-      }
-    }
-    //transform.
+//
+//    public Quaternion MagneticHeading {
+//      get {
+//        if (!Device.Equals(null)) {
+//          var newHeading = Quaternion.Euler(0, -Device.MagneticHeading, 0);
+//          magneticHeading = newHeading;
+//        }
+//        return magneticHeading;
+//      }
+//    }
 
     /// <inheritdoc />
     public override CompassService Initialise() {

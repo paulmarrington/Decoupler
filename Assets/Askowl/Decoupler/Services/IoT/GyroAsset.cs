@@ -8,10 +8,10 @@ namespace CustomAsset.Mutable {
     /// <see cref="OfType{T}.Value"/>
     public GyroService Device { get { return Value; } set { Value = value; } }
 
-    private float      settleTime;
-    private bool       settled;
-    private Vector3    unityCameraForward;
-    private Quaternion calibration;
+    private float settleTime;
+
+    private bool settled;
+//    private Quaternion calibration;
 
     public bool Ready {
       get {
@@ -22,7 +22,8 @@ namespace CustomAsset.Mutable {
     }
 
     public Quaternion Attitude {
-      get { return RightToLeftHanded(calibration * Input.gyro.attitude); }
+//      get { return RightToLeftHanded(calibration * Input.gyro.attitude); }
+      get { return RightToLeftHanded(Input.gyro.attitude); }
     }
 
     private Quaternion RightToLeftHanded(Quaternion q) {
@@ -35,16 +36,17 @@ namespace CustomAsset.Mutable {
       return Device = GyroService.Instance;
     }
 
-    public void Calibrate() {
+    public Quaternion Calibrate() {
       var fw = (Input.gyro.attitude) * (-Vector3.forward);
       fw.z = 0;
 
-      calibration = (fw == Vector3.zero)
-                      ? Quaternion.identity
-                      : Quaternion.FromToRotation(Vector3.up, fw);
+      Quaternion calibration = (fw == Vector3.zero)
+                                 ? Quaternion.identity
+                                 : Quaternion.FromToRotation(Vector3.up, fw);
 
       Quaternion baseOrientation = Quaternion.Euler(x: 90, y: 0, z: 0);
       calibration = Quaternion.Inverse(baseOrientation) * Quaternion.Inverse(calibration);
+      return RightToLeftHanded(calibration);
     }
   }
 }
