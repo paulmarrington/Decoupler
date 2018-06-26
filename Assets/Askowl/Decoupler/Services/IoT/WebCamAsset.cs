@@ -29,7 +29,7 @@ namespace CustomAsset.Mutable {
       Device.Playing = true;
     }
 
-    public void correctForDeviceRotation() {
+    public void correctForDeviceScreenAngle() {
       aspectRatioFitter.aspectRatio = Device.AspectRatio;
 
       int verticalMirror = Device.VerticalMirror ? -1 : 1;

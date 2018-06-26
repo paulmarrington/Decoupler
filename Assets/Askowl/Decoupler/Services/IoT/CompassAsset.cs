@@ -21,7 +21,7 @@ namespace CustomAsset.Mutable {
       }
     }
 
-    public Quaternion RotationAdjustment {
+    public Quaternion MagneticHeading {
       get {
         if (!Device.Equals(null)) rotation = Quaternion.Euler(0, -Device.MagneticHeading, 0);
         return rotation;
