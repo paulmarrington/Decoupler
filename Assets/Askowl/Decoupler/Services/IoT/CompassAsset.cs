@@ -5,6 +5,8 @@ namespace CustomAsset.Mutable {
   /// <inheritdoc cref="Decoupled.GyroService" />
   [CreateAssetMenu(menuName = "Custom Assets/Device/Compass"), ValueName("Device")]
   public class CompassAsset : OfType<CompassService> {
+    public static CompassAsset Instance { get { return Instance<CompassAsset>(); } }
+
     /// <see cref="OfType{T}.Value"/>
     public CompassService Device { get { return Value; } set { Value = value; } }
 
