@@ -8,9 +8,6 @@ namespace Decoupled {
   /// </summary>
   [Serializable]
   public class GyroService : Service<GyroService> {
-    [SerializeField, Tooltip("larger for more stability, smaller for faster following")]
-    private float minimumChange = 0.01f;
-
     /// <inheritdoc />
     /// Call in implementation constructor
     protected override void Initialise() {
@@ -45,6 +42,8 @@ namespace Decoupled {
     /// </summary>
     public virtual Quaternion Attitude { get { return Quaternion.identity; } }
 
+    public virtual float UpdateIntervalInSeconds { get; set; }
+
     /// <summary>
     ///   <para>Sets or retrieves the enabled status of this gyroscope.</para>
     /// </summary>
@@ -54,12 +53,15 @@ namespace Decoupled {
 
     /// <inheritdoc />
     public override bool Equals(object other) {
-      float change = Mathf.Abs(Quaternion.Dot(Attitude, lastReading)) - 1;
+      if (Attitude == lastReading) return true;
+
       lastReading = Attitude;
-      return (change <= minimumChange);
+      return false;
     }
 
     /// <inheritdoc />
     public override int GetHashCode() { return Attitude.GetHashCode(); }
+
+    public override string ToString() { return Attitude.eulerAngles.ToString(); }
   }
 }
