@@ -8,6 +8,7 @@ namespace CustomAsset.Mutable {
   public class WebCamAsset : OfType<WebCamService> {
     private RawImage          rawImage;
     private AspectRatioFitter aspectRatioFitter;
+    private int               lastVerticalMirror, lastRotationAngle = 1;
 
     /// <see cref="OfType{T}.Value"/>
     public WebCamService Device { get { return Value; } private set { Value = value; } }
@@ -29,14 +30,22 @@ namespace CustomAsset.Mutable {
       Device.Playing = true;
     }
 
-    public void correctForDeviceScreenAngle() {
+    public void correctForDeviceScreenOrientation() {
       aspectRatioFitter.aspectRatio = Device.AspectRatio;
 
       int verticalMirror = Device.VerticalMirror ? -1 : 1;
-      rawImage.rectTransform.localScale = new Vector3(x: 1, y: verticalMirror, z: 1);
+
+      if (verticalMirror != lastVerticalMirror) {
+        rawImage.rectTransform.localScale = new Vector3(x: 1, y: verticalMirror, z: 1);
+        lastVerticalMirror                = verticalMirror;
+      }
 
       int rotationAngle = Device.RotationAngle;
-      rawImage.rectTransform.localEulerAngles = new Vector3(x: 0, y: 0, z: -rotationAngle);
+
+      if (rotationAngle != lastRotationAngle) {
+        rawImage.rectTransform.localEulerAngles = new Vector3(x: 0, y: 0, z: -rotationAngle);
+        lastRotationAngle                       = rotationAngle;
+      }
     }
   }
 }
