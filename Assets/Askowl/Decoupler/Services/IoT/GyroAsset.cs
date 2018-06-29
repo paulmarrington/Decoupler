@@ -1,6 +1,4 @@
-﻿using System;
-using Askowl;
-using Decoupled;
+﻿using Decoupled;
 using UnityEngine;
 
 namespace CustomAsset.Mutable {
@@ -31,10 +29,11 @@ namespace CustomAsset.Mutable {
     /// Gyro is right-handed while Unity is left-handed.
     public Quaternion Attitude { get { return RightToLeftHanded(Input.gyro.attitude); } }
 
-    private Quaternion RightToLeftHanded(Quaternion gyroAttitude) {
-      gyroAttitude.z = -gyroAttitude.z;
-      gyroAttitude.w = -gyroAttitude.w;
-      return gyroAttitude;
+    private Quaternion attitude = new Quaternion();
+
+    public Quaternion RightToLeftHanded(Quaternion gyroAttitude) {
+      attitude.Set(gyroAttitude.x, gyroAttitude.y, -gyroAttitude.z, -gyroAttitude.w);
+      return attitude;
     }
 
     /// <inheritdoc />
