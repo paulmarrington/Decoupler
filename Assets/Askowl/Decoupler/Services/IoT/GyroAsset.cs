@@ -23,7 +23,7 @@ namespace CustomAsset.Mutable {
 
         if (Device.Attitude == Quaternion.identity) return false;
 
-//        rotateFrom.Set(Device.Attitude);
+        rotateFrom.Set(Device.Attitude);
         settleTime = Time.realtimeSinceStartup - settleTime;
         return (settled = true);
       }
@@ -52,12 +52,10 @@ namespace CustomAsset.Mutable {
      */
     public Tetrad Attitude {
       get {
-//        rotateTo.Set(Device.Attitude).RightToLeftHanded();
-//        rotation.Slerp(rotateFrom, rotateTo, smoothing);
-//        rotateFrom.Set(rotateTo);
-        return rotateTo;
-
-//        return rotation;
+        rotateTo.Set(Device.Attitude).RightToLeftHanded();
+        rotation.Slerp(rotateFrom, rotateTo, smoothing);
+        rotateFrom.Set(rotateTo);
+        return rotation;
       }
     }
 

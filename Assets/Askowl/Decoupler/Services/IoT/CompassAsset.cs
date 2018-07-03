@@ -1,4 +1,5 @@
-﻿using Decoupled;
+﻿using System;
+using Decoupled;
 using UnityEngine;
 
 namespace CustomAsset.Mutable {
@@ -13,7 +14,7 @@ namespace CustomAsset.Mutable {
     private float                    settleTime;
     private bool                     settled;
     private Quaternion               magneticHeading;
-    private Vector3                  rotateFrom, rotateTo;
+    private float                    rotateFrom, rotateTo;
     private float                    lastUpdateTime;
     private ExponentialMovingAverage ema;
 
@@ -23,9 +24,7 @@ namespace CustomAsset.Mutable {
         if (Time.realtimeSinceStartup < settleTime) return false;
 
         ema        = new ExponentialMovingAverage(16);
-        rotateFrom = new Vector3(0, Device.MagneticHeading, 0);
-        rotateTo   = new Vector3(0, Device.MagneticHeading, 0);
-        Calibrate();
+        rotateFrom = rotateTo = Device.MagneticHeading;
 
         return (settled = true);
       }
@@ -43,7 +42,12 @@ namespace CustomAsset.Mutable {
      */
     public void Calibrate() {
       // Use the exponential moving average to help smooth out compass variations
-      rotateTo.y     = ema.Average(Device.MagneticHeading);
+      rotateFrom = rotateTo;
+      rotateTo   = ema.AverageAngle(Device.MagneticHeading);
+
+      Debug.LogFormat("**** CompassAsset:46 rotateFrom={0}, rotateTo={1}, MagneticHeading={2}",
+                      rotateFrom, rotateTo, Device.MagneticHeading); //#DM#//
+
       lastUpdateTime = Time.realtimeSinceStartup;
     }
 
@@ -59,7 +63,7 @@ namespace CustomAsset.Mutable {
     public float MagneticHeading {
       get {
         float elapsedSeconds = Time.realtimeSinceStartup - lastUpdateTime;
-        return Vector3.Slerp(rotateFrom, rotateTo, elapsedSeconds).y;
+        return Mathf.LerpAngle(rotateFrom, rotateTo, elapsedSeconds);
       }
     }
 
