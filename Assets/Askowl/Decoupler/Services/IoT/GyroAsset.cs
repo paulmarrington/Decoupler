@@ -15,7 +15,7 @@ namespace CustomAsset.Mutable {
 
     private float  settleTime;
     private bool   settled;
-    private Tetrad rotateFrom = new Tetrad(), rotateTo = new Tetrad();
+    private Tetrad rotateFrom = new Tetrad(), rotateTo = new Tetrad(), rotation = new Tetrad();
 
     public bool Ready {
       get {
@@ -53,7 +53,7 @@ namespace CustomAsset.Mutable {
     public Tetrad Attitude {
       get {
         rotateTo.Set(Device.Attitude).RightToLeftHanded();
-        var rotation = Quaternion.Slerp(rotateFrom, rotateTo, smoothing);
+        rotation.Slerp(rotateFrom, rotateTo, smoothing);
         rotateFrom.Set(rotateTo);
         return rotateTo;
 
