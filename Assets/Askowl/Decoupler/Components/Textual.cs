@@ -1,5 +1,6 @@
 ﻿// Copyright 2018 (C) paul@marrington.net http://www.askowl.net/unity-packages
 
+using System;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,7 +16,7 @@ namespace Decoupled {
   /// </summary>
   /// <remarks><a href="http://decoupler.marrington.net#decoupledtext">More...</a></remarks>
   public partial class Textual : ComponentDecoupler<Textual>, TextualInterface {
-    private TextualInterface Backer { get { return ComponentInterface as TextualInterface; } }
+    private TextualInterface Backer { get { return Instance as TextualInterface; } }
 
     /// <summary>
     /// Get and set text in backing component
@@ -29,13 +30,10 @@ namespace Decoupled {
       private Text UnityText { get { return Component as Text; } }
 
       public string text { get { return UnityText.text; } set { UnityText.text = value; } }
+
+      public UnityTextInterface() { Instantiate<UnityTextInterface, Text>(false); }
     }
 
-#if UNITY_EDITOR
-    // ReSharper disable once ArrangeAttributes
-    [InitializeOnLoadMethod]
-#endif
-    [RuntimeInitializeOnLoadMethod]
-    private static void UnityTextInitialise() { Instantiate<UnityTextInterface, Text>(false); }
+    private UnityTextInterface unityTextInterface = new UnityTextInterface();
   }
 }

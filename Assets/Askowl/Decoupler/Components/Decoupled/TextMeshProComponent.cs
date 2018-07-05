@@ -13,13 +13,7 @@ namespace Decoupled {
       public string text { get { return TmpText.text; } set { TmpText.text = value; } }
     }
 
-
-#if UNITY_EDITOR
-    // ReSharper disable once ArrangeAttributes
-    [InitializeOnLoadMethod]
-#endif
-    [RuntimeInitializeOnLoadMethod]
-    private static void TextMeshProUguiInitialise() {
+    static TextMeshProUguiInterface() {
       Instantiate<TextMeshProUguiInterface, TextMeshProUGUI>(primary: true);
     }
   }

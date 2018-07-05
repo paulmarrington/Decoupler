@@ -5,16 +5,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Decoupled {
-  /// <summary>
-  /// Use as superclass for Interface specifications
-  /// </summary>
-  public class ComponentInterface {
-    internal Component Component;
-  }
-
   /// <inheritdoc />
   /// <summary>
-  /// Superclass for a decoupled component Monobehaviour
+  /// Superclass for a decoupled component MonoBehaviour
   /// </summary>
   /// <typeparam name="T"></typeparam>
   public abstract class ComponentDecoupler<T> : MonoBehaviour where T : ComponentDecoupler<T> {
@@ -27,53 +20,71 @@ namespace Decoupled {
     private static readonly HashSet<Type> Interfaces = new HashSet<Type>();
 
     /// <summary>
+    /// Use as superclass for Interface specifications
+    /// </summary>
+    public class ComponentInterface {
+      internal Component Component;
+
+      /// <summary>
+      /// Called on load to find and assign a component found in the current GameObject.
+      /// If not found, set the default for adding one later. Use by editor and runtime.
+      /// </summary>
+      /// <param name="primary">True if this component becomes the one created if none found</param>
+      /// <typeparam name="TI">Type of the interface used to access this component</typeparam>
+      /// <typeparam name="TC">Type of component we are playing with</typeparam>
+      protected void Instantiate<TI, TC>(bool primary)
+        where TC : Component where TI : ComponentInterface, new() {
+        Type type = GetType();
+        if (Interfaces.Contains(type)) return;
+
+        Interfaces.Add(type);
+
+        Initialisers += (decoupler) => {
+          if (decoupler.Instantiated) return;
+
+          if (primary || (decoupler.defaultComponent == null)) {
+            decoupler.defaultComponent = typeof(TC);
+          }
+
+          TC component = decoupler.GetComponent<TC>();
+
+          if (component != null) {
+            Component = component;
+            decoupler.Instantiate(this);
+          }
+        };
+      }
+    }
+
+    /// <summary>
     /// Interface created in concrete classes to provide decoupled component access
     /// </summary>
-    protected ComponentInterface ComponentInterface;
+    private ComponentInterface componentInterface;
 
     /// <summary>
     /// Retrieve the component type of the default component
     /// </summary>
     private Type defaultComponent;
 
-    private void Start() { Reset(); }
+    private void Awake() { Reset(); }
 
     /// <summary>
     /// Called when component is loaded or reset from the Inspector menu
     /// </summary>
     protected void Reset() {
-      ComponentInterface = null;
+      componentInterface = null;
       Initialisers(this as T);
 
-      if ((ComponentInterface != null) || (defaultComponent == null)) return;
+      if ((componentInterface != null) || (defaultComponent == null)) return;
 
       gameObject.AddComponent(defaultComponent);
       Initialisers(this as T);
     }
 
-    /// <summary>
-    /// Called on load to find and assign a component found in the current GameObject.
-    /// If not found, set the default for adding one later. Use by editor and runtime.
-    /// </summary>
-    /// <param name="primary">True if this component becomes the one created if none found</param>
-    /// <typeparam name="TI">Type of the interface used to access this component</typeparam>
-    /// <typeparam name="TC">Type of component we are playing with</typeparam>
-    protected static void Instantiate<TI, TC>(bool primary)
-      where TC : Component where TI : ComponentInterface, new() {
-      Type type = typeof(TI);
-      if (Interfaces.Contains(type)) return;
+    internal void Instantiate(ComponentInterface winner) { componentInterface = winner; }
 
-      Interfaces.Add(type);
+    protected bool Instantiated { get { return componentInterface != null; } }
 
-      Initialisers += (textual) => {
-        if (textual.ComponentInterface != null) return;
-
-        if (primary || (textual.defaultComponent == null)) textual.defaultComponent = typeof(TC);
-
-        TC component = textual.GetComponent<TC>();
-
-        if (component != null) textual.ComponentInterface = new TI {Component = component};
-      };
-    }
+    protected ComponentInterface Instance { get { return componentInterface; } }
   }
 }
