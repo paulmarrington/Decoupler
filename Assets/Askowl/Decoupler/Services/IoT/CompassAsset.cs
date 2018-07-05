@@ -42,12 +42,8 @@ namespace CustomAsset.Mutable {
      */
     public void Calibrate() {
       // Use the exponential moving average to help smooth out compass variations
-      rotateFrom = rotateTo;
-      rotateTo   = ema.AverageAngle(Device.MagneticHeading);
-
-      Debug.LogFormat("**** CompassAsset:46 rotateFrom={0}, rotateTo={1}, MagneticHeading={2}",
-                      rotateFrom, rotateTo, Device.MagneticHeading); //#DM#//
-
+      rotateFrom     = rotateTo;
+      rotateTo       = ema.AverageAngle(Device.MagneticHeading);
       lastUpdateTime = Time.realtimeSinceStartup;
     }
 

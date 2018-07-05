@@ -9,6 +9,8 @@ namespace CustomAsset.Mutable {
     /// <see cref="OfType{T}.Value"/>
     public GPSService Device { get { return Value; } set { Value = value; } }
 
+    public bool Ready { get { return Device.Running; } }
+
     /// <inheritdoc />
     public override GPSService Initialise() { return Device = GPSService.Instance; }
   }

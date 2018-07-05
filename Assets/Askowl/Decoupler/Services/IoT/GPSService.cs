@@ -1,4 +1,5 @@
 ﻿using System;
+using Askowl;
 using UnityEngine;
 
 namespace Decoupled {
@@ -97,15 +98,20 @@ namespace Decoupled {
     /// </summary>
     public float VerticalAccuracy { get { return Location.VerticalAccuracyInMetres; } }
 
-    /// <inheritdoc />
-    public override bool Equals(object other) {
-      var lastLocation = Location;
-      UpdateLocation();
+    /// Fetch the current device coordinates and see if they have changed from last time.
+    public bool Changed {
+      get {
+        var lastLocation = Location;
+        UpdateLocation();
 
-      return ((Math.Abs(Latitude  - lastLocation.Latitude)         > 0.000005f) ||
-              (Math.Abs(Longitude - lastLocation.Longitude)        > 0.000005f) ||
-              (Math.Abs(Altitude  - lastLocation.AltitudeInMeters) > 0.25f));
+        return Compare.AlmostEqual(Latitude,  lastLocation.Latitude)  &&
+               Compare.AlmostEqual(Longitude, lastLocation.Longitude) &&
+               Compare.AlmostEqual(Altitude,  lastLocation.AltitudeInMeters);
+      }
     }
+
+    /// <inheritdoc />
+    public override bool Equals(object other) { return Changed; }
 
     /// <inheritdoc />
     // ReSharper disable once NonReadonlyMemberInGetHashCode
