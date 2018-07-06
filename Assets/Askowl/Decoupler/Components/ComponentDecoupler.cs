@@ -39,7 +39,7 @@ namespace Decoupled {
         Interfaces.Add(type);
 
         Initialisers += (decoupler) => {
-          if (decoupler.Instantiated) return;  // someone else got in first
+          if (decoupler.Instantiated) return; // someone else got in first
 
           if (primary || (decoupler.defaultComponent == null)) {
             decoupler.defaultComponent = typeof(TC);
@@ -65,20 +65,23 @@ namespace Decoupled {
     /// </summary>
     private Type defaultComponent;
 
-    private void Awake() {
-      componentInterface = null;
+    internal void Prepare(ComponentInterface winner) { componentInterface = winner; }
+
+    private ComponentInterface Prepare() {
+      if (componentInterface != null) return componentInterface;
+
       Initialisers(this as T);
 
-      if ((componentInterface != null) || (defaultComponent == null)) return;
+      if ((componentInterface != null) || (defaultComponent == null)) return componentInterface;
 
       gameObject.AddComponent(defaultComponent);
       Initialisers(this as T);
-    }
 
-    internal void Prepare(ComponentInterface winner) { componentInterface = winner; }
+      return componentInterface;
+    }
 
     protected bool Instantiated { get { return componentInterface != null; } }
 
-    protected ComponentInterface Instance { get { return componentInterface; } }
+    protected ComponentInterface Instance { get { return componentInterface ?? Prepare(); } }
   }
 }
