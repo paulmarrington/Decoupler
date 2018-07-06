@@ -30,17 +30,16 @@ namespace Decoupled {
       /// If not found, set the default for adding one later. Use by editor and runtime.
       /// </summary>
       /// <param name="primary">True if this component becomes the one created if none found</param>
-      /// <typeparam name="TI">Type of the interface used to access this component</typeparam>
       /// <typeparam name="TC">Type of component we are playing with</typeparam>
-      protected void Instantiate<TI, TC>(bool primary)
-        where TC : Component where TI : ComponentInterface, new() {
+      protected void Instantiate<TC>(bool primary)
+        where TC : Component {
         Type type = GetType();
         if (Interfaces.Contains(type)) return;
 
         Interfaces.Add(type);
 
         Initialisers += (decoupler) => {
-          if (decoupler.Instantiated) return;
+          if (decoupler.Instantiated) return;  // someone else got in first
 
           if (primary || (decoupler.defaultComponent == null)) {
             decoupler.defaultComponent = typeof(TC);
@@ -50,7 +49,7 @@ namespace Decoupled {
 
           if (component != null) {
             Component = component;
-            decoupler.Instantiate(this);
+            decoupler.Prepare(this);
           }
         };
       }
@@ -66,12 +65,7 @@ namespace Decoupled {
     /// </summary>
     private Type defaultComponent;
 
-    private void Awake() { Reset(); }
-
-    /// <summary>
-    /// Called when component is loaded or reset from the Inspector menu
-    /// </summary>
-    protected void Reset() {
+    private void Awake() {
       componentInterface = null;
       Initialisers(this as T);
 
@@ -81,7 +75,7 @@ namespace Decoupled {
       Initialisers(this as T);
     }
 
-    internal void Instantiate(ComponentInterface winner) { componentInterface = winner; }
+    internal void Prepare(ComponentInterface winner) { componentInterface = winner; }
 
     protected bool Instantiated { get { return componentInterface != null; } }
 

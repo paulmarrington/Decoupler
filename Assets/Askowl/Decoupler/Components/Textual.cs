@@ -31,9 +31,9 @@ namespace Decoupled {
 
       public string text { get { return UnityText.text; } set { UnityText.text = value; } }
 
-      public UnityTextInterface() { Instantiate<UnityTextInterface, Text>(false); }
+      public UnityTextInterface() { Instantiate<Text>(false); }
     }
 
-    private UnityTextInterface unityTextInterface = new UnityTextInterface();
+    private static UnityTextInterface unityTextInterface = new UnityTextInterface();
   }
 }

@@ -14,7 +14,7 @@ namespace Decoupled {
     }
 
     static TextMeshProUguiInterface() {
-      Instantiate<TextMeshProUguiInterface, TextMeshProUGUI>(primary: true);
+      Instantiate<TextMeshProUGUI>(primary: true);
     }
   }
 }
