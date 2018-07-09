@@ -10,7 +10,9 @@ namespace CustomAsset.Mutable {
     /// <see cref="OfType{T}.Value"/>
     public GPSService Device { get { return Value; } set { Value = value; } }
 
-    public bool Ready { get { return Device.Running; } }
+    public bool Ready        { get { return Device.Running; } }
+    public bool Initialising { get { return Device.Initialising; } }
+    public bool Offline      { get { return Device.Offline; } }
 
     public Geodetic.Coordinates Here { get { return Location(Device.Location); } }
 

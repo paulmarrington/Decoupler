@@ -34,7 +34,9 @@ namespace Decoupled {
       public UnityTextInterface() { Instantiate<Text>(false); }
     }
 
+    #pragma warning disable CS0414
     // ReSharper disable once UnusedMember.Local
-    private static UnityTextInterface unityTextInterface = new UnityTextInterface();
+    private UnityTextInterface unityTextInterface = new UnityTextInterface();
+    #pragma warning restore CS0414
   }
 }

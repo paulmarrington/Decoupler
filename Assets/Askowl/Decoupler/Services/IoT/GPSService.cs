@@ -25,6 +25,13 @@ namespace Decoupled {
       public double Timestamp;
       public float  VerticalAccuracyInMetres;
       public float  HorizontalAccuracyInMetres;
+
+      public bool Set { get { return Timestamp > 0; } }
+
+      public override string ToString() {
+        return string.Format("({0:n5}, {1:n5}, alt: {2:n2})",
+                             Longitude, Latitude, AltitudeInMeters);
+      }
     }
 
     private LocationData location;
@@ -107,18 +114,22 @@ namespace Decoupled {
       get {
         var lastLocation = location;
         UpdateLocation();
+        var vAccuracy = location.VerticalAccuracyInMetres;
+        var hAccuracy = location.HorizontalAccuracyInMetres * 1e-5;
 
-        return Compare.AlmostEqual(Latitude,  lastLocation.Latitude)  &&
-               Compare.AlmostEqual(Longitude, lastLocation.Longitude) &&
-               Compare.AlmostEqual(Altitude,  lastLocation.AltitudeInMeters);
+        return !Compare.AlmostEqual(Latitude,  lastLocation.Latitude,         hAccuracy) ||
+               !Compare.AlmostEqual(Longitude, lastLocation.Longitude,        hAccuracy) ||
+               !Compare.AlmostEqual(Altitude,  lastLocation.AltitudeInMeters, vAccuracy);
       }
     }
 
     /// <inheritdoc />
-    public override bool Equals(object other) { return Changed; }
+    public override bool Equals(object other) { return !Changed; }
 
     /// <inheritdoc />
     // ReSharper disable once NonReadonlyMemberInGetHashCode
     public override int GetHashCode() { return location.GetHashCode(); }
+
+    public override string ToString() { return location.ToString(); }
   }
 }

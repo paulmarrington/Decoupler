@@ -49,9 +49,13 @@ namespace Decoupled {
 
           if (component != null) {
             Component = component;
-            decoupler.Prepare(this);
+            decoupler.Prepare((ComponentInterface) MemberwiseClone());
           }
         };
+      }
+
+      public override string ToString() {
+        return (Component == null) ? "null" : Component.gameObject.name;
       }
     }
 
@@ -71,12 +75,10 @@ namespace Decoupled {
       if (componentInterface != null) return componentInterface;
 
       Initialisers(this as T);
-
       if ((componentInterface != null) || (defaultComponent == null)) return componentInterface;
 
       gameObject.AddComponent(defaultComponent);
       Initialisers(this as T);
-
       return componentInterface;
     }
 
