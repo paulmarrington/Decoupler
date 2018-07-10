@@ -2,7 +2,7 @@
 
 using System.Collections;
 using System;
-using CustomAsset.Mutable;
+//using CustomAsset.Mutable;
 using Object = UnityEngine.Object;
 
 namespace Decoupled {
@@ -12,17 +12,17 @@ namespace Decoupled {
   /// </summary>
   /// <remarks><a href="http://decoupler.marrington.net#decoupledauthentication">More...</a></remarks>
   public sealed class Authentication : Service<Authentication> {
-    private AuthenticationAsset user = AuthenticationAsset.Instance("Guest");
+//    private AuthenticationAsset user = AuthenticationAsset.Instance("Guest");
 
     public IEnumerator CreateUser(string         email, string password,
                                   Action<string> error = null) {
-      user      = AuthenticationAsset.Instance(email);
-      user.Name = user.Email = email;
+//      user      = AuthenticationAsset.Instance(email);
+//      user.Name = user.Email = email;
       yield return null;
     }
 
     public IEnumerator UpdateProfile(string displayName, Action<string> error = null) {
-      user.Name = displayName;
+//      user.Name = displayName;
       yield return null;
     }
 
@@ -33,8 +33,8 @@ namespace Decoupled {
     public IEnumerator SignIn(object credential, Action<string> error = null) { yield return null; }
 
     public void SignOut() {
-      Object.Destroy(user);
-      user = AuthenticationAsset.Instance("Guest");
+//      Object.Destroy(user);
+//      user = AuthenticationAsset.Instance("Guest");
     }
 
     public IEnumerator Anonymous(Action<string> error = null) { yield return null; }
@@ -94,24 +94,25 @@ namespace Decoupled {
       public override int GetHashCode() { return (Email != null ? Email.GetHashCode() : 0); }
     }
 
-    /// <inheritdoc />
-    /// <summary>
-    /// Contains valuable information recorded when a player logs in.
-    /// </summary>
-    public class AuthenticationAsset : OfType<User> {
-      public static AuthenticationAsset Instance(string name) {
-        return Instance<AuthenticationAsset>(name);
-      }
-
-      /// <summary>
-      /// Name of the logged in player (often email) - defaults to guest.
-      /// </summary>
-      public string Name { get { return Value.Name; } set { this.Set(ref Value.Name, value); } }
-
-      /// <summary>
-      /// Email address of the logged in player - defaults to empty.
-      /// </summary>
-      public string Email { get { return Value.Email; } set { this.Set(ref Value.Email, value); } }
-    }
+//
+//    /// <inheritdoc />
+//    /// <summary>
+//    /// Contains valuable information recorded when a player logs in.
+//    /// </summary>
+//    public class AuthenticationAsset : OfType<User> {
+//      public static AuthenticationAsset Instance(string name) {
+//        return Instance<AuthenticationAsset>(name);
+//      }
+//
+//      /// <summary>
+//      /// Name of the logged in player (often email) - defaults to guest.
+//      /// </summary>
+//      public string Name { get { return Value.Name; } set { this.Set(ref Value.Name, value); } }
+//
+//      /// <summary>
+//      /// Email address of the logged in player - defaults to empty.
+//      /// </summary>
+//      public string Email { get { return Value.Email; } set { this.Set(ref Value.Email, value); } }
+//    }
   }
 }

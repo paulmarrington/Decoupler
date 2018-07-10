@@ -17,7 +17,7 @@ namespace Decoupled {
 
     private static readonly List<T> InstanceList = new List<T>();
 
-    private static T defaultInstance;
+    private static T defaultInstance, mockInstance;
 
     private static bool Available { get { return InstanceList.Count > 0; } }
 
@@ -105,9 +105,15 @@ namespace Decoupled {
         Debug.LogWarningFormat("More than one implementation for service '{0}'", typeof(T).Name);
       }
 
-      TD service = new TD {Name = typeof(TD).Name};
+      TD service = (TD) mockInstance ?? new TD {Name = typeof(TD).Name};
       InstanceList.Add(service);
       service.Initialise();
+    }
+
+    public static void RegisterMock<TD>() where TD : T, new() {
+      mockInstance = new TD {Name = typeof(TD).Name};
+      InstanceList.Clear();
+      Register<TD>();
     }
   }
 }

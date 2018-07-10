@@ -26,7 +26,7 @@ namespace Decoupled {
       public float  VerticalAccuracyInMetres;
       public float  HorizontalAccuracyInMetres;
 
-      public bool Set { get { return Timestamp > 0; } }
+      public bool IsSet { get { return Timestamp > 0; } }
 
       public override string ToString() {
         return string.Format("({0:n5}, {1:n5}, alt: {2:n2})",

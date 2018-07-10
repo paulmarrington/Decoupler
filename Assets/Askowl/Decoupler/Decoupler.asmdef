@@ -1,0 +1,11 @@
+{
+    "name": "Decoupler",
+    "references": [
+        "Base",
+        "Build"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}
