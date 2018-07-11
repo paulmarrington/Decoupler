@@ -4,7 +4,7 @@ using Askowl;
 using UnityEngine;
 
 namespace Decoupled.Mock {
-  public class MockGPSService : GPSService {
+  public class MockGPSService : GPSService, IMock {
     private bool      running, offline, tracking, initialising;
     public  Locations locations = new Locations();
 
