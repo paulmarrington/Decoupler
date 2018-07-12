@@ -4,27 +4,37 @@ namespace Decoupled {
   using System.Collections.Generic;
   using UnityEngine;
 
+  public abstract class Service {
+    public string Name;
+
+    protected static bool hasMockInstance;
+
+    /// <summary>
+    /// Override to initialise service when it is created.
+    /// </summary>
+    protected virtual void Initialise() { }
+
+    public static void RegisterAsMock(Service mock) { mock.RegisterAsMock(); }
+
+    protected abstract void RegisterAsMock();
+  }
+
   /// <summary>
   /// Base class for decoupled interfaces. Provides constant services to register and access service networks.
   /// </summary>
   /// <remarks><a href="http://decoupler.marrington.net#for-a-new-interface">More...</a></remarks>
   /// <typeparam name="T">use `public class MyService : Service&lt;MyService>{}` to define a service</typeparam>
-  public class Service<T> where T : Service<T>, new() {
-    /// <summary>
-    /// Name for this concrete service - generated from the concrete interface class name
-    /// </summary>
-    public string Name { get; private set; }
-
+  public class Service<T> : Service where T : Service<T>, new() {
     private static readonly List<T> InstanceList = new List<T>();
 
-    private static T defaultInstance, mockInstance;
+    private static T defaultInstance;
 
-    private static bool Available { get { return InstanceList.Count > 0; } }
+    private static bool Available => InstanceList.Count > 0;
 
     /// <summary>
     /// Used by testing framework between tests
     /// </summary>
-    public static void Reset() {
+    internal static void Reset() {
       InstanceList.Clear();
       defaultInstance = default(T);
     }
@@ -41,7 +51,7 @@ namespace Decoupled {
         defaultInstance = new T();
 
         if (defaultInstance == null) {
-          Debug.LogError(message: "Cannot instantiate default '" + typeof(T).Name + "'");
+          Debug.LogErrorFormat("Cannot instantiate default '{0}'", typeof(T).Name);
         } else {
           defaultInstance.Initialise();
         }
@@ -49,11 +59,6 @@ namespace Decoupled {
         return defaultInstance;
       }
     }
-
-    /// <summary>
-    /// Override to initialise service when it is created.
-    /// </summary>
-    protected virtual void Initialise() { }
 
     /// <summary>
     /// A rare form of service interface will have more than one service and the application will
@@ -105,15 +110,18 @@ namespace Decoupled {
         Debug.LogWarningFormat("More than one implementation for service '{0}'", typeof(T).Name);
       }
 
-      TD service = (TD) mockInstance ?? new TD {Name = typeof(TD).Name};
-      InstanceList.Add(service);
-      service.Initialise();
+      if (!hasMockInstance) (new TD {Name = typeof(TD).Name}).Register();
     }
 
-    public static void RegisterMock<TD>() where TD : T, new() {
-      mockInstance = new TD {Name = typeof(TD).Name};
-      InstanceList.Clear();
-      Register<TD>();
+    internal void Register() {
+      InstanceList.Add((T) this);
+      Initialise();
+    }
+
+    protected override void RegisterAsMock() {
+      Reset();
+      hasMockInstance = true;
+      Register();
     }
   }
 }

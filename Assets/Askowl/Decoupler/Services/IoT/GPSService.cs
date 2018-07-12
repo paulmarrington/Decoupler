@@ -16,7 +16,7 @@ namespace Decoupled {
     // ReSharper restore Unity.RedundantSerializeFieldAttribute
 
     /// <summary>
-    /// Device independant location storage
+    /// Device independent location storage
     /// </summary>
     public struct LocationData {
       public float  Latitude;
@@ -26,12 +26,10 @@ namespace Decoupled {
       public float  VerticalAccuracyInMetres;
       public float  HorizontalAccuracyInMetres;
 
-      public bool IsSet { get { return Timestamp > 0; } }
+      public bool IsSet => Timestamp > 0;
 
-      public override string ToString() {
-        return string.Format("({0:n5}, {1:n5}, alt: {2:n2})",
-                             Longitude, Latitude, AltitudeInMeters);
-      }
+      public override string ToString() =>
+        $"({Longitude:n5}, {Latitude:n5}, alt: {AltitudeInMeters:n2})";
     }
 
     private LocationData location;
@@ -41,22 +39,22 @@ namespace Decoupled {
     /// <summary>
     /// Set in Unity inspector, but GPS really controls accuracy
     /// </summary>
-    public float DesiredAccuracyInMeters { get { return desiredAccuracyInMeters; } }
+    public float DesiredAccuracyInMeters => desiredAccuracyInMeters;
 
     /// <summary>
     /// Set int he Unity inspector, but GPS decides whether to take notice
     /// </summary>
-    public float UpdateDistanceInMeters { get { return updateDistanceInMeters; } }
+    public float UpdateDistanceInMeters => updateDistanceInMeters;
 
     /// <summary>
     /// Set true if the code is running on a device with GPS, the user has enabled GPS access and we have started the GPS tracking.
     /// </summary>
-    public virtual bool Running { get { return false; } }
+    public virtual bool Running => false;
 
     /// <summary>
     /// Set true if we do not have access to the GPS or its initialisation failed
     /// </summary>
-    public virtual bool Offline { get { return true; } }
+    public virtual bool Offline => true;
 
     /// <summary>
     /// If all is good start the GPS tracking position. Remember that this eats battery.
@@ -72,7 +70,7 @@ namespace Decoupled {
     /// <summary>
     /// Continue to return false until the GPS comes on-line
     /// </summary>
-    public virtual bool Initialising { get { return false; } }
+    public virtual bool Initialising => false;
 
     /// <summary>
     /// Turns off GPS tracking - saving battery.
@@ -82,32 +80,32 @@ namespace Decoupled {
     /// <summary>
     /// Latitude of the last GPS read
     /// </summary>
-    public float Latitude { get { return location.Latitude; } }
+    public float Latitude => location.Latitude;
 
     /// <summary>
     /// Longitude of the last GPS read
     /// </summary>
-    public float Longitude { get { return location.Longitude; } }
+    public float Longitude => location.Longitude;
 
     /// <summary>
     /// Altitude of the last GPS read
     /// </summary>
-    public float Altitude { get { return location.AltitudeInMeters; } }
+    public float Altitude => location.AltitudeInMeters;
 
     /// <summary>
     /// Timestamp of the last GPS read
     /// </summary>
-    public double Timestamp { get { return location.Timestamp; } }
+    public double Timestamp => location.Timestamp;
 
     /// <summary>
     /// Horizontal accuracy in metres
     /// </summary>
-    public float HorizontalAccuracy { get { return location.HorizontalAccuracyInMetres; } }
+    public float HorizontalAccuracy => location.HorizontalAccuracyInMetres;
 
     /// <summary>
     /// Vertical accuracy in metres
     /// </summary>
-    public float VerticalAccuracy { get { return location.VerticalAccuracyInMetres; } }
+    public float VerticalAccuracy => location.VerticalAccuracyInMetres;
 
     /// Fetch the current device coordinates and see if they have changed from last time.
     public bool Changed {
@@ -124,12 +122,12 @@ namespace Decoupled {
     }
 
     /// <inheritdoc />
-    public override bool Equals(object other) { return !Changed; }
+    public override bool Equals(object other) => !Changed;
 
     /// <inheritdoc />
     // ReSharper disable once NonReadonlyMemberInGetHashCode
-    public override int GetHashCode() { return location.GetHashCode(); }
+    public override int GetHashCode() => location.GetHashCode();
 
-    public override string ToString() { return location.ToString(); }
+    public override string ToString() => location.ToString();
   }
 }
