@@ -7,15 +7,33 @@ using Random = UnityEngine.Random;
 
 namespace Decoupled.Mock {
   public class MockGPS : Mock<MockGPS.Service> {
+    [Serializable]
+    public class StartingPoint {
+      // ReSharper disable Unity.RedundantSerializeFieldAttribute
+
+      [SerializeField] internal float  Latitude               = -27.46850f;
+      [SerializeField] internal float  Longitude              = 151.94379f;
+      [SerializeField] internal float  RangeInMetres          = 100;
+      [SerializeField] internal float  AltitudeInMeters       = 660;
+      [SerializeField] internal float  AltitudeRange          = 5;
+      [SerializeField] internal double Timestamp              = 0;
+      [SerializeField] internal float  SecondsBetweenReadings = 5;
+      [SerializeField] internal float  TimeAccelerationFactor = 1;
+
+      // ReSharper restore Unity.RedundantSerializeFieldAttribute
+    }
+
+    [SerializeField] internal StartingPoint startingPoint;
+
     protected override void Awake() {
       base.Awake();
-      MockService.locations = new Service.Locations();
+      MockService.locations = new Service.Locations() {StartingPoint = startingPoint};
       MockService.StartTracking();
     }
 
     public class Service : GPSService {
-      private bool      running, initialising, tracking;
-      public  Locations locations;
+      internal Locations locations;
+      private  bool      running, initialising, tracking;
 
       private float start;
 
@@ -39,7 +57,7 @@ namespace Decoupled.Mock {
         if (running || !tracking) return;
 
         int elapsed = (int) (Time.realtimeSinceStartup - start);
-        if (elapsed < (int) (1 * locations.TimeAccelerationFactor)) return;
+        if (elapsed < (int) (1 * locations.StartingPoint.TimeAccelerationFactor)) return;
 
         initialising = false;
         running      = true;
@@ -59,33 +77,31 @@ namespace Decoupled.Mock {
       }
 
       public class Locations : IEnumerator<LocationData> {
-        public float  StartLatitude          = -27.46850f;
-        public float  StartLongitude         = 151.94379f;
-        public float  RangeInMetres          = 100;
-        public float  StartAltitudeInMeters  = 660;
-        public float  AltitudeRange          = 5;
-        public double Timestamp              = -1;
-        public float  SecondsBetweenReadings = 5;
-        public float  TimeAccelerationFactor = 1;
+        private StartingPoint startingPoint;
+
+        internal StartingPoint StartingPoint {
+          get { return startingPoint; }
+          set {
+            startingPoint = value;
+            ResetToStart();
+          }
+        }
 
         private LocationData lastLocation;
         private float        range;
         private float        nextReadingTime, realSecondsBetweenReadings;
 
-        public Locations() {
-          if (Timestamp < 0) Timestamp = Clock.EpochTimeNow;
-          range                      = RangeInMetres          * 0.0001f;
-          realSecondsBetweenReadings = SecondsBetweenReadings / TimeAccelerationFactor;
-          ResetToStart();
-        }
-
         public bool MoveNext() {
           if (Time.realtimeSinceStartup < nextReadingTime) return true;
 
-          lastLocation.Latitude         += Random.Range(-range,         range);
-          lastLocation.Longitude        += Random.Range(-range,         range);
-          lastLocation.AltitudeInMeters += Random.Range(-AltitudeRange, AltitudeRange);
-          lastLocation.Timestamp        += SecondsBetweenReadings;
+          ResetToStart();
+          lastLocation.Latitude  += Random.Range(min: -range, max: range);
+          lastLocation.Longitude += Random.Range(min: -range, max: range);
+
+          lastLocation.AltitudeInMeters += Random.Range(min: -StartingPoint.AltitudeRange,
+                                                        max: StartingPoint.AltitudeRange);
+
+          lastLocation.Timestamp += StartingPoint.SecondsBetweenReadings;
 
           nextReadingTime += realSecondsBetweenReadings;
           Current         =  lastLocation;
@@ -95,14 +111,20 @@ namespace Decoupled.Mock {
         void IEnumerator.Reset() { ResetToStart(); }
 
         private void ResetToStart() {
+          if (StartingPoint.Timestamp <= 0) StartingPoint.Timestamp = Clock.EpochTimeNow;
+          range = StartingPoint.RangeInMetres * 0.0001f;
+
+          realSecondsBetweenReadings = StartingPoint.SecondsBetweenReadings /
+                                       StartingPoint.TimeAccelerationFactor;
+
           nextReadingTime = Time.realtimeSinceStartup + realSecondsBetweenReadings;
 
-          lastLocation.Latitude                   = StartLatitude;
-          lastLocation.Longitude                  = StartLongitude;
-          lastLocation.AltitudeInMeters           = StartAltitudeInMeters;
-          lastLocation.Timestamp                  = Timestamp;
-          lastLocation.VerticalAccuracyInMetres   = 10;
-          lastLocation.HorizontalAccuracyInMetres = 65;
+          lastLocation.Latitude                   = StartingPoint.Latitude;
+          lastLocation.Longitude                  = StartingPoint.Longitude;
+          lastLocation.AltitudeInMeters           = StartingPoint.AltitudeInMeters;
+          lastLocation.Timestamp                  = StartingPoint.Timestamp;
+          lastLocation.VerticalAccuracyInMetres   = 2  + Random.Range(min: -1, max: 10);
+          lastLocation.HorizontalAccuracyInMetres = 10 + Random.Range(min: -8, max: 55);
         }
 
         public LocationData Current { get; private set; }
