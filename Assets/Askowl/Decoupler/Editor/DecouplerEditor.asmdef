@@ -1,0 +1,12 @@
+{
+    "name": "DecouplerEditor",
+    "references": [
+        "Build"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}
