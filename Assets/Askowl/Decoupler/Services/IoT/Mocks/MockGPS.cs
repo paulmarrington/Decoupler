@@ -71,9 +71,9 @@ namespace Decoupled.Mock {
 
       public override void StopTracking() { tracking = initialising = running = false; }
 
-      public override void UpdateLocation() {
+      protected override LocationData ReadLocation() {
         locations.MoveNext();
-        Location = locations.Current;
+        return locations.Current;
       }
 
       public class Locations : IEnumerator<LocationData> {
@@ -123,8 +123,8 @@ namespace Decoupled.Mock {
           lastLocation.Longitude                  = StartingPoint.Longitude;
           lastLocation.AltitudeInMeters           = StartingPoint.AltitudeInMeters;
           lastLocation.Timestamp                  = StartingPoint.Timestamp;
-          lastLocation.VerticalAccuracyInMetres   = 2  + Random.Range(min: -1, max: 10);
-          lastLocation.HorizontalAccuracyInMetres = 10 + Random.Range(min: -8, max: 55);
+          lastLocation.VerticalAccuracyInMetres   = 2  + Random.Range(min: 1, max: 10);
+          lastLocation.HorizontalAccuracyInMetres = 10 + Random.Range(min: 4, max: 55);
         }
 
         public LocationData Current { get; private set; }
