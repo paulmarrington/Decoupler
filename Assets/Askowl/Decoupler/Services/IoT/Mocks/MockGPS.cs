@@ -122,7 +122,7 @@ namespace Decoupled.Mock {
           lastLocation.Latitude                   = StartingPoint.Latitude;
           lastLocation.Longitude                  = StartingPoint.Longitude;
           lastLocation.AltitudeInMeters           = StartingPoint.AltitudeInMeters;
-          lastLocation.Timestamp                  = StartingPoint.Timestamp;
+          lastLocation.Timestamp                  = Clock.EpochTimeNow;
           lastLocation.VerticalAccuracyInMetres   = 2  + Random.Range(min: 1, max: 10);
           lastLocation.HorizontalAccuracyInMetres = 10 + Random.Range(min: 4, max: 55);
         }

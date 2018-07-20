@@ -29,7 +29,7 @@ namespace Decoupled {
       public bool IsSet => Timestamp > 0;
 
       public override string ToString() =>
-        $"({Longitude:n5}, {Latitude:n5}, alt: {AltitudeInMeters:n2})";
+        $"{Longitude:n5}, {Latitude:n5}, alt: {AltitudeInMeters:n2}";
     }
 
     private LocationData location, lastLocation;
@@ -69,7 +69,7 @@ namespace Decoupled {
       location     = ReadLocation();
 
       float vAccuracy = location.VerticalAccuracyInMetres   / 2;
-      float hAccuracy = location.HorizontalAccuracyInMetres * 1e-5f;
+      float hAccuracy = location.HorizontalAccuracyInMetres * 1e-6f;
 
       return Changed = !Compare.AlmostEqual(Latitude,  lastLocation.Latitude,         hAccuracy) ||
                        !Compare.AlmostEqual(Longitude, lastLocation.Longitude,        hAccuracy) ||
