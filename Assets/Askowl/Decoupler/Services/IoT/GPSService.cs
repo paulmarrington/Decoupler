@@ -4,21 +4,22 @@ using UnityEngine;
 
 namespace Decoupled {
   // ReSharper disable once InconsistentNaming
-  /// <inheritdoc />
   /// Decoupled interface to device GPS
+  /// <inheritdoc />
+  /// <remarks><a href="http://unitydoc.marrington.net/Mars#service-1">More...</a></remarks>
   [Serializable]
   public class GPSService : Service<GPSService> {
-    // ReSharper disable Unity.RedundantSerializeFieldAttribute
+    [SerializeField, Tooltip("Set in Unity inspector, but GPS really controls accuracy")]
+    private float desiredAccuracyInMeters = 1;
 
-    [SerializeField] private float desiredAccuracyInMeters = 1;
-    [SerializeField] private float updateDistanceInMeters  = 0.25f;
-
-    // ReSharper restore Unity.RedundantSerializeFieldAttribute
+    [SerializeField, Tooltip("Set in Unity inspector, but GPS really controls accuracy")]
+    private float updateDistanceInMeters = 0.25f;
 
     /// <summary>
     /// Device independent location storage
     /// </summary>
     public struct LocationData {
+      // ReSharper disable MissingXmlDoc
       public float  Latitude;
       public float  Longitude;
       public float  AltitudeInMeters;
@@ -31,9 +32,13 @@ namespace Decoupled {
       public override string ToString() =>
         $"{Longitude:n5}, {Latitude:n5}, alt: {AltitudeInMeters:n2}";
     }
+    // ReSharper restore MissingXmlDoc
 
     private LocationData location, lastLocation;
 
+    /// <summary>
+    /// The last location the GPS device recorded
+    /// </summary>
     public LocationData Location { get { return location; } protected set { location = value; } }
 
     /// <summary>
@@ -76,6 +81,10 @@ namespace Decoupled {
                        !Compare.AlmostEqual(Altitude,  lastLocation.AltitudeInMeters, vAccuracy);
     }
 
+    /// <summary>
+    /// Poll the GPS device to get the latest location data
+    /// </summary>
+    /// <returns>THe most recent location calculated by the GPS</returns>
     protected virtual LocationData ReadLocation() {
       Debug.LogError("Must implement 'ReadLocation'");
       return new LocationData();

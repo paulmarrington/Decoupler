@@ -7,6 +7,7 @@ namespace Decoupled {
   /// <summary>
   /// Interface to a device compass (magnetometer).
   /// </summary>
+  /// <remarks><a href="http://unitydoc.marrington.net/Mars#service">More...</a></remarks>
   [Serializable]
   public class CompassService : Service<CompassService> {
     [SerializeField, Tooltip("Not too small or there will be jitter")]
@@ -20,36 +21,33 @@ namespace Decoupled {
     protected override void Initialise() { Enabled = true; }
 
     /// Set if compass failed to initialise
-    public virtual bool Offline { get { return true; } }
+    public virtual bool Offline => true;
 
     ///  Accuracy of compass at the moment (in degrees)
-    public virtual float AccuracyDegrees { get { return 0; } }
+    public virtual float AccuracyDegrees => 0;
 
     /// Which way (in degrees) the phone is pointing relative to magnetic north
-    public virtual float MagneticHeading { get { return 0; } }
+    public virtual float MagneticHeading => 0;
 
     /// Epoch time (seconds between 1/1/1970) since last reading
-    public virtual double TimeStamp { get { return 0; } }
+    public virtual double TimeStamp => 0;
 
     /// Which way (in degrees) the phone is pointing relative to geographic north
-    public virtual float TrueHeading { get { return 0; } }
+    public virtual float TrueHeading => 0;
 
-    /// <summary>
-    ///   <para>Sets or retrieves the enabled status of this gyroscope.</para>
-    /// </summary>
+    /// Sets or retrieves the enabled status of this device.
     public virtual bool Enabled { get; set; }
 
-    /// <inheritdoc />
-    public override bool Equals(object other) {
+    /// Check if the magnetic heading has changed significantly.
+    public bool Changed() {
       if (Compare.AlmostEqual(lastTimestamp, TimeStamp) ||
-          Compare.AlmostEqual(lastReading,   MagneticHeading, minimumChange)) return true;
+          Compare.AlmostEqual(lastReading,   MagneticHeading, minimumChange)) {
+        return false;
+      }
 
       lastTimestamp = TimeStamp;
       lastReading   = MagneticHeading;
-      return false;
+      return true;
     }
-
-    /// <inheritdoc />
-    public override int GetHashCode() { return MagneticHeading.GetHashCode(); }
   }
 }

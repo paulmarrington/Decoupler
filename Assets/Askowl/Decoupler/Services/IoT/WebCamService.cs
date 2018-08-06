@@ -6,6 +6,7 @@ namespace Decoupled {
   /// <summary>
   /// Decoupled interface to the device camera.
   /// </summary>
+  /// <remarks><a href="http://unitydoc.marrington.net/Mars#service-3">More...</a></remarks>
   [Serializable]
   public class WebCamService : Service<WebCamService> {
     /// <summary>
@@ -45,12 +46,12 @@ namespace Decoupled {
     /// <summary>
     /// Set in Unity inspector. Only applicable on devices with opposing cameras
     /// </summary>
-    public bool UseFrontFacing { get { return useFrontFacing; } }
+    public bool UseFrontFacing => useFrontFacing;
 
     /// <summary>
     /// Set in Unity inspector. If not true the application will need to set Width and Height
     /// </summary>
-    public bool IsFullScreen { get { return isFullScreen; } }
+    public bool IsFullScreen => isFullScreen;
 
     /// <summary>
     /// True if the camera is on and available. Can be used to turn camera on and off
@@ -77,22 +78,22 @@ namespace Decoupled {
     /// Returns an clockwise angle (in degrees), which can be used to rotate a polygon so camera
     /// contents are shown in correct orientation. Only in 90 degree steps.
     /// </summary>
-    public virtual int RotationAngle { get { return 0; } }
+    public virtual int RotationAngle => 0;
 
     /// <summary>
     /// Returns true if the texture image is vertically flipped.
     /// </summary>
-    public virtual bool VerticalMirror { get { return false; } }
+    public virtual bool VerticalMirror => false;
 
     /// <summary>
     /// Did the video buffer update this frame?
     /// </summary>
-    public virtual bool DidUpdateThisFrame { get { return false; } }
+    public virtual bool DidUpdateThisFrame => false;
 
     /// <summary>
     /// Used by a AspectRatioFitter to make the image look correct
     /// </summary>
-    public float AspectRatio { get { return (float) Width / Height; } }
+    public float AspectRatio => (float) Width / Height;
 
     /// <summary>
     /// Stops the camera
@@ -100,9 +101,9 @@ namespace Decoupled {
     public virtual void Stop() { }
 
     /// <inheritdoc />
-    public override bool Equals(object other) { return other == this; }
+    public override bool Equals(object other) => other == this;
 
     /// <inheritdoc />
-    public override int GetHashCode() { return ToString().GetHashCode(); }
+    public override int GetHashCode() => ToString().GetHashCode();
   }
 }
