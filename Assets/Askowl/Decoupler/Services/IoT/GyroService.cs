@@ -21,27 +21,27 @@ namespace Decoupled {
     /// <summary>
     ///   Returns rotation rate as measured by the device's gyroscope.
     /// </summary>
-    public virtual Vector3 RotationRate { get { return Vector3.zero; } }
+    public virtual Vector3 RotationRate => Vector3.zero;
 
     /// <summary>
     ///   Returns unbiased rotation rate as measured by the device's gyroscope.
     /// </summary>
-    public virtual Vector3 RotationRateUnbiased { get { return Vector3.zero; } }
+    public virtual Vector3 RotationRateUnbiased => Vector3.zero;
 
     /// <summary>
     ///   Returns the gravity acceleration vector expressed in the device's reference frame.
     /// </summary>
-    public virtual Vector3 Gravity { get { return Vector3.zero; } }
+    public virtual Vector3 Gravity => Vector3.zero;
 
     /// <summary>
     ///   Returns the acceleration that the user is giving to the device.
     /// </summary>
-    public virtual Vector3 UserAcceleration { get { return Vector3.zero; } }
+    public virtual Vector3 UserAcceleration => Vector3.zero;
 
     /// <summary>
     ///   Returns the attitude (ie, orientation in space) of the device.
     /// </summary>
-    public virtual Quaternion Attitude { get { return Quaternion.identity; } }
+    public virtual Quaternion Attitude => Quaternion.identity;
 
     // ReSharper disable once UnusedMemberInSuper.Global
     /// <summary>
