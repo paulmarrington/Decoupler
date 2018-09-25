@@ -22,7 +22,7 @@ namespace Decoupled {
     
     public virtual void Error(string          name,
                               string          message,
-                              params object[] more) {
+		    ){//params object[] more) {
       Event(name: name, action: "Error", result: message, more: more);
     }
 
@@ -37,7 +37,7 @@ namespace Decoupled {
     public virtual void Event(string          name,
                               string          action,
                               string          result,
-                              params object[] more) {
+		    ){//params object[] more) {
       Debug.Log("**** Event '" + name + "' -- action: " + action + ", result: " + result +
                 ", more: "     + More(more));
     }
@@ -48,7 +48,7 @@ namespace Decoupled {
     /// <param name="list">The list to convert</param>
     /// <returns>A string containing the csv</returns>
     [NotNull, UsedImplicitly]
-    public static string More(params object[] list) {
+    public static string More(){//params object[] list) {
       string[] items = Array.ConvertAll(array: list, converter: x => x.ToString());
       return string.Join(separator: ",", value: items);
     }
@@ -63,7 +63,7 @@ namespace Decoupled {
     
     public static Dictionary<string, object> ToDictionary(string          action,
                                                           string          result,
-                                                          params object[] more) {
+		    ){//params object[] more) {
       Dictionary<string, object> dictionary = new Dictionary<string, object> {
         {"action", action}, {"result", result}
       };
