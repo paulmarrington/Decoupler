@@ -1,23 +1,17 @@
-﻿using System;
-using Askowl;
-using UnityEngine;
+﻿namespace Decoupled {
+  using System;
+  using Askowl;
+  using UnityEngine;
 
-namespace Decoupled {
-  // ReSharper disable once InconsistentNaming
-  /// Decoupled interface to device GPS
-  /// <inheritdoc />
-  /// <remarks><a href="http://unitydoc.marrington.net/Mars#service-1">More...</a></remarks>
-  [Serializable]
-  public class GPSService : Service<GPSService> {
+  /// <a href=""></a> //#TBD#// <inheritdoc />
+  [Serializable] public class GpsService : Service<GpsService> {
     [SerializeField, Tooltip("Set in Unity inspector, but GPS really controls accuracy")]
     private float desiredAccuracyInMeters = 1;
 
     [SerializeField, Tooltip("Set in Unity inspector, but GPS really controls accuracy")]
     private float updateDistanceInMeters = 0.25f;
 
-    /// <summary>
-    /// Device independent location storage
-    /// </summary>
+    /// <a href="">Device independent location storage</a> //#TBD#//
     public struct LocationData {
       // ReSharper disable MissingXmlDoc
       public float  Latitude;
@@ -29,46 +23,31 @@ namespace Decoupled {
 
       public bool IsSet => Timestamp > 0;
 
-      public override string ToString() =>
-        $"{Longitude:n5}, {Latitude:n5}, alt: {AltitudeInMeters:n2}";
+      public override string ToString() => $"{Longitude:n5}, {Latitude:n5}, alt: {AltitudeInMeters:n2}";
     }
     // ReSharper restore MissingXmlDoc
 
     private LocationData location, lastLocation;
 
-    /// <summary>
-    /// The last location the GPS device recorded
-    /// </summary>
-    public LocationData Location { get { return location; } protected set { location = value; } }
+    /// <a href="">The last location the GPS device recorded</a> //#TBD#//
+    public LocationData Location { get => location; protected set => location = value; }
 
-    /// <summary>
-    /// Set in Unity inspector, but GPS really controls accuracy
-    /// </summary>
+    /// <a href="">Set in Unity inspector, but GPS really controls accuracy</a> //#TBD#//
     public float DesiredAccuracyInMeters => desiredAccuracyInMeters;
 
-    /// <summary>
-    /// Set int he Unity inspector, but GPS decides whether to take notice
-    /// </summary>
+    /// <a href="">Set int he Unity inspector, but GPS decides whether to take notice</a> //#TBD#//
     public float UpdateDistanceInMeters => updateDistanceInMeters;
 
-    /// <summary>
-    /// Set true if the code is running on a device with GPS, the user has enabled GPS access and we have started the GPS tracking.
-    /// </summary>
+    /// <a href="">Set true if the code is running on a device with GPS, the user has enabled GPS access and we have started the GPS tracking</a> //#TBD#//
     public virtual bool Running => false;
 
-    /// <summary>
-    /// Set true if we do not have access to the GPS or its initialisation failed
-    /// </summary>
+    /// <a href="">Set true if we do not have access to the GPS or its initialisation failed</a> //#TBD#//
     public virtual bool Offline => true;
 
-    /// <summary>
-    /// If all is good start the GPS tracking position. Remember that this eats battery.
-    /// </summary>
+    /// <a href="">If all is good start the GPS tracking position. Remember that this eats battery</a> //#TBD#//
     public virtual void StartTracking() { }
 
-    /// Copy from device location structure into the device independent one.
-    /// Translate where needed - especially timestamp
-    /// <returns>true if location has changed</returns>
+    /// <a href="">Copy from device location structure into the device independent one</a> //#TBD#//
     public bool UpdateLocation() {
       lastLocation = location;
       location     = ReadLocation();
@@ -81,56 +60,37 @@ namespace Decoupled {
                        !Compare.AlmostEqual(Altitude,  lastLocation.AltitudeInMeters, vAccuracy);
     }
 
-    /// <summary>
-    /// Poll the GPS device to get the latest location data
-    /// </summary>
-    /// <returns>THe most recent location calculated by the GPS</returns>
+    /// <a href="">Poll the GPS device to get the latest location data</a> //#TBD#//
     protected virtual LocationData ReadLocation() {
       Debug.LogError("Must implement 'ReadLocation'");
       return new LocationData();
     }
 
-    /// <summary>
-    /// Continue to return false until the GPS comes on-line
-    /// </summary>
+    /// <a href="">Continue to return false until the GPS comes on-line</a> //#TBD#//
     public virtual bool Initialising => false;
 
-    /// <summary>
-    /// Turns off GPS tracking - saving battery.
-    /// </summary>
+    /// <a href="">Turns off GPS tracking - saving battery</a> //#TBD#//
     public virtual void StopTracking() { }
 
-    /// <summary>
-    /// Latitude of the last GPS read
-    /// </summary>
+    /// <a href="">Latitude of the last GPS read</a> //#TBD#//
     public float Latitude => location.Latitude;
 
-    /// <summary>
-    /// Longitude of the last GPS read
-    /// </summary>
+    /// <a href="">Longitude of the last GPS read</a> //#TBD#//
     public float Longitude => location.Longitude;
 
-    /// <summary>
-    /// Altitude of the last GPS read
-    /// </summary>
+    /// <a href="">Altitude of the last GPS read</a> //#TBD#//
     public float Altitude => location.AltitudeInMeters;
 
-    /// <summary>
-    /// Timestamp of the last GPS read
-    /// </summary>
+    /// <a href="">Timestamp of the last GPS read</a> //#TBD#//
     public double Timestamp => location.Timestamp;
 
-    /// <summary>
-    /// Horizontal accuracy in metres
-    /// </summary>
+    /// <a href="">Horizontal accuracy in metres</a> //#TBD#//
     public float HorizontalAccuracy => location.HorizontalAccuracyInMetres;
 
-    /// <summary>
-    /// Vertical accuracy in metres
-    /// </summary>
+    /// <a href="">Vertical accuracy in metres</a> //#TBD#//
     public float VerticalAccuracy => location.VerticalAccuracyInMetres;
 
-    /// Fetch the current device coordinates and see if they have changed from last time.
+    /// <a href="">Fetch the current device coordinates and see if they have changed from last time</a> //#TBD#//
     public bool Changed { get; private set; }
 
     /// <inheritdoc />

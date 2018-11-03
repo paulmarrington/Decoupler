@@ -1,20 +1,17 @@
 ﻿// Copyright 2018 (C) paul@marrington.net http://www.askowl.net/unity-packages
 
 #if TextMeshPro
-using TMPro;
-using UnityEditor;
-using UnityEngine;
-
 namespace Decoupled {
+  using TMPro;
+
   public partial class Textual {
+    // ReSharper disable once UnusedMember.Local
     private class TextMeshProUguiInterface : ComponentInterface, TextualInterface {
-      private TextMeshProUGUI TmpText { get { return Component as TextMeshProUGUI; } }
+      private TextMeshProUGUI TmpText => Component as TextMeshProUGUI;
 
-      public string text { get { return TmpText.text; } set { TmpText.text = value; } }
-    }
+      public string text { get => TmpText.text; set => TmpText.text = value; }
 
-    static TextMeshProUguiInterface() {
-      Instantiate<TextMeshProUGUI>(primary: true);
+      public TextMeshProUguiInterface() { Instantiate<TextMeshProUGUI>(primary: true); }
     }
   }
 }

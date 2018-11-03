@@ -2,56 +2,36 @@
 using UnityEngine;
 
 namespace Decoupled {
-  /// <inheritdoc />
-  /// <summary>
-  /// Interface to a device gyroscope.
-  /// </summary>
-  /// <remarks><a href="http://unitydoc.marrington.net/Mars#service-2">More...</a></remarks>
-  [Serializable]
-  public class GyroService : Service<GyroService> {
-    /// <inheritdoc />
-    /// Call in implementation constructor
+  /// <a href=""></a> //#TBD#// <inheritdoc />
+  [Serializable] public class GyroService : Service<GyroService> {
+    /// <a href=""></a> //#TBD#// <inheritdoc />
     protected override void Initialise() {
       Enabled = true; // Tell the gyroscope to start spinning :)
     }
 
-    /// Set if Gyro failed to initialise
+    /// <a href="">Set if Gyro failed to initialise</a> //#TBD#//
     public virtual bool Offline => true;
 
-    /// <summary>
-    ///   Returns rotation rate as measured by the device's gyroscope.
-    /// </summary>
+    /// <a href="">Returns rotation rate as measured by the device's gyroscope.</a> //#TBD#//
     public virtual Vector3 RotationRate => Vector3.zero;
 
-    /// <summary>
-    ///   Returns unbiased rotation rate as measured by the device's gyroscope.
-    /// </summary>
+    /// <a href="">Returns unbiased rotation rate as measured by the device's gyroscope.</a> //#TBD#//
     public virtual Vector3 RotationRateUnbiased => Vector3.zero;
 
-    /// <summary>
-    ///   Returns the gravity acceleration vector expressed in the device's reference frame.
-    /// </summary>
+    /// <a href="">Returns the gravity acceleration vector expressed in the device's reference frame.</a> //#TBD#//
     public virtual Vector3 Gravity => Vector3.zero;
 
-    /// <summary>
-    ///   Returns the acceleration that the user is giving to the device.
-    /// </summary>
+    /// <a href="">Returns the acceleration that the user is giving to the device.</a> //#TBD#//
     public virtual Vector3 UserAcceleration => Vector3.zero;
 
-    /// <summary>
-    ///   Returns the attitude (ie, orientation in space) of the device.
-    /// </summary>
+    /// <a href="">Returns the attitude (ie, orientation in space) of the device.</a> //#TBD#//
     public virtual Quaternion Attitude => Quaternion.identity;
 
     // ReSharper disable once UnusedMemberInSuper.Global
-    /// <summary>
-    /// Some gyroscope services allow an update interval to be set to save polling
-    /// </summary>
+    /// <a href="">Some gyroscope services allow an update interval to be set to save polling</a> //#TBD#//
     public virtual float UpdateIntervalInSeconds { get; set; }
 
-    /// <summary>
-    ///   Sets or retrieves the enabled status of this gyroscope.
-    /// </summary>
+    /// <a href="">Sets or retrieves the enabled status of this gyroscope.</a> //#TBD#//
     public virtual bool Enabled { get; set; }
 
     private Quaternion lastReading;

@@ -1,14 +1,11 @@
-﻿using System;
-using Askowl;
-using UnityEngine;
+﻿namespace Decoupled {
+  using System;
+  using Askowl;
+  using UnityEngine;
 
-namespace Decoupled {
-  /// <inheritdoc />
-  /// <summary>
-  /// Interface to a device compass (magnetometer).
-  /// </summary>
-  /// <remarks><a href="http://unitydoc.marrington.net/Mars#service">More...</a></remarks>
+  /// <a href="">Interface to a device compass (magnetometer)</a> //#TBD#// <inheritdoc />
   [Serializable]
+  // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
   public class CompassService : Service<CompassService> {
     [SerializeField, Tooltip("Not too small or there will be jitter")]
     private float minimumChange = 0.2f;
@@ -16,34 +13,31 @@ namespace Decoupled {
     private float  lastReading;
     private double lastTimestamp;
 
-    /// <inheritdoc />
-    /// Call in implementation constructor
+    /// <a href="">Call in implementation constructor</a> //#TBD#// <inheritdoc />
     protected override void Initialise() { Enabled = true; }
 
-    /// Set if compass failed to initialise
+    /// <a href="">Set if compass failed to initialise</a> //#TBD#//
     public virtual bool Offline => true;
 
-    ///  Accuracy of compass at the moment (in degrees)
+    /// <a href="">Accuracy of compass at the moment (in degrees)</a> //#TBD#//
     public virtual float AccuracyDegrees => 0;
 
-    /// Which way (in degrees) the phone is pointing relative to magnetic north
+    /// <a href="">Which way (in degrees) the phone is pointing relative to magnetic north</a> //#TBD#//
     public virtual float MagneticHeading => 0;
 
-    /// Epoch time (seconds between 1/1/1970) since last reading
+    /// <a href="">Epoch time (seconds between 1/1/1970) since last reading</a> //#TBD#//
     public virtual double TimeStamp => 0;
 
-    /// Which way (in degrees) the phone is pointing relative to geographic north
+    /// <a href="">Which way (in degrees) the phone is pointing relative to geographic north</a> //#TBD#//
     public virtual float TrueHeading => 0;
 
-    /// Sets or retrieves the enabled status of this device.
+    /// <a href="">Sets or retrieves the enabled status of this device</a> //#TBD#//
     public virtual bool Enabled { get; set; }
 
-    /// Check if the magnetic heading has changed significantly.
+    /// <a href="">Check if the magnetic heading has changed significantly</a> //#TBD#//
     public bool Changed() {
       if (Compare.AlmostEqual(lastTimestamp, TimeStamp) ||
-          Compare.AlmostEqual(lastReading,   MagneticHeading, minimumChange)) {
-        return false;
-      }
+          Compare.AlmostEqual(lastReading,   MagneticHeading, minimumChange)) { return false; }
 
       lastTimestamp = TimeStamp;
       lastReading   = MagneticHeading;

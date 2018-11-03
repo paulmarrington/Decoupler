@@ -7,18 +7,10 @@ using Random = UnityEngine.Random;
 
 namespace Decoupled.Mock {
   // ReSharper disable once InconsistentNaming
-  /// <inheritdoc />
-  /// <summary>
-  /// Enable in a scene and the game will get GPS coordinates from this module.
-  /// The game will not complain when run on a device without a GPS.
-  /// </summary>
-  /// <remarks><a href="http://unitydoc.marrington.net/Mars#mocking">More...</a></remarks>
+  /// <a href=""></a> //#TBD#// <inheritdoc />
   public class MockGPS : Mock<MockGPS.Service> {
-    /// <summary>
-    /// Seed data for generating GPS points - to be set in the Unity Inspector
-    /// </summary>
-    [Serializable]
-    public class StartingPoint {
+    /// <a href="">Seed data for generating GPS points - to be set in the Unity Inspector</a> //#TBD#//
+    [Serializable] public class StartingPoint {
       [SerializeField] internal float  Latitude               = -27.46850f;
       [SerializeField] internal float  Longitude              = 151.94379f;
       [SerializeField] internal float  RangeInMetres          = 100;
@@ -29,20 +21,18 @@ namespace Decoupled.Mock {
       [SerializeField] internal float  TimeAccelerationFactor = 1;
     }
 
-    [SerializeField] internal StartingPoint startingPoint;
+    [SerializeField] private StartingPoint startingPoint;
 
     /// <inheritdoc />
     protected override void Awake() {
       base.Awake();
-      MockService.locations = new Service.Locations() {StartingPoint = startingPoint};
+      MockService.locations = new Service.Locations() { StartingPoint = startingPoint };
       MockService.StartTracking();
     }
 
-    /// <inheritdoc />
-    /// <summary>
-    /// The actual mock service - that returns dummy data to the Unity application
-    /// </summary>
-    public class Service : GPSService {
+    /// <a href="">The actual mock service - that returns dummy data to the Unity application</a> //#TBD#// <inheritdoc />
+    public class Service : GpsService {
+      // ReSharper disable once InconsistentNaming
       internal Locations locations;
       private  bool      running, initialising, tracking;
 
@@ -70,7 +60,7 @@ namespace Decoupled.Mock {
       private void SetState() {
         if (running || !tracking) return;
 
-        int elapsed = (int) (Time.realtimeSinceStartup - start);
+        var elapsed = (int) (Time.realtimeSinceStartup - start);
         if (elapsed < (int) (1 * locations.StartingPoint.TimeAccelerationFactor)) return;
 
         initialising = false;
@@ -93,14 +83,12 @@ namespace Decoupled.Mock {
         return locations.Current;
       }
 
-      /// <summary>
-      /// Retrieve semi-random locations restricted by StartingPoint.
-      /// </summary>
+      /// <a href="">Retrieve semi-random locations restricted by StartingPoint</a> //#TBD#//
       public class Locations : IEnumerator<LocationData> {
         private StartingPoint startingPoint;
 
         internal StartingPoint StartingPoint {
-          get { return startingPoint; }
+          get => startingPoint;
           set {
             startingPoint = value;
             ResetToStart();
@@ -119,8 +107,9 @@ namespace Decoupled.Mock {
           lastLocation.Latitude  += Random.Range(min: -range, max: range);
           lastLocation.Longitude += Random.Range(min: -range, max: range);
 
-          lastLocation.AltitudeInMeters += Random.Range(min: -StartingPoint.AltitudeRange,
-                                                        max: StartingPoint.AltitudeRange);
+          lastLocation.AltitudeInMeters += Random.Range(
+            min: -StartingPoint.AltitudeRange,
+            max: StartingPoint.AltitudeRange);
 
           lastLocation.Timestamp += StartingPoint.SecondsBetweenReadings;
 

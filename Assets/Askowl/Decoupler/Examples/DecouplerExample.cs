@@ -2,15 +2,10 @@
 using Decoupled;
 using NUnit.Framework;
 
-/// <summary>
-/// Unit tests for Decoupler system
-/// </summary>
+/// <a href="">Unit tests for Decoupler system</a> //#TBD#//
 public sealed class TestDecoupler {
-  /// <summary>
-  /// Make sure the default works if no concrete services are registered
-  /// </summary>
-  [Test]
-  public void DefaultServiceTest() {
+  /// <a href="">Make sure the default works if no concrete services are registered</a> //#TBD#//
+  [Test] public void DefaultServiceTest() {
     FirstDecouplerInterface.Reset();
 
     var firstDecoupler = FirstDecouplerInterface.Instance;
@@ -19,11 +14,8 @@ public sealed class TestDecoupler {
     Assert.AreEqual(expected: firstDecoupler.Entry2(), actual: 12);
   }
 
-  /// <summary>
-  /// Make sure no calls slip through to the default service after registration
-  /// </summary>
-  [Test]
-  public void LoadImplementedServiceTest() {
+  /// <a href="">Make sure no calls slip through to the default service after registration</a> //#TBD#//
+  [Test] public void LoadImplementedServiceTest() {
     FirstDecouplerInterface.Reset();
 
     FirstDecouplerInterface.Register<FirstDecouplerService>();

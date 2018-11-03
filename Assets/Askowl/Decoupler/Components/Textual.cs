@@ -1,42 +1,31 @@
 ﻿// Copyright 2018 (C) paul@marrington.net http://www.askowl.net/unity-packages
 
-using System;
-using UnityEditor;
-using UnityEngine;
-using UnityEngine.UI;
-
 namespace Decoupled {
+  using UnityEngine.UI;
+
   internal interface TextualInterface {
+    // ReSharper disable once InconsistentNaming
     string text { get; set; }
   }
 
-  /// <inheritdoc cref="MonoBehaviour" />
-  /// <summary>
-  /// Interface to generic UI text functions. Defaults to <see cref="UnityEngine.UI.Text"/>
-  /// </summary>
-  /// <remarks><a href="http://decoupler.marrington.net#decoupledtext">More...</a></remarks>
+  /// <a href=""></a> //#TBD#// <inheritdoc cref="ComponentDecoupler{T}" />
   public partial class Textual : ComponentDecoupler<Textual>, TextualInterface {
-    private TextualInterface Backer { get { return Instance as TextualInterface; } }
+    private TextualInterface Backer => Instance as TextualInterface;
 
-    /// <summary>
-    /// Get and set text in backing component
-    /// </summary>
-    // ReSharper disable once InconsistentNaming
-    public string text { get { return Backer.text; } set { Backer.text = value; } }
+    /// <a href=""></a> //#TBD#//
+    public string text { get => Backer.text; set => Backer.text = value; }
   }
 
   public partial class Textual {
     private class UnityTextInterface : ComponentInterface, TextualInterface {
-      private Text UnityText { get { return Component as Text; } }
+      private Text UnityText => Component as Text;
 
-      public string text { get { return UnityText.text; } set { UnityText.text = value; } }
+      public string text { get => UnityText.text; set => UnityText.text = value; }
 
-      public UnityTextInterface() { Instantiate<Text>(false); }
+      public UnityTextInterface() { Instantiate<Text>(primary: false); }
     }
 
-    #pragma warning disable CS0414
     // ReSharper disable once UnusedMember.Local
     private UnityTextInterface unityTextInterface = new UnityTextInterface();
-    #pragma warning restore CS0414
   }
 }

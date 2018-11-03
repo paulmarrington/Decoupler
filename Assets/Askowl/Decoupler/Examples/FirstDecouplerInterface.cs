@@ -1,18 +1,13 @@
 ﻿#if UNITY_EDITOR && AskowlDecoupler
 namespace Decoupled {
-  /// <inheritdoc />
-  /// <summary>
-  /// Default interface for the unit test
-  /// </summary>
+  /// <a href="">Default interface for the unit test</a> //#TBD#// <inheritdoc />
   public class FirstDecouplerInterface : Service<FirstDecouplerInterface> {
-    /// <summary>
-    /// something to check which instance is used.
-    /// </summary>
+    /// <a href="">something to check which instance is used</a> //#TBD#//
     protected int Number;
 
     internal virtual void Entry1(int number) { Number = number; }
 
-    internal int Entry2() { return Number; }
+    internal int Entry2() => Number;
   }
 }
 #endif
