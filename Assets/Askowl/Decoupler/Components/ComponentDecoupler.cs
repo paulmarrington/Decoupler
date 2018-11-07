@@ -5,19 +5,19 @@ namespace Decoupled {
   using System.Collections.Generic;
   using UnityEngine;
 
-  /// <a href=""></a> //#TBD#// <inheritdoc />
+  /// <a href="http://bit.ly/2AMWG4P">Creating Decoupled Components</a> <inheritdoc />
   public abstract class ComponentDecoupler<T> : MonoBehaviour where T : ComponentDecoupler<T> {
-    /// <a href=""></a> //#TBD#//
+    /// <a href="http://bit.ly/2AO0T8m">List of component initialisers (used internally)</a>
     protected static event Action<T> Initialisers = delegate { };
 
     // ReSharper disable once StaticMemberInGenericType
     private static readonly HashSet<Type> interfaces = new HashSet<Type>();
 
-    /// <a href=""></a> //#TBD#//
+    /// <a href="http://bit.ly/2AO0T8m">Parent class for component interfaces</a>
     public class ComponentInterface {
       internal Component Component;
 
-      /// <a href=""></a> //#TBD#//
+      /// <a href="http://bit.ly/2AO0T8m">Called in concrete class constructor</a>
       protected void Instantiate<Tc>(bool primary) where Tc : Component {
         Type type = typeof(Tc);
         if (interfaces.Contains(type)) return;
@@ -39,7 +39,7 @@ namespace Decoupled {
         Initialisers += initialiser;
       }
 
-      /// <a href=""></a> //#TBD#//
+      /// <a href="http://bit.ly/2PHS606">Returns game object name as the most useful</a>
       public override string ToString() => Component == null ? "null" : Component.gameObject.name;
     }
 
@@ -47,10 +47,10 @@ namespace Decoupled {
 
     private Type defaultComponent;
 
-    /// <a href=""></a> //#TBD#//
+    /// <a href="http://bit.ly/2AO0T8m">Set when the component is first instantiated (used internally)</a>
     protected bool Instantiated => componentInterface != null;
 
-    /// <a href=""></a> //#TBD#//
+    /// <a href="http://bit.ly/2AO0T8m">Called in concrete component instances to get the correct backing component</a>
     protected ComponentInterface Instance {
       get {
         if (componentInterface != null) return componentInterface;

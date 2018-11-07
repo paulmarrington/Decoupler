@@ -11,8 +11,11 @@ namespace Decoupled {
 
       public string text { get => TmpText.text; set => TmpText.text = value; }
 
-      public TextMeshProUguiInterface() { Instantiate<TextMeshProUGUI>(primary: true); }
+      public TextMeshProUguiInterface() => Instantiate<TextMeshProUGUI>(primary: true);
     }
+
+    // ReSharper disable once UnusedMember.Local
+    private TextMeshProUguiInterface textMeshProUguiInterface = new TextMeshProUguiInterface();
   }
 }
 #endif

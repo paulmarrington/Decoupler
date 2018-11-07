@@ -20,8 +20,9 @@ namespace Decoupled.Mock {
       [SerializeField] internal float  SecondsBetweenReadings = 5;
       [SerializeField] internal float  TimeAccelerationFactor = 1;
     }
-
+    #pragma warning disable 0649
     [SerializeField] private StartingPoint startingPoint;
+    #pragma warning restore 0649
 
     /// <inheritdoc />
     protected override void Awake() {

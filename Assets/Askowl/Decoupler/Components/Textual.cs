@@ -3,16 +3,18 @@
 namespace Decoupled {
   using UnityEngine.UI;
 
-  internal interface TextualInterface {
+  /// <a href="http://bit.ly/2PLnhaQ">Change text component properties - Unity or TextMeshPro</a>
+  public interface TextualInterface {
     // ReSharper disable once InconsistentNaming
+    /// <a href="http://bit.ly/2PLnhaQ">Get or set the text to display</a>
     string text { get; set; }
   }
 
-  /// <a href=""></a> //#TBD#// <inheritdoc cref="ComponentDecoupler{T}" />
+  /// <a href="http://bit.ly/2PLnhaQ">Decoupled text component concrete implementation</a> <inheritdoc cref="ComponentDecoupler{T}" />
   public partial class Textual : ComponentDecoupler<Textual>, TextualInterface {
     private TextualInterface Backer => Instance as TextualInterface;
 
-    /// <a href=""></a> //#TBD#//
+    /// <inheritdoc />
     public string text { get => Backer.text; set => Backer.text = value; }
   }
 
@@ -22,7 +24,7 @@ namespace Decoupled {
 
       public string text { get => UnityText.text; set => UnityText.text = value; }
 
-      public UnityTextInterface() { Instantiate<Text>(primary: false); }
+      public UnityTextInterface() => Instantiate<Text>(primary: false);
     }
 
     // ReSharper disable once UnusedMember.Local
