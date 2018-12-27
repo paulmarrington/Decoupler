@@ -1,8 +1,8 @@
-﻿namespace Decoupled {
-  using System;
-  using Askowl;
-  using UnityEngine;
+﻿using System;
+using Askowl;
+using UnityEngine;
 
+namespace Decoupled {
   /// <a href="">Interface to a device compass (magnetometer)</a> //#TBD#// <inheritdoc />
   [Serializable]
   // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
@@ -14,7 +14,7 @@
     private double lastTimestamp;
 
     /// <a href="">Call in implementation constructor</a> //#TBD#// <inheritdoc />
-    protected override void Initialise() { Enabled = true; }
+    protected override void Initialise() => Enabled = true;
 
     /// <a href="">Set if compass failed to initialise</a> //#TBD#//
     public virtual bool Offline => true;
@@ -32,6 +32,7 @@
     public virtual float TrueHeading => 0;
 
     /// <a href="">Sets or retrieves the enabled status of this device</a> //#TBD#//
+    // ReSharper disable once UnusedAutoPropertyAccessor.Global
     public virtual bool Enabled { get; set; }
 
     /// <a href="">Check if the magnetic heading has changed significantly</a> //#TBD#//
