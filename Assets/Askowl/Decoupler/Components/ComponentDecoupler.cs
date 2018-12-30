@@ -1,5 +1,7 @@
 ﻿// Copyright 2018 (C) paul@marrington.net http://www.askowl.net/unity-packages
 
+using Askowl;
+
 namespace Decoupled {
   using System;
   using System.Collections.Generic;
@@ -11,7 +13,7 @@ namespace Decoupled {
     protected static event Action<T> Initialisers = delegate { };
 
     // ReSharper disable once StaticMemberInGenericType
-    private static readonly HashSet<Type> interfaces = new HashSet<Type>();
+    private static readonly Map interfaces = new Map();
 
     /// <a href="http://bit.ly/2AO0T8m">Parent class for component interfaces</a>
     public class ComponentInterface {
@@ -20,7 +22,7 @@ namespace Decoupled {
       /// <a href="http://bit.ly/2AO0T8m">Called in concrete class constructor</a>
       protected void Instantiate<Tc>(bool primary) where Tc : Component {
         Type type = typeof(Tc);
-        if (interfaces.Contains(type)) return;
+        if (interfaces[type].Found) return;
 
         interfaces.Add(type);
 
