@@ -1,12 +1,14 @@
 // Copyright 2019 (C) paul@marrington.net http://www.askowl.net/unity-packages
+#if AskowlTests
 
 using UnityEngine;
 
-namespace CustomAsset.Services {
+namespace Decoupler.Services {
   /// <a href=""></a> //#TBD#//
-  [CreateAssetMenu(menuName = "Custom Assets/Services/ServiceExample/Context", fileName = "ServiceExampleContext")]
+  [CreateAssetMenu(menuName = "Examples/Decouple/ServiceExample/Context", fileName = "ServiceExampleContext")]
   public class ServiceExampleContext : Services<ServiceExampleServiceAdapter, ServiceExampleContext>.Context {
     /// <a href=""></a> //#TBD#//
     protected bool Equals(ServiceExampleContext other) => base.Equals(other);
   }
 }
+#endif

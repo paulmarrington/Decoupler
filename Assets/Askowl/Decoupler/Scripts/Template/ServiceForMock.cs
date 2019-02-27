@@ -4,9 +4,9 @@ using System;
 using Askowl;
 using UnityEngine;
 
-namespace CustomAsset.Services {
+namespace Decoupler.Services {
   /// <a href=""></a> //#TBD#//
-  [CreateAssetMenu(menuName = "Custom Assets/Services/Template/ServiceForMock", fileName = "TemplateServiceForMock")]
+  [CreateAssetMenu(menuName = "Decoupled/Template/ServiceForMock", fileName = "TemplateServiceForMock")]
   public class TemplateServiceForMock : TemplateServiceAdapter {
     /// <a href="">Prepare the mock service for operations</a> //#TBD#//
     protected override void Prepare() => base.Prepare();

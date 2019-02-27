@@ -1,17 +1,15 @@
 ﻿// Copyright 2019 (C) paul@marrington.net http://www.askowl.net/unity-packages
 #if AskowlTests
 using System.Collections;
-using System.Collections.Generic;
 using Askowl.Gherkin;
 using CustomAsset;
 using CustomAsset.Mutable;
-using CustomAsset.Services;
-using UnityEngine;
+using Decoupler.Services;
 using UnityEngine.Assertions;
 using UnityEngine.TestTools;
 // ReSharper disable MissingXmlDoc
 
-namespace Askowl.CustomAssets.Examples {
+namespace Askowl.Decoupler.Examples {
   public class ServiceExamples : PlayModeTests {
     /// Sample service call
     private Emitter CallService() {
@@ -76,10 +74,10 @@ namespace Askowl.CustomAssets.Examples {
     }
 
     [Step(@"^we use service (\d+)$")] public Emitter WeUseService(string[] matches) {
-      var serviceNumber = int.Parse(matches[0]);
+      var serviceNumber        = int.Parse(matches[0]);
       firstValue = secondValue = 0;
       return Fiber.Start.WaitFor(_ => CallService())
-                  .Do(_ => Assert.AreEqual(serviceNumber, addService.Dto.response+1))
+                  .Do(_ => Assert.AreEqual(serviceNumber, addService.Dto.response + 1))
                   .OnComplete;
     }
 
@@ -87,7 +85,7 @@ namespace Askowl.CustomAssets.Examples {
 
     [Step(@"^we will eventually get the same service number twice in a row$")]
     public Emitter TwiceInARow(string[] matches) {
-      string services = "";
+      string services          = "";
       firstValue = secondValue = 0;
       var fiber = Fiber.Start.Begin.Do(_ => services = "")
                        .Begin.WaitFor(_ => CallService())
@@ -99,7 +97,7 @@ namespace Askowl.CustomAssets.Examples {
 
     [Step(@"^we will never get the same service number twice in a row$")]
     public Emitter NeverTwiceInARow(string[] matches) {
-      string services = "";
+      string services          = "";
       firstValue = secondValue = 0;
       var fiber = Fiber.Start.Begin.ExitOnError.Do(_ => services = "").Begin
                        .WaitFor(_ => CallService())
@@ -113,7 +111,7 @@ namespace Askowl.CustomAssets.Examples {
     [Step(@"^each service is called (\d+) times in a row$")] public void InARow() { }
 
     [Step(@"^we get the same service twice cycling$")] public Emitter RepeatCycling() {
-      string services = "";
+      string services          = "";
       firstValue = secondValue = 0;
       var fiber = Fiber.Start.Begin
                        .WaitFor(_ => CallService())

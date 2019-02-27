@@ -1,10 +1,11 @@
 // Copyright 2019 (C) paul@marrington.net http://www.askowl.net/unity-packages
+#if AskowlTests
 
 using Askowl;
 using UnityEditor;
 // ReSharper disable MissingXmlDoc
 
-namespace CustomAsset.Services {
+namespace Decoupler.Services {
   /// <a href=""></a><inheritdoc /> //#TBD#//
   public abstract class
     ServiceExampleServiceAdapter : Services<ServiceExampleServiceAdapter, ServiceExampleContext>.ServiceAdapter {
@@ -59,3 +60,4 @@ namespace CustomAsset.Services {
     #endregion
   }
 }
+#endif

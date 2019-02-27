@@ -3,7 +3,7 @@
 using Askowl;
 using UnityEditor;
 
-namespace CustomAsset.Services {
+namespace Decoupler.Services {
   /// <a href=""></a><inheritdoc /> //#TBD#//
   public abstract class TemplateServiceAdapter : Services<TemplateServiceAdapter, TemplateContext>.ServiceAdapter {
     #region Service Support

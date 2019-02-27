@@ -2,8 +2,8 @@
 
 using UnityEngine;
 
-namespace CustomAsset.Services {
+namespace Decoupler.Services {
   /// Services Manager resides in project hierarchy to load and initialise service management
-  [CreateAssetMenu(menuName = "Custom Assets/Services/Template/Service", fileName = "TemplateServicesManager")]
+  [CreateAssetMenu(menuName = "Decoupled/Template/Service", fileName = "TemplateServicesManager")]
   public class TemplateServicesManager : Services<TemplateServiceAdapter, TemplateContext> { }
 }

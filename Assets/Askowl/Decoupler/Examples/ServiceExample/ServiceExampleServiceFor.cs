@@ -1,4 +1,5 @@
 // Copyright 2019 (C) paul@marrington.net http://www.askowl.net/unity-packages
+#if AskowlTests
 
 using System;
 using UnityEngine;
@@ -7,9 +8,9 @@ using Askowl;
 // Add using statements for service library here
 #endif
 
-namespace CustomAsset.Services {
+namespace Decoupler.Services {
   /// <a href=""></a><inheritdoc /> //#TBD#//
-  [CreateAssetMenu(menuName = "Custom Assets/Services/ServiceExample/Service", fileName = "ServiceExampleServiceFor")]
+  [CreateAssetMenu(menuName = "Examples/Decouple/ServiceExample/Service", fileName = "ServiceExampleServiceFor")]
   public abstract class ServiceExampleServiceFor : ServiceExampleServiceAdapter {
     #if ServiceExampleServiceFor || true
     protected override void Prepare() => base.Prepare();
@@ -26,3 +27,4 @@ namespace CustomAsset.Services {
     #endif
   }
 }
+#endif

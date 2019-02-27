@@ -3,9 +3,10 @@
 using System;
 using System.Linq;
 using Askowl;
+using CustomAsset;
 using UnityEngine;
 
-namespace CustomAsset.Services {
+namespace Decoupler.Services {
   /// <a href="">Separate selection and service from context for easy Inspector configuration</a> //#TBD#//
   public class Services<TS, TC> : Manager
     where TS : Services<TS, TC>.ServiceAdapter

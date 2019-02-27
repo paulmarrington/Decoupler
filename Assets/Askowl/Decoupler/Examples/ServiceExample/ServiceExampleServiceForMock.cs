@@ -1,13 +1,13 @@
 // Copyright 2019 (C) paul@marrington.net http://www.askowl.net/unity-packages
+#if AskowlTests
 
 using Askowl;
 using CustomAsset.Mutable;
 using UnityEngine;
 
-namespace CustomAsset.Services {
+namespace Decoupler.Services {
   /// <a href=""></a> //#TBD#//
-  [CreateAssetMenu(
-    menuName = "Custom Assets/Services/ServiceExample/ServiceForMock", fileName = "ServiceExampleServiceForMock")]
+  [CreateAssetMenu(menuName = "Examples/Decouple/ServiceExample/ServiceForMock", fileName = "ServiceExampleServiceForMock")]
   public class ServiceExampleServiceForMock : ServiceExampleServiceAdapter {
     [SerializeField] private String mockState    = default;
     [SerializeField] private int    serviceIndex = 0;
@@ -42,3 +42,4 @@ namespace CustomAsset.Services {
     public override bool IsExternalServiceAvailable() => true;
   }
 }
+#endif

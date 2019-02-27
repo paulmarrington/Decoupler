@@ -6,9 +6,9 @@ using Askowl;
 // Add using statements for service library here
 #endif
 
-namespace CustomAsset.Services {
+namespace Decoupler.Services {
   /// <a href=""></a><inheritdoc /> //#TBD#//
-  [CreateAssetMenu(menuName = "Custom Assets/Services/Template/Service", fileName = "TemplateServiceFor")]
+  [CreateAssetMenu(menuName = "Decoupled/Template/Service", fileName = "TemplateServiceFor")]
   public abstract class TemplateServiceFor : TemplateServiceAdapter {
     #if TemplateServiceFor || true
     protected override void Prepare() => base.Prepare();
