@@ -9,14 +9,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4847664e908cd473e8e4fd44829ee277, type: 3}
+  m_Script: {fileID: 11500000, guid: d24f6225bedcc4d71bad4ca7fa668973, type: 3}
   m_Name: round-robinServicesManager
   m_EditorClassIdentifier: 
   description: 
   services:
-  - {fileID: 11400000, guid: 8d5c3d73b391b499d8bf0dfe45431a77, type: 2}
-  - {fileID: 11400000, guid: 37a5ce57a7dd741deac297333ecb5ce1, type: 2}
-  context: {fileID: 11400000, guid: a7e62e8f5761145b9839ed59762d7d9e, type: 2}
-  order: 1
-  usagesRemaining: 2
-  currentService: {fileID: 11400000, guid: 37a5ce57a7dd741deac297333ecb5ce1, type: 2}
+  - {fileID: 11400000, guid: 6798815b6e6bc4cc3886290270f4d992, type: 2}
+  - {fileID: 11400000, guid: 31f88c5ec8db34d7391bfe34676cbcb1, type: 2}
+  context: {fileID: 11400000, guid: c1f93cb30436c4049bc73647a31b5fc9, type: 2}
+  order: 2
+  usagesRemaining: 0
+  currentService: {fileID: 0}

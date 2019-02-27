@@ -5,7 +5,8 @@ using UnityEngine;
 
 namespace Decoupler.Services {
   /// Services Manager resides in project hierarchy to load and initialise service management
-  [CreateAssetMenu(menuName = "Examples/Decouple/ServiceExample/Service", fileName = "ServiceExampleServicesManager")]
+  [CreateAssetMenu(
+    menuName = "Examples/Decouple/ServiceExample/ServiceManager", fileName = "ServiceExampleServicesManager")]
   public class ServiceExampleServicesManager : Services<ServiceExampleServiceAdapter, ServiceExampleContext> { }
 }
 #endif

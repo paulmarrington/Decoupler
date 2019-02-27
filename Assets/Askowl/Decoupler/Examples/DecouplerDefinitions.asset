@@ -9,8 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e80bcfc52d60b4ca7ae23a5cea4855f3, type: 3}
-  m_Name: ServiceExampleMockContext
+  m_Script: {fileID: 11500000, guid: fb52da872b4994be98fa81bdd3d025d4, type: 3}
+  m_Name: DecouplerDefinitions
   m_EditorClassIdentifier: 
   description: 
-  environment: {fileID: 11400000, guid: 9e4edb4dbb8a34b1eba8bc288818dd00, type: 2}
+  vocabularies:
+  - {fileID: 11400000, guid: 20fe77311133848c0bc03cf2605153d6, type: 2}
+  gherkinDefinitions:
+  - {fileID: 11500000, guid: 8e16a8c999cad41a1b563ee612fc7aea, type: 3}

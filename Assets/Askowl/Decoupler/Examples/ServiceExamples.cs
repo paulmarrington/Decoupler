@@ -32,7 +32,7 @@ namespace Askowl.Decoupler.Examples {
     private ServiceExampleServicesManager                manager;
 
     private IEnumerator ServiceTest(string label) {
-      yield return Feature.Go("CustomAssetsDefinitions", featureFile: "Services", label).AsCoroutine();
+      yield return Feature.Go("DecouplerDefinitions", featureFile: "Services", label).AsCoroutine();
     }
 
     [UnityTest] public IEnumerator TopDownSuccess()   { yield return ServiceTest("@TopDownSuccess"); }

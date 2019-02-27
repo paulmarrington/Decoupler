@@ -9,12 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 06627434adc264003b20a04cd7b562fa, type: 3}
+  m_Script: {fileID: 11500000, guid: a43d553ac7e154d619cb34c97423a989, type: 3}
   m_Name: ServiceExampleServiceForMock 0
   m_EditorClassIdentifier: 
   description: 
   priority: 1
-  usageBalance: 2
-  context: {fileID: 11400000, guid: a7e62e8f5761145b9839ed59762d7d9e, type: 2}
-  mockState: {fileID: 11400000, guid: 67401ebea3bac4c35910be6e89d7e1e9, type: 2}
+  usageBalance: 1
+  context: {fileID: 11400000, guid: c1f93cb30436c4049bc73647a31b5fc9, type: 2}
+  mockState: {fileID: 11400000, guid: 3c7ae51c91a444d0494a323929d165d8, type: 2}
   serviceIndex: 0
