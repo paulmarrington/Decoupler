@@ -1,6 +1,5 @@
 ﻿// Copyright 2019 (C) paul@marrington.net http://www.askowl.net/unity-packages
 
-#if UNITY_EDITOR
 using System;
 using System.IO;
 using Askowl;
@@ -150,4 +149,3 @@ namespace Decoupler {
     }
   }
 }
-#endif
