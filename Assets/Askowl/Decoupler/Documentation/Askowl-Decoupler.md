@@ -12,6 +12,10 @@ The Askowl Decoupler is here to provide an interface between your code and Unity
 
 > Read the code in the Examples Folder.
 
+# Videos
+
+# Cheat-Sheet
+
 # Introduction
 
 Decoupling software components and systems have been a focus for many decades. In the 80s we talked about software black boxes. You didn't care what was inside, just on the inputs and outputs.
@@ -20,12 +24,12 @@ Microsoft had much fun in the 90's designing and implementing COM and DCOM. I st
 
 Now we have Web APIs, REST or SOAP interfaces and micro-services. Design patterns such as the Factory Pattern are here to "force" decoupling at the enterprise software level. There have been dozens of standards over the years.
 
-Despite this, programmers have continued to create tightly coupled systems even while enforcing the requirements of the framework.
+Despite this, developers have continued to create tightly coupled systems.
 
 Consider a simple example. I have an app that uses a Google Maps API to translate coordinates into a description "Five miles south-west of Gundagai". My app is running on an iPhone calling into a cloud of Google servers. The hardware is different and remote, and they both use completely different software systems. However, my app won't run, or at least perform correctly, without Google. Worse still if I am using a Google library, it won't even compile without a copy.
 
 # What is the Askowl Decoupler
-First and foremost, the Askowl Decoupler is a way to decouple your app from packages in the Unity3D ecosystem.
+First and foremost, the Askowl Decoupler is a way to decouple your app from packages in the Unity3D ecosystem. This would include sub-systems withing your app or game.
 
 It works at the C# class level, meaning that it does not provide the physical separation. That is done by the Unity packages when needed. In approach, it acts very much like a C# Interface.
 
@@ -39,10 +43,10 @@ It works at the C# class level, meaning that it does not provide the physical se
 # Decoupling Packages
 
 ## How do I use a decoupled package?
-Always get an instance through static methods on the interface.
+Always get an instance through static methods on the 'interface'.
 
 ### For singleton services
-Access the registered service using the Instance selector. If keeping a reference, set it in Awake or later. It gives the services an opportunity to register.
+Access the registered service using the Instance selector. If keeping a reference, set it in Awake or later. It gives the external services an opportunity to register and initialise.
 ```c#
 Decoupled.Authentication auth;
 void Awake() { auth = Decoupled.Authentication.Instance; }
@@ -62,11 +66,11 @@ Access the next registered service using the Instance selector.
 In the example, the code will cycle through all the advertising services, stopping when one display an ad or when the list has been exhausted.
 
 ### To select a named service
-All services have a name. Names are set by either specifying the name in `Register`/`Load` or using the default name is the class name of the service. A service can then be retrieved by name using `Named`.
+All services have a name. Names are set by either specifying the name in `Register`/`Load` or using the default name, being the class name of the service. A service can then be retrieved by name using `Named`.
 
 ```c#
 [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-    private static void RegisterService() { Social.Register <Facebook>(); }
+    private static void RegisterService() { Social.Register<Facebook>(); }
 
 ```
 
@@ -92,10 +96,10 @@ for (int i = 0; i < Decoupled.Service.InstanceList.Count; i++) {
 ```
 
 ### How do I know if there is a service implemented
-All service interfaces have a static member `Available`.
+All service interfaces have a method `IsExternalServiceAvailable()`.
 
 ```c#
-  if (!Decoupled.Social.Available) Debug.Log("Oops");
+  if (!Decoupled.Social.IsExternalServiceAvailable()) Debug.Log("Oops");
 ```
 
 ## How much work do I need to do to implement a decoupler?
@@ -118,44 +122,27 @@ In either case, if external dependencies are needed, the log provides what is ne
 5. Implement the virtual methods as needed (using override)
 6. Create a loader method to register this service
 
-A sample service would look something like this.
+#### Initialisation
 ```c#
-#if AnalyticsFabric
-  public sealed class AnalyticsFabric: Analytics {
-    public override void Event(string name){/* etc etc */}
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-    private static void RegisterService() { Analytics.Register<AnalyticsFabric>(); }
-  }
+#if ServiceExampleServiceFor
+public override bool IsExternalServiceAvailable() => true;
+[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+private static void RegisterService() { Analytics.Register<AnalyticsFabric>(); }
+#else
+public override bool IsExternalServiceAvailable() => false;
 #endif
-```
-By using ***Askowl.DefineBuild** set a definition file in an ***Editor*** directory. Here we are deciding on the existence of a package by the existence or not of a directory.
 
-```c#
-  [InitializeOnLoad]
-  public sealed class DetectMyUnityPackage : DefineSymbols {
-    static DetectMyUnityPackage() {
-      bool usable = HasFolder("Fabric");
-      AddOrRemoveDefines(addDefines: usable, named: "AnalyticsFabric");
-    }
-  }
+[InitializeOnLoadMethod] private static void DetectService() {
+  bool usable = DefineSymbols.HasPackage("Fabric") || DefineSymbols.HasFolder("Fabric");
+  DefineSymbols.AddOrRemoveDefines(addDefines: usable, named: "AnalyticsFabric");
 }
 ```
+`DetectService` is only run in the unity editor and will set a compile-time define. If the service exists, `RegisterService` is called when the game runs before the first scene load.
 
 ### For a new interface
 The decoupler interface is not an Interface in the Java/C# sense. It is a base class. It provides decoupling support as well as default functionality.
 
-If the decoupler interface is for a new package you are writing, then the methods are a matter for software design. If it is an existing package, then the contents reflect the functionality you want to access. It can be just the parts you need or if for distribution, it may be exhaustive. For an example of the latter, look at ***Askowl-Decoupler/Services/Analytics***. There are multiple classes here to represent different aspects of the analytics requirement.
-
-```c#
-namespace Decoupled.Analytics {
-  public class Play : Decoupled.Service<Play> {
-
-    public virtual void Screen(string name, string clazz) {
-      Debug.Log("**** Screen '" + name + "' - " + clazz);
-    }
-  // ...more
-}
-```
+If the decoupler interface is for a new package you are writing, then the methods are a matter for software design. If it is an existing package, then the contents reflect the functionality you want to access. It can be just the parts you need or if for distribution, it may be exhaustive.
 
 Most interface methods do nothing. Since analytics is a form of logging, it is best to display to the console by default. In our production code, we may override the interface with Firebase Analytics for Android and iOS, but falling back to the default for the Editor. We might even choose a different analytics system for OS X, Windows or Windows Phone.
 
@@ -216,7 +203,7 @@ If a service implementation calls `RegisterAsMock` instead of `Register`, then t
 There is always a risk of mocks leaking to production. Decoupler mocks write a warning to the log, so as long as you insist on a clean log before release, all is well.
 
 
-## Built-In Interfaces
+## Built-In Service Interfaces
 
 To use a decoupled service, you need to have an interface class. Often these are provided with packages that need them, but for commonly needed ones, we have included them in Askowl Decoupler.
 

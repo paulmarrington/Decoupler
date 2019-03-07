@@ -41,6 +41,8 @@ namespace Decoupler.Services {
     #region Compiler Definition
     #if TemplateServiceFor
     public override bool IsExternalServiceAvailable() => true;
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    private static void RegisterService() { }
     #else
     public override bool IsExternalServiceAvailable() => false;
     #endif
