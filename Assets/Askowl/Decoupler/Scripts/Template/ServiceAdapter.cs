@@ -1,26 +1,14 @@
 ﻿// Copyright 2019 (C) paul@marrington.net http://www.askowl.net/unity-packages
 
 using Askowl;
-using UnityEditor;
 
 namespace Decoupler.Services {
   /// <a href=""></a><inheritdoc /> //#TBD#//
   public abstract class TemplateServiceAdapter : Services<TemplateServiceAdapter, TemplateContext>.ServiceAdapter {
     #region Service Support
+    // Code that is common to all services belongs here
     /// <a href=""></a> //#TBD#//
     protected override void Prepare() { }
-
-    protected override void LogOnResponse(Emitter emitter) {
-      var service = emitter.Context<Service>();
-      var error   = service.ErrorMessage;
-      if (error != default) {
-        if (!string.IsNullOrEmpty(error)) Error($"Service Error: {error}");
-      } else {
-        Log("Warning", $"LogOnResponse for '{GetType().Name}");
-      }
-    }
-
-    // Code that is common to all services belongs here
     #endregion
 
     #region Public Interface
@@ -36,21 +24,6 @@ namespace Decoupler.Services {
     /// Abstract services - one per dto type
     public abstract Emitter Call(Service<TemplateServiceDto> service);
     // **************** End of TemplateServiceMethod **************** //
-    #endregion
-
-    #region Compiler Definition
-    #if TemplateServiceFor
-    public override bool IsExternalServiceAvailable() => true;
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-    private static void RegisterService() { }
-    #else
-    public override bool IsExternalServiceAvailable() => false;
-    #endif
-
-    [InitializeOnLoadMethod] private static void DetectService() {
-      bool usable = DefineSymbols.HasPackage("") || DefineSymbols.HasFolder("");
-      DefineSymbols.AddOrRemoveDefines(addDefines: usable, named: "TemplateServiceFor");
-    }
     #endregion
   }
 }

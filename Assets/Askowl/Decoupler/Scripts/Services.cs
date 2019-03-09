@@ -96,7 +96,15 @@ namespace Decoupler.Services {
       public abstract bool IsExternalServiceAvailable();
 
       /// <a href="">Registered with Emitter to provide common logging</a> //#TBD#/
-      protected abstract void LogOnResponse(Emitter emitter);
+      protected virtual void LogOnResponse(Emitter emitter) {
+        var service = emitter.Context<Service>();
+        var error   = service.ErrorMessage;
+        if (error != default) {
+          if (!string.IsNullOrEmpty(error)) Error($"Service Error: {error}");
+        } else {
+          Log("Warning", $"LogOnResponse for '{GetType().Name}");
+        }
+      }
       private Emitter.Action logOnResponse;
 
       /// <a href="">Override to initialise concrete service instances</a>

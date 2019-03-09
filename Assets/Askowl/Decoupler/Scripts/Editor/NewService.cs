@@ -2,141 +2,73 @@
 
 using System;
 using System.IO;
+using System.Text;
+using System.Text.RegularExpressions;
 using Askowl;
-using CustomAsset;
 using UnityEditor;
-using UnityEditor.Callbacks;
 using UnityEngine;
-using GameObject = UnityEngine.GameObject;
 using Object = UnityEngine.Object;
-using String = CustomAsset.Constant.String;
 
 namespace Decoupler {
   /// <a href=""></a> //#TBD#//
-  public class NewService : Base {
-    [MenuItem("Assets/Create/Decoupled/New Service")] private static void Phase1() {
-      var templatePath    = TemplatePath();
-      var sources         = AssetDatabase.FindAssets("", new[] {templatePath});
-      var destinationPath = EditorUtility.SaveFilePanel("Save Your New Service", GetSelectedPathOrFallback(), "", "");
-      var serviceName     = Path.GetFileNameWithoutExtension(destinationPath);
-      if (string.IsNullOrEmpty(destinationPath)) return;
-      if (Directory.Exists(destinationPath)) {
-        Debug.LogError($"{destinationPath} already exists. Please select a different name or project directory");
-        return;
+  public class NewService : AssetWizard {
+    private static NewService newServiceInputForm;
+
+    [MenuItem("Assets/Create/Decoupled/New Service")] private static void Start() {
+      if (newServiceInputForm == null) newServiceInputForm = CreateInstance<NewService>();
+      Selection.activeObject = newServiceInputForm;
+    }
+
+    [SerializeField] private string newServiceName;
+    [SerializeField, Tooltip("C# definitions, as in 'String str;RuntimePlatform platform'"), Multiline]
+    private string context = "RuntimePlatform platform;";
+    [SerializeField] private ServiceMeta[] entryPoints;
+
+    /// <a href=""></a> //#TBD#//
+    [Serializable] public struct ServiceMeta {
+      [SerializeField]            private string entryPointName;
+      [SerializeField, Multiline] private string requestData;
+      [SerializeField, Multiline] private string responseData;
+    }
+    private string destinationPath;
+
+    internal void Clear() {
+      newServiceName = context = "";
+      entryPoints    = default;
+    }
+
+    internal void Create() {
+      StringBuilder builder = new StringBuilder();
+      for (int i = 0; i < entryPoints.Length; i++) {
+        ParseEntryPoint(builder, entryPoints[i]);
       }
-      Directory.CreateDirectory(destinationPath);
-
-      using (var template = Template.Instance) {
-        template.Substitute("Template", serviceName);
-        for (int i = 0; i < sources.Length; i++) {
-          var sourcePath = AssetDatabase.GUIDToAssetPath(sources[i]);
-          if (!File.Exists(sourcePath)) continue;
-          var text     = template.Process(File.ReadAllText(sourcePath));
-          var fileName = Path.GetFileNameWithoutExtension(sourcePath);
-          File.WriteAllText($"{destinationPath}/{serviceName}{fileName}.cs", text);
-        }
-
-        destinationPath = destinationPath.Substring(destinationPath.IndexOf("/Assets/", StringComparison.Ordinal) + 1);
-        AssetDatabase.ImportAsset(
-          Path.GetDirectoryName(destinationPath),
-          ImportAssetOptions.ForceSynchronousImport | ImportAssetOptions.ImportRecursive);
-        PlayerPrefs.SetString("DecouplerBuildServiceName",     serviceName);
-        PlayerPrefs.SetString("DecouplerBuildDestinationPath", destinationPath);
-
-        Debug.Log($"Scripts for `{destinationPath}` waiting on rebuild for basic assets...");
-        // Will continue in `OnScriptsReloaded`
-      }
+      CreateAssets(
+        "Decoupler",
+        "Template",            newServiceName,
+        "/*-ContextFields-*/", ParseFields(context), "/*-ContextEquality-*/", ContextEquality(context),
+        "/*-EntryPoints-*/",   builder.ToString());
     }
 
-    [DidReloadScripts] private static void Phase2() {
-      if (!PlayerPrefs.HasKey("DecouplerBuildServiceName")) return;
-      var serviceName = PlayerPrefs.GetString("DecouplerBuildServiceName");
-      PlayerPrefs.DeleteKey("DecouplerBuildServiceName");
-      var destinationPath = PlayerPrefs.GetString("DecouplerBuildDestinationPath");
-      PlayerPrefs.DeleteKey("DecouplerBuildDestinationPath");
-
-      Debug.Log($"... rebuild complete, creating basic assets for `{destinationPath}`");
-      Debug.Log($"  1. Update `{serviceName}Context.cs` with context data for your service. Don't forget `Equals`");
-      Debug.Log(
-        $"  2. Fill `{serviceName}ServiceAdapter.cs` with supporting code and abstract or default interface methods");
-      Debug.Log($"  3. Fill `{serviceName}ServiceForMock.cs` interface methods for mocking");
-      Debug.Log("  4. Write some tests to prove that the mock interface works as expected");
-      Debug.Log($"  5. Write `{serviceName}ServiceForSource.cs` where `Source` is a service source");
-      Debug.Log("  6. Create an asset for each source and update relevant data accordingly");
-      Debug.Log("  7. Repeat [5,6] for each source");
-      Debug.Log($"  8. Add source service assets to `{serviceName}ServicesManager");
-      Debug.Log($"  9. Create Context assets and update `{serviceName}Services` in GameObject `Managers` as needed");
-
-      Environment mockEnvironment =
-        AssetDatabase.LoadAssetAtPath<Environment>("Assets/Askowl/Decoupler/Scripts/Environments/Mock.asset");
-
-      var servicesManager = CreateInstance(serviceName, "ServicesManager");
-      var context         = CreateInstance(serviceName, "Context");
-      var serviceForMock  = CreateInstance(serviceName, "ServiceForMock");
-
-      var servicesManagerSerializedObject = new SerializedObject(servicesManager);
-      var contextSerializedObject         = new SerializedObject(context);
-      var serviceForMockSerializedObject  = new SerializedObject(serviceForMock);
-
-      SetField(servicesManagerSerializedObject, "context", context);
-      SetField(serviceForMockSerializedObject,  "context", context);
-      InsertIntoArrayField(servicesManagerSerializedObject, "services", serviceForMock);
-      SetField(contextSerializedObject, "environment", mockEnvironment);
-
-      AssetDatabase.CreateAsset(servicesManager, $"{destinationPath}/{serviceName}ServicesManager.asset");
-      AssetDatabase.CreateAsset(context,         $"{destinationPath}/{serviceName}MockContext.asset");
-      AssetDatabase.CreateAsset(serviceForMock,  $"{destinationPath}/{serviceName}ServiceForMock.asset");
-
-      servicesManagerSerializedObject.ApplyModifiedProperties();
-      contextSerializedObject.ApplyModifiedProperties();
-      serviceForMockSerializedObject.ApplyModifiedProperties();
-      AssetDatabase.SaveAssets();
-
-      var managers = GameObject.Find("/Service Managers");
-      if (managers == default) {
-        var prefab = Resources.Load("Managers");
-        managers      = (GameObject) Instantiate(prefab, Vector3.zero, Quaternion.identity);
-        managers.name = "Service Managers";
-      }
-      var managersSerializedObject = new SerializedObject(managers.GetComponent<Managers>());
-      InsertIntoArrayField(managersSerializedObject, "managers", servicesManager);
+    private string ParseCS(string cs, Func<string, string, string> toString) {
+      StringBuilder builder = new StringBuilder();
+      var           pairs   = csRegex.Split(cs);
+      for (int i = 0; i < pairs.Length; i += 2) builder.Append(toString(pairs[i], pairs[i + 1]));
+      return builder.ToString();
     }
+    static Regex csRegex = new Regex(@"\s*;\s*|\s*,\s*|\s+", RegexOptions.Singleline);
 
-    private static void SetField(SerializedObject asset, string fieldName, Object fieldValue) {
-      var serialisedProperty                                                  = FindProperty(asset, fieldName);
-      if (serialisedProperty != null) serialisedProperty.objectReferenceValue = fieldValue;
-    }
+    private string ParseFields(string cs) =>
+      ParseCS(cs, (type, fieldName) => $@"    [SerializedField] public {type} {fieldName};\n");
 
-    private static void InsertIntoArrayField(SerializedObject asset, string fieldName, Object fieldValue) {
-      var serialisedProperty = FindProperty(asset, fieldName);
-      if (serialisedProperty != null) {
-        serialisedProperty.InsertArrayElementAtIndex(0);
-        var arrayElementSerialisedProperty = serialisedProperty.GetArrayElementAtIndex(0);
-        arrayElementSerialisedProperty.objectReferenceValue = fieldValue;
-        asset.ApplyModifiedProperties();
-      }
-    }
+    private string ContextEquality(string cs) =>
+      ParseCS(cs, (type, fieldName) => $@" && Equals({fieldName}, other.{fieldName})");
 
-    private static SerializedProperty FindProperty(SerializedObject asset, string name) {
-      var serialisedProperty = asset.FindProperty(name);
-      if (serialisedProperty == null) Debug.LogError($"No serialisable property {name} in {asset}");
-      return serialisedProperty;
-    }
+    private string ParseEntryPoint(StringBuilder builder, ServiceMeta entryPoint) { }
 
-    private static ScriptableObject CreateInstance(string serviceName, string scriptableObjectName) =>
-      CreateInstance($"Decoupler.Services.{serviceName}{scriptableObjectName}");
+    /// <a href=""></a> //#TBD#//
+    protected override string GetDestinationPath() => $"{GetSelectedPathInProjectView()}/{newServiceName}";
 
-    private static string TemplatePath() {
-      var paths = AssetDatabase.FindAssets("DecouplerTemplatePath");
-      for (int i = 0; i < paths.Length; i++) {
-        var path = AssetDatabase.GUIDToAssetPath(paths[i]);
-        if (path.IndexOf("Askowl", StringComparison.Ordinal) == -1) return path;
-      }
-      if (paths.Length == 0) return "";
-      return AssetDatabase.LoadAssetAtPath<String>(AssetDatabase.GUIDToAssetPath(paths[0]));
-    }
-
-    private static string GetSelectedPathOrFallback() {
+    private static string GetSelectedPathInProjectView() {
       string path = "Assets";
       foreach (Object obj in Selection.GetFiltered(typeof(Object), SelectionMode.Assets)) {
         path = AssetDatabase.GetAssetPath(obj);
@@ -146,6 +78,20 @@ namespace Decoupler {
         }
       }
       return path;
+    }
+    protected override void OnScriptReload() { }
+  }
+
+  [CustomEditor(typeof(NewService))] internal class NewServiceEditor : Editor {
+    public override void OnInspectorGUI() {
+      if (GUILayout.Button("Clear")) {
+        ((NewService) target).Clear();
+        GUI.FocusControl(null);
+      }
+      serializedObject.Update();
+      DrawDefaultInspector();
+      if (GUILayout.Button("Create")) ((NewService) target).Create();
+      serializedObject.ApplyModifiedProperties();
     }
   }
 }
