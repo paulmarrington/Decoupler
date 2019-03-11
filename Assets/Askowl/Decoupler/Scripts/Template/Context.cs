@@ -7,10 +7,14 @@ namespace Decoupler.Services {
   [CreateAssetMenu(menuName = "Decoupled/Template/Context", fileName = "TemplateContext")]
   public class TemplateContext : Services<TemplateServiceAdapter, TemplateContext>.Context {
     #region Service Validity Fields
-    /*-ContextFields-*/
+    /*-ContextField...-*/
+    /// <a href=""></a> //#TBD#//
+    [SerializeField] public TemplateContext contextFieldName;
+    /*-...ContextField-*/
 
     /// <a href="">Equality is used to decide if a service is valid in this context</a> //#TBD#//
-    protected bool Equals(TemplateContext other) => base.Equals(other) /*-ContextEquality-*/;
+    protected bool Equals(TemplateContext other) =>
+      base.Equals(other) /*--ContextEquals-- && Equals(ContextEquality, other.ContextEquality))--*/;
     #endregion
 
     #region Other Context Fields

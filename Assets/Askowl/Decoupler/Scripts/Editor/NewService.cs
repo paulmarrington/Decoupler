@@ -1,13 +1,9 @@
 ﻿// Copyright 2019 (C) paul@marrington.net http://www.askowl.net/unity-packages
 
 using System;
-using System.IO;
-using System.Text;
-using System.Text.RegularExpressions;
 using Askowl;
 using UnityEditor;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace Decoupler {
   /// <a href=""></a> //#TBD#//
@@ -20,78 +16,59 @@ namespace Decoupler {
     }
 
     [SerializeField] private string newServiceName;
-    [SerializeField, Tooltip("C# definitions, as in 'String str;RuntimePlatform platform'"), Multiline]
+    [SerializeField, Tooltip("C# definitions, as in 'String str;RuntimePlatform platform'")]
     private string context = "RuntimePlatform platform;";
     [SerializeField] private ServiceMeta[] entryPoints;
 
     /// <a href=""></a> //#TBD#//
-    [Serializable] public struct ServiceMeta {
-      [SerializeField]            private string entryPointName;
-      [SerializeField, Multiline] private string requestData;
-      [SerializeField, Multiline] private string responseData;
+    [Serializable] private struct ServiceMeta {
+      [SerializeField] internal string entryPointName;
+      [SerializeField] internal string requestData;
+      [SerializeField] internal string responseData;
+      public ServiceMeta(string to = default) => entryPointName = requestData = responseData = to;
     }
     private string destinationPath;
 
-    internal void Clear() {
+    protected override void Clear() {
       newServiceName = context = "";
       entryPoints    = default;
     }
 
-    internal void Create() {
-      StringBuilder builder = new StringBuilder();
-      for (int i = 0; i < entryPoints.Length; i++) {
-        ParseEntryPoint(builder, entryPoints[i]);
+    protected override void Create() => CreateAssets("Decoupler");
+
+    protected override string FillTemplate(Template template, string text) {
+      template.From(text);
+
+      var pairs = ToDefinitions(context);
+      using (var inner = template.Inner("/*-ContextField...-*/(.*?)/*-...ContextField-*/")) {
+        for (int i = 0; i < (pairs.Length - 1); i += 2) {
+          inner.Substitute("TemplateContext", pairs[i]).And("contextFieldName", pairs[i + 1]).Add();
+        }
       }
-      CreateAssets(
-        "Decoupler",
-        "Template",            newServiceName,
-        "/*-ContextFields-*/", ParseFields(context), "/*-ContextEquality-*/", ContextEquality(context),
-        "/*-EntryPoints-*/",   builder.ToString());
+      using (var inner = template.Inner("/*--ContextEquals--(.*?)--*/")) {
+        for (int i = 0; i < (pairs.Length - 1); i += 2) inner.Substitute("ContextEquality", pairs[i + 1]).Add();
+      }
+
+      using (var inner = template.Inner("/*-EntryPoint...-*/(.*?)/*-...EntryPoint-*/")) {
+        for (int i = 0; i < entryPoints.Length; i++) {
+          inner.Substitute("EntryPoint", entryPoints[i].entryPointName)
+               .And("int /*-entryPointRequest-*/",  ToTuple(entryPoints[i].requestData))
+               .And("int /*-entryPointResponse-*/", ToTuple(entryPoints[i].responseData))
+               .Add();
+        }
+      }
+
+      return template.Substitute("Template", newServiceName)
+                     .And("/*-destination-*/",     destination)
+                     .And("/*-destinationName-*/", destinationName)
+                     .And("/*-assetType-*/",       assetType)
+                     .And("/*--",                  "")
+                     .And("--*/",                  "").Result();
     }
-
-    private string ParseCS(string cs, Func<string, string, string> toString) {
-      StringBuilder builder = new StringBuilder();
-      var           pairs   = csRegex.Split(cs);
-      for (int i = 0; i < pairs.Length; i += 2) builder.Append(toString(pairs[i], pairs[i + 1]));
-      return builder.ToString();
-    }
-    static Regex csRegex = new Regex(@"\s*;\s*|\s*,\s*|\s+", RegexOptions.Singleline);
-
-    private string ParseFields(string cs) =>
-      ParseCS(cs, (type, fieldName) => $@"    [SerializedField] public {type} {fieldName};\n");
-
-    private string ContextEquality(string cs) =>
-      ParseCS(cs, (type, fieldName) => $@" && Equals({fieldName}, other.{fieldName})");
-
-    private string ParseEntryPoint(StringBuilder builder, ServiceMeta entryPoint) { }
 
     /// <a href=""></a> //#TBD#//
     protected override string GetDestinationPath() => $"{GetSelectedPathInProjectView()}/{newServiceName}";
 
-    private static string GetSelectedPathInProjectView() {
-      string path = "Assets";
-      foreach (Object obj in Selection.GetFiltered(typeof(Object), SelectionMode.Assets)) {
-        path = AssetDatabase.GetAssetPath(obj);
-        if (!string.IsNullOrEmpty(path) && File.Exists(path)) {
-          path = Path.GetDirectoryName(path);
-          break;
-        }
-      }
-      return path;
-    }
     protected override void OnScriptReload() { }
-  }
-
-  [CustomEditor(typeof(NewService))] internal class NewServiceEditor : Editor {
-    public override void OnInspectorGUI() {
-      if (GUILayout.Button("Clear")) {
-        ((NewService) target).Clear();
-        GUI.FocusControl(null);
-      }
-      serializedObject.Update();
-      DrawDefaultInspector();
-      if (GUILayout.Button("Create")) ((NewService) target).Create();
-      serializedObject.ApplyModifiedProperties();
-    }
   }
 }

@@ -15,15 +15,21 @@ namespace Decoupler.Services {
     // Methods calling code will use to call a service - over and above concrete interface methods below ones defined below.
     #endregion
 
-    #region Service Interface Methods
+    #region Service Entry Points
     // List of virtual interface methods that all concrete service adapters need to implement.
 
-    // **************** Start of TemplateServiceMethod **************** //
-    /// A service dto contains data required to call service and data returned from said call
-    public class TemplateServiceDto : DelayedCache<TemplateServiceDto> { }
-    /// Abstract services - one per dto type
-    public abstract Emitter Call(Service<TemplateServiceDto> service);
-    // **************** End of TemplateServiceMethod **************** //
+    /*-EntryPoint...-*/
+    /// <a href=""></a> //#TBD#//
+    public class EntryPointDto : DelayedCache<EntryPointDto> {
+      /// <a href=""></a> //#TBD#//
+      public int /*-entryPointRequest-*/ request;
+      /// <a href=""></a> //#TBD#//
+      public int /*-entryPointResponse-*/ response;
+    }
+
+    /// <a href=""></a> //#TBD#//
+    public abstract Emitter Call(Service<EntryPointDto> service);
+    /*-...EntryPoint-*/
     #endregion
   }
 }

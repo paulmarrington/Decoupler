@@ -8,13 +8,13 @@ namespace Decoupler.Services {
   /// <a href=""></a> //#TBD#//
   [CreateAssetMenu(menuName = "Decoupled/Template/ServiceForMock", fileName = "TemplateServiceForMock")]
   public class TemplateServiceForMock : TemplateServiceAdapter {
-    /// <a href="">Prepare the mock service for operations</a> //#TBD#//
-    protected override void Prepare() => base.Prepare();
-
-    /// <a href="">Use Log and Error to record analytics based on service responses</a> //#TBD#//
-    protected override void LogOnResponse(Emitter emitter) => base.LogOnResponse(emitter);
-
-    public override Emitter Call(Service<TemplateServiceDto> service) => throw new NotImplementedException();
+    /*-EntryPoint...-*/
+    /// <inheritdoc />
+    public override Emitter Call(Service<EntryPointDto> service) {
+      Debug.Log($"*** Call '{GetType().Name}' '{typeof(EntryPointDto).Name}'"); //#DM#//
+      return null;
+    }
+    /*-EntryPoint...-*/
 
     /// <inheritdoc />
     public override bool IsExternalServiceAvailable() => true;

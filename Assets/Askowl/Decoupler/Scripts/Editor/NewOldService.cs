@@ -31,7 +31,7 @@ namespace Decoupler {
         for (int i = 0; i < sources.Length; i++) {
           var sourcePath = AssetDatabase.GUIDToAssetPath(sources[i]);
           if (!File.Exists(sourcePath)) continue;
-          var text     = template.Process(File.ReadAllText(sourcePath));
+          var text     = template.From(File.ReadAllText(sourcePath)).Result();
           var fileName = Path.GetFileNameWithoutExtension(sourcePath);
           File.WriteAllText($"{destinationPath}/{serviceName}{fileName}.cs", text);
         }
