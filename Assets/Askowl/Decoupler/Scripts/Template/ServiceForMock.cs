@@ -6,8 +6,8 @@ using UnityEngine;
 
 namespace Decoupler.Services {
   /// <a href=""></a> //#TBD#//
-  [CreateAssetMenu(menuName = "Decoupled/Template/ServiceForMock", fileName = "TemplateServiceForMock")]
-  public class TemplateServiceForMock : TemplateServiceAdapter {
+  [CreateAssetMenu(menuName = "Decoupled/_Template_/ServiceForMock", fileName = "_Template_ServiceForMock")]
+  public class _Template_ServiceForMock : _Template_ServiceAdapter {
     /*-EntryPoint...-*/
     /// <inheritdoc />
     public override Emitter Call(Service<EntryPointDto> service) {

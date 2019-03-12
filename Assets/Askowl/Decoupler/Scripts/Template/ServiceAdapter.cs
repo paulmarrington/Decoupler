@@ -4,7 +4,7 @@ using Askowl;
 
 namespace Decoupler.Services {
   /// <a href=""></a><inheritdoc /> //#TBD#//
-  public abstract class TemplateServiceAdapter : Services<TemplateServiceAdapter, TemplateContext>.ServiceAdapter {
+  public abstract class _Template_ServiceAdapter : Services<_Template_ServiceAdapter, _Template_Context>.ServiceAdapter {
     #region Service Support
     // Code that is common to all services belongs here
     /// <a href=""></a> //#TBD#//

@@ -41,24 +41,26 @@ namespace Decoupler {
 
       var pairs = ToDefinitions(context);
       using (var inner = template.Inner("/*-ContextField...-*/(.*?)/*-...ContextField-*/")) {
-        for (int i = 0; i < (pairs.Length - 1); i += 2) {
-          inner.Substitute("TemplateContext", pairs[i]).And("contextFieldName", pairs[i + 1]).Add();
-        }
+        while (inner.More())
+          for (int i = 0; i < (pairs.Length - 1); i += 2)
+            inner.Substitute("TemplateContext", pairs[i]).And("contextFieldName", pairs[i + 1]).Add();
       }
       using (var inner = template.Inner("/*--ContextEquals--(.*?)--*/")) {
-        for (int i = 0; i < (pairs.Length - 1); i += 2) inner.Substitute("ContextEquality", pairs[i + 1]).Add();
+        while (inner.More())
+          for (int i = 0; i < (pairs.Length - 1); i += 2)
+            inner.Substitute("ContextEquality", pairs[i + 1]).Add();
       }
 
       using (var inner = template.Inner("/*-EntryPoint...-*/(.*?)/*-...EntryPoint-*/")) {
-        for (int i = 0; i < entryPoints.Length; i++) {
-          inner.Substitute("EntryPoint", entryPoints[i].entryPointName)
-               .And("int /*-entryPointRequest-*/",  ToTuple(entryPoints[i].requestData))
-               .And("int /*-entryPointResponse-*/", ToTuple(entryPoints[i].responseData))
-               .Add();
-        }
+        while (inner.More())
+          for (int i = 0; i < entryPoints.Length; i++)
+            inner.Substitute("EntryPoint", entryPoints[i].entryPointName)
+                 .And("int /*-entryPointRequest-*/",  ToTuple(entryPoints[i].requestData))
+                 .And("int /*-entryPointResponse-*/", ToTuple(entryPoints[i].responseData))
+                 .Add();
       }
 
-      return template.Substitute("Template", newServiceName)
+      return template.Substitute("_Template_", newServiceName)
                      .And("/*-destination-*/",     destination)
                      .And("/*-destinationName-*/", destinationName)
                      .And("/*-assetType-*/",       assetType)
@@ -67,7 +69,7 @@ namespace Decoupler {
     }
 
     /// <a href=""></a> //#TBD#//
-    protected override string GetDestinationPath() => $"{GetSelectedPathInProjectView()}/{newServiceName}";
+    protected override string GetDestinationPath() => $"{selectedPathInProjectView}/{newServiceName}";
 
     protected override void OnScriptReload() { }
   }

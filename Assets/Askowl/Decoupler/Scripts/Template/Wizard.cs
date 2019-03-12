@@ -11,7 +11,7 @@ namespace Decoupler {
   public class TemplateWizard : AssetWizard {
     private static TemplateWizard newServiceInputForm;
 
-    [MenuItem("Assets/Create/Template/New Service")] private static void Start() {
+    [MenuItem("Assets/Create/Decoupled/_Template_/New Service")] private static void Start() {
       if (newServiceInputForm == null) newServiceInputForm = CreateInstance<TemplateWizard>();
       Selection.activeObject = newServiceInputForm;
     }
@@ -33,7 +33,7 @@ namespace Decoupler {
     }
 
     protected override string FillTemplate(Template template, string text) =>
-      template.From(text).Substitute("XXX", newTemplateServiceName).Result();
+      template.From(text).Substitute("_ConcreteService_", newTemplateServiceName).Result();
 
     protected override void OnScriptReload() =>
       CreateAssetDictionary((newTemplateServiceName, Type.GetType($"Decoupler.Services.{newTemplateServiceName}")));

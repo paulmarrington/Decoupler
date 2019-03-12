@@ -2,22 +2,23 @@
 
 using UnityEditor;
 using UnityEngine;
-#if TemplateServiceFor || true
+#if _Template_ServiceFor || true
 using Askowl;
 // Add using statements for service library here
 #endif
 
 namespace Decoupler.Services {
   /// <a href=""></a><inheritdoc /> //#TBD#//
-  [CreateAssetMenu(menuName = "Decoupled/Template/ServiceForXXX", fileName = "TemplateServiceForXXX")]
-  public abstract class TemplateServiceForXXX : TemplateServiceAdapter {
+  [CreateAssetMenu(
+    menuName = "Decoupled/_Template_/ServiceFor_ConcreteService_", fileName = "_Template_ServiceFor_ConcreteService_")]
+  public abstract class _Template_ServiceFor_ConcreteService_ : _Template_ServiceAdapter {
     [InitializeOnLoadMethod] private static void DetectService() {
-      bool usable = DefineSymbols.HasPackage("XXX") || DefineSymbols.HasFolder("XXX");
-      DefineSymbols.AddOrRemoveDefines(addDefines: usable, named: "TemplateServiceForXXX");
+      bool usable = DefineSymbols.HasPackage("_ConcreteService_") || DefineSymbols.HasFolder("_ConcreteService_");
+      DefineSymbols.AddOrRemoveDefines(addDefines: usable, named: "_Template_ServiceFor_ConcreteService_");
     }
 
     #region Service Entry Points
-    #if !TemplateServiceForXXX
+    #if !_Template_ServiceFor_ConcreteService_
     protected override void Prepare() => base.Prepare();
 
     protected override void LogOnResponse(Emitter emitter) => base.LogOnResponse(emitter);
@@ -39,7 +40,7 @@ namespace Decoupler.Services {
     #endregion
 
     #region Service Entry Points
-    #if TemplateServiceForXXX
+    #if _Template_ServiceFor_ConcreteService_
     /*-EntryPoint...-*/
     /// <inheritdoc />
     public override Emitter Call(Service<EntryPointDto> service) => throw new NotImplementedException("EntryPointDto");
@@ -52,10 +53,10 @@ namespace Decoupler.Services {
     // or set dto.ErrorMessage if the service call fails to initialise
 
     #region Compiler Definition
-    #if TemplateServiceForXXX
-    public override bool IsExternalServiceAvailable() => true;
+    #if _Template_ServiceFor_ConcreteService_
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void RegisterService() { }
+    public override bool IsExternalServiceAvailable() => true;
     #else
     public override bool IsExternalServiceAvailable() => false;
     #endif
