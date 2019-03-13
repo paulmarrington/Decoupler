@@ -3,11 +3,10 @@
 using Askowl;
 
 namespace Decoupler.Services {
-  /// <a href=""></a><inheritdoc /> //#TBD#//
-  public abstract class _Template_ServiceAdapter : Services<_Template_ServiceAdapter, _Template_Context>.ServiceAdapter {
+  public abstract class
+    _Template_ServiceAdapter : Services<_Template_ServiceAdapter, _Template_Context>.ServiceAdapter {
     #region Service Support
     // Code that is common to all services belongs here
-    /// <a href=""></a> //#TBD#//
     protected override void Prepare() { }
     #endregion
 
@@ -19,15 +18,11 @@ namespace Decoupler.Services {
     // List of virtual interface methods that all concrete service adapters need to implement.
 
     /*-EntryPoint...-*/
-    /// <a href=""></a> //#TBD#//
     public class EntryPointDto : DelayedCache<EntryPointDto> {
-      /// <a href=""></a> //#TBD#//
-      public int /*-entryPointRequest-*/ request;
-      /// <a href=""></a> //#TBD#//
+      public int /*-entryPointRequest-*/  request;
       public int /*-entryPointResponse-*/ response;
     }
 
-    /// <a href=""></a> //#TBD#//
     public abstract Emitter Call(Service<EntryPointDto> service);
     /*-...EntryPoint-*/
     #endregion

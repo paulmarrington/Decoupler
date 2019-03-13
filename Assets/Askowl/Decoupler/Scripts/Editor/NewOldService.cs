@@ -14,7 +14,8 @@ using String = CustomAsset.Constant.String;
 namespace Decoupler {
   /// <a href=""></a> //#TBD#//
   public class NewOldService : Base {
-    [MenuItem("Assets/Create/Decoupled/New Old Service")] private static void Phase1() {
+    //[MenuItem("Assets/Create/Decoupled/New Old Service")] 
+    private static void Phase1() {
       var templatePath    = TemplatePath();
       var sources         = AssetDatabase.FindAssets("", new[] {templatePath});
       var destinationPath = EditorUtility.SaveFilePanel("Save Your New Service", GetSelectedPathOrFallback(), "", "");

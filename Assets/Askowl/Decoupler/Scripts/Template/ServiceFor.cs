@@ -1,18 +1,18 @@
 ﻿// Copyright 2019 (C) paul@marrington.net http://www.askowl.net/unity-packages
 
-using UnityEditor;
-using UnityEngine;
 #if _Template_ServiceFor || true
 using Askowl;
+using UnityEditor;
+using UnityEngine;
 // Add using statements for service library here
 #endif
 
 namespace Decoupler.Services {
-  /// <a href=""></a><inheritdoc /> //#TBD#//
-  [CreateAssetMenu(
-    menuName = "Decoupled/_Template_/ServiceFor_ConcreteService_", fileName = "_Template_ServiceFor_ConcreteService_")]
+  /*++[CreateAssetMenu(
+    menuName = "Decoupled/_Template_/ServiceFor_ConcreteService_", fileName = "_Template_ServiceFor_ConcreteService_")]++*/
   public abstract class _Template_ServiceFor_ConcreteService_ : _Template_ServiceAdapter {
-    [InitializeOnLoadMethod] private static void DetectService() {
+    /*++[InitializeOnLoadMethod]++*/
+    private static void DetectService() {
       bool usable = DefineSymbols.HasPackage("_ConcreteService_") || DefineSymbols.HasFolder("_ConcreteService_");
       DefineSymbols.AddOrRemoveDefines(addDefines: usable, named: "_Template_ServiceFor_ConcreteService_");
     }
@@ -24,7 +24,6 @@ namespace Decoupler.Services {
     protected override void LogOnResponse(Emitter emitter) => base.LogOnResponse(emitter);
 
     /*-EntryPoint...-*/
-    /// <inheritdoc />
     public override Emitter Call(Service<EntryPointDto> service) => EntryPointDtoFiber.Go(service).OnComplete;
 
     private class EntryPointDtoFiber : Fiber.Closure<EntryPointDtoFiber, Service<EntryPointDto>> {
@@ -42,7 +41,6 @@ namespace Decoupler.Services {
     #region Service Entry Points
     #if _Template_ServiceFor_ConcreteService_
     /*-EntryPoint...-*/
-    /// <inheritdoc />
     public override Emitter Call(Service<EntryPointDto> service) => throw new NotImplementedException("EntryPointDto");
     /*-...EntryPoint-*/
     #endif
