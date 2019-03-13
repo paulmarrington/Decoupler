@@ -9,7 +9,7 @@ namespace Decoupler.Services {
     /*-EntryPoint...-*/
     /// <inheritdoc />
     public override Emitter Call(Service<EntryPointDto> service) {
-      Debug.Log($"*** Mock Call '{GetType().Name}' '{typeof(EntryPointDto).Name}'");
+      Debug.Log($"*** Mock Call '{GetType().Name}' '{typeof(EntryPointDto).Name}', '{service.Dto.request}");
       return null;
     }
     /*-...EntryPoint-*/

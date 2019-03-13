@@ -1,6 +1,7 @@
 ﻿// Copyright 2019 (C) paul@marrington.net http://www.askowl.net/unity-packages
 
 #if _Template_ServiceFor || true
+using System;
 using Askowl;
 using UnityEditor;
 using UnityEngine;
@@ -18,7 +19,7 @@ namespace Decoupler.Services {
     }
 
     #region Service Entry Points
-    #if !_Template_ServiceFor_ConcreteService_
+    #if _Template_ServiceFor_ConcreteService_
     protected override void Prepare() => base.Prepare();
 
     protected override void LogOnResponse(Emitter emitter) => base.LogOnResponse(emitter);
@@ -39,7 +40,7 @@ namespace Decoupler.Services {
     #endregion
 
     #region Service Entry Points
-    #if _Template_ServiceFor_ConcreteService_
+    #if !_Template_ServiceFor_ConcreteService_
     /*-EntryPoint...-*/
     public override Emitter Call(Service<EntryPointDto> service) => throw new NotImplementedException("EntryPointDto");
     /*-...EntryPoint-*/
