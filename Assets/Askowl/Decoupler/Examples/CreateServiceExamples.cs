@@ -23,8 +23,7 @@ namespace Askowl.Decoupler.Examples {
 
     [Step(@"^we are in the project directory ""(.*)""$")] public void ServerStack(string[] matches) {
       if (!Directory.Exists(path = matches[0])) {
-        AssetDb.CreateFolders(path);
-        AssetDb.SelectFolder(path);
+        using(var assetDb = AssetDb.Instance.CreateFolders(path).Select(path)){}
       }
     }
 
