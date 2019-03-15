@@ -17,3 +17,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 20fe77311133848c0bc03cf2605153d6, type: 2}
   gherkinDefinitions:
   - {fileID: 11500000, guid: 8e16a8c999cad41a1b563ee612fc7aea, type: 3}
+  - {fileID: 11500000, guid: ab6d1378dcd43405084098f1691872dc, type: 3}

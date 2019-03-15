@@ -10,7 +10,7 @@ using UnityEngine.TestTools;
 // ReSharper disable MissingXmlDoc
 
 namespace Askowl.Decoupler.Examples {
-  public class ServiceExamples : PlayModeTests {
+  public class CallServiceExamples : PlayModeTests {
     /// Sample service call
     private Emitter CallService() {
       // Load the service manager for this service type. You can cache this. It does not change (except for testing)
@@ -32,7 +32,8 @@ namespace Askowl.Decoupler.Examples {
     private ServiceExampleServicesManager                manager;
 
     private IEnumerator ServiceTest(string label) {
-      yield return Feature.Go("DecouplerDefinitions", featureFile: "Services", label).AsCoroutine();
+      yield return Feature.Go(definitionAsset: "DecouplerDefinitions", featureFile: "CallServices", label)
+                          .AsCoroutine();
     }
 
     [UnityTest] public IEnumerator TopDownSuccess()   { yield return ServiceTest("@TopDownSuccess"); }

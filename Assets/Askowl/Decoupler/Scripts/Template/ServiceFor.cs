@@ -1,6 +1,6 @@
 ﻿// Copyright 2019 (C) paul@marrington.net http://www.askowl.net/unity-packages
 
-#if _Template_ServiceFor || true
+#if _Template_ServiceFor_ConcreteService_ || true
 using System;
 using Askowl;
 using UnityEditor;
@@ -11,7 +11,7 @@ using UnityEngine;
 namespace Decoupler.Services {
   /*++[CreateAssetMenu(
     menuName = "Decoupled/_Template_/ServiceFor_ConcreteService_", fileName = "_Template_ServiceFor_ConcreteService_")]++*/
-  public abstract class _Template_ServiceFor_ConcreteService_ : _Template_ServiceAdapter {
+  public class _Template_ServiceFor_ConcreteService_ : _Template_ServiceAdapter {
     /*++[InitializeOnLoadMethod]++*/
     private static void DetectService() {
       bool usable = DefineSymbols.HasPackage("_ConcreteService_") || DefineSymbols.HasFolder("_ConcreteService_");

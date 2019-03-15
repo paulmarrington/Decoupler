@@ -1,4 +1,4 @@
-Feature: CustomAsset Services
+Feature: Calls to a decoupled service
 
   @TopDownSuccess
   Scenario: Successful Top-Down Service Call

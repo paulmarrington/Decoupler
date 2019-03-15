@@ -4,9 +4,10 @@ using System;
 using System.IO;
 using Askowl;
 using UnityEditor;
+using UnityEditor.Callbacks;
 using UnityEngine;
 
-namespace Decoupler {
+namespace Decoupler.Services {
   public class _Template_Wizard : AssetWizard {
     private static _Template_Wizard newServiceInputForm;
 
@@ -25,12 +26,13 @@ namespace Decoupler {
     protected override void Create() {
       assetType   = "/*-assetType-*/";
       destination = "/*-destination-*/";
-      CreateAssets("cs");
+      PlayerPrefs.SetString($"AssetWizard.CreateAssets._Template_", $"ServiceFor{newTemplateServiceName}");
+      CreateAssets("cs", "_Template_");
     }
     protected override bool ProcessAllFiles(string textAssetTypes) {
       var serviceFor = $"{destination}/_Template_ServiceFor";
-      if (File.Exists($"{serviceFor}.cs")) throw new Exception($"'{serviceFor}.cs already exists. Try another name.");
-      var fileName = $"{serviceFor}{newTemplateServiceName}.cs";
+      var fileName   = $"{serviceFor}{newTemplateServiceName}.cs";
+      if (File.Exists(fileName)) throw new Exception($"'{fileName}' already exists. Try another name.");
       File.Copy($"{serviceFor}.cs", fileName);
       ProcessFiles("cs", fileName);
       return true;
@@ -43,7 +45,15 @@ namespace Decoupler {
               .Substitute("_ConcreteService_", newTemplateServiceName)
               .And(@"/\*\+\+", "").And(@"\+\+\*/", "").Result();
 
-    protected override void OnScriptReload() =>
-      CreateAssetDictionary((newTemplateServiceName, Type.GetType($"Decoupler.Services.{newTemplateServiceName}")));
+    [DidReloadScripts] private static void Phase2() {
+      using (var assets = AssetCreator.Instance("_Template_")) {
+        if (assets == null) return;
+        var newTemplateServiceName = PlayerPrefs.GetString($"AssetWizard.CreateAssets._Template_");
+        assets.Add((newTemplateServiceName, $"Decoupler.Services._Template_{newTemplateServiceName}"))
+              .Load(("ContextAsset", "Decoupler.Services._Template_Context"))
+              .SetField(newTemplateServiceName, "context", "ContextAsset");
+        Debug.Log("...All Done");
+      }
+    }
   }
 }
