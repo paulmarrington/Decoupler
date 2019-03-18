@@ -11,20 +11,11 @@ namespace Decoupler {
   /// <a href=""></a> //#TBD#//
   public class NewService : AssetWizard {
     [MenuItem("Assets/Create/Decoupled/New Service")] private static void Start() {
-      var newServiceInputForm = Wizard;
-//      EditorUtility.FocusProjectWindow();
-      Selection.activeObject = newServiceInputForm;
+      Selection.activeObject = wizard;
       EditorGUI.FocusTextInControl("FirstWizardField");
     }
-
-    private static NewService Wizard {
-      get {
-        if (wizard != default) return wizard;
-        selectedPathInProjectView = AssetDatabase.GetAssetPath(Selection.activeObject);
-        return wizard = LoadOrCreate<NewService>("Askowl/Decoupler/Scripts/Editor/NewService.asset");
-      }
-    }
-    private static NewService wizard;
+    private static readonly Jit<NewService> wizard = Jit<NewService>.Instance(
+      _ => LoadOrCreate<NewService>("Askowl/Decoupler/Scripts/Editor/NewService.asset"));
 
     [SerializeField] private string newServiceName;
     [SerializeField, Tooltip("C# definitions, as in 'String str;RuntimePlatform platform'")]
@@ -47,7 +38,7 @@ namespace Decoupler {
       Physics.Raycast(ray, maxDistance: 10, layerMask);
     }
 
-    protected override void Create() => CreateAssets("Decoupler", "");
+    public override void Create() => CreateAssets("Decoupler", "NewDecoupledService.");
 
     protected override string FillTemplate(Template template, string text) {
       template.From(text);
@@ -84,20 +75,24 @@ namespace Decoupler {
     }
 
     /// <a href=""></a> //#TBD#//
-    protected override string GetDestinationPath() => $"{selectedPathInProjectView}/{newServiceName}";
+    protected override string GetDestinationPath() {
+      Debug.Log($"*** GetDestinationPath '{selectedPathInProjectView}' '{newServiceName}'"); //#DM#//
+      return $"{selectedPathInProjectView}/{newServiceName}";
+    }
 
     [DidReloadScripts] private static void Phase2() {
-      using (var assets = AssetCreator.Instance("")) {
+      using (var assets = AssetEditor.Instance("NewDecoupledService.")) {
         if (assets == null) return;
+        destination = assets.destination.Split('/')[1].Trim();
         Environment mockEnvironment =
           AssetDatabase.LoadAssetAtPath<Environment>("Assets/Askowl/Decoupler/Scripts/Environments/Mock.asset");
         assets.Add(
-                 ("ServicesManager", $"Decoupler.Services.{assets.destinationName}ServicesManager")
-               , ("ContextAsset", $"Decoupler.Services.{assets.destinationName}Context")
-               , ("ServiceForMock", $"Decoupler.Services.{assets.destinationName}ServiceForMock")
-               , ("Wizard", $"Decoupler.Services.{assets.destinationName}Wizard"))
-              .SetField("ServicesManager", "context", "ContextAsset")
-              .SetField("ServiceForMock",  "context", "ContextAsset")
+                 ("ServicesManager", $"Decoupler.Services.{destination}ServicesManager")
+               , ("ContextAsset", $"Decoupler.Services.{destination}Context")
+               , ("ServiceForMock", $"Decoupler.Services.{destination}ServiceForMock")
+               , ("Wizard", $"Decoupler.Services.{destination}Wizard"))
+              .SetFieldToAssetEditorEntry("ServicesManager", "context", "ContextAsset")
+              .SetFieldToAssetEditorEntry("ServiceForMock",  "context", "ContextAsset")
               .InsertIntoArrayField("ServicesManager", "services", "ServiceForMock")
               .SetField("ContextAsset", "environment", mockEnvironment);
         Debug.Log("...All Done");

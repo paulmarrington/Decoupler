@@ -23,11 +23,11 @@ namespace Decoupler.Services {
 
     protected override void Clear() => newTemplateServiceName = "";
 
-    protected override void Create() {
+    public override void Create() {
       assetType   = "/*-assetType-*/";
       destination = "/*-destination-*/";
       PlayerPrefs.SetString($"AssetWizard.CreateAssets._Template_", $"ServiceFor{newTemplateServiceName}");
-      CreateAssets("cs", "_Template_");
+      CreateAssets("Decoupler", "_Template_DecoupledService");
     }
     protected override bool ProcessAllFiles(string textAssetTypes) {
       var serviceFor = $"{destination}/_Template_ServiceFor";
@@ -37,6 +37,7 @@ namespace Decoupler.Services {
       ProcessFiles("cs", fileName);
       return true;
     }
+
     /// <a href=""></a> //#TBD#//
     protected override string GetDestinationPath() => null;
 
@@ -46,12 +47,12 @@ namespace Decoupler.Services {
               .And(@"/\*\+\+", "").And(@"\+\+\*/", "").Result();
 
     [DidReloadScripts] private static void Phase2() {
-      using (var assets = AssetCreator.Instance("_Template_")) {
+      using (var assets = AssetEditor.Instance("_Template_DecoupledService")) {
         if (assets == null) return;
         var newTemplateServiceName = PlayerPrefs.GetString($"AssetWizard.CreateAssets._Template_");
         assets.Add((newTemplateServiceName, $"Decoupler.Services._Template_{newTemplateServiceName}"))
               .Load(("ContextAsset", "Decoupler.Services._Template_Context"))
-              .SetField(newTemplateServiceName, "context", "ContextAsset");
+              .SetFieldToAssetEditorEntry(newTemplateServiceName, "context", "ContextAsset");
         Debug.Log("...All Done");
       }
     }
