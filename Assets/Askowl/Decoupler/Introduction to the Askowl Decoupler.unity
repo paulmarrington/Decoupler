@@ -209,40 +209,10 @@ MonoBehaviour:
   description: 
   services:
   - {fileID: 0}
-  context: {fileID: 934639096}
+  context: {fileID: 0}
   order: 0
   usagesRemaining: 0
   currentService: {fileID: 0}
---- !u!114 &899086531
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c6507b8b6ecdd4b33baf383e502c51c8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  description: 
-  priority: 1
-  usageBalance: 1
-  context: {fileID: 1942796495}
---- !u!114 &934639096
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c5d267692a2834f21ab57c027e1fef4c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  description: 
-  environment: {fileID: 11400000, guid: 9e4edb4dbb8a34b1eba8bc288818dd00, type: 2}
 --- !u!1 &1332467727
 GameObject:
   m_ObjectHideFlags: 0
@@ -273,6 +243,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   managers:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
@@ -320,20 +293,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1942796495
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c5d267692a2834f21ab57c027e1fef4c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  description: 
-  environment: {fileID: 11400000, guid: 9e4edb4dbb8a34b1eba8bc288818dd00, type: 2}
 --- !u!114 &1956239551
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -348,8 +307,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   description: 
   services:
-  - {fileID: 899086531}
-  context: {fileID: 1942796495}
+  - {fileID: 0}
+  context: {fileID: 0}
   order: 0
   usagesRemaining: 0
   currentService: {fileID: 0}

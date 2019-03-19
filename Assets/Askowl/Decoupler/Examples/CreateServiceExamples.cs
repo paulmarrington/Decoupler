@@ -20,29 +20,29 @@ namespace Askowl.Decoupler.Examples {
 
     private IEnumerator ServiceTest(string label) {
       yield return Feature.Go("DecouplerDefinitions", featureFile: "CreateServices", label).AsCoroutine();
-      if (projectDirectory != null) AssetDb.Instance.Delete(projectDirectory);
       assetDb?.Dispose();
-      assetEditor.Dispose();
+      assetEditor?.Dispose();
     }
 
     [UnityTest] public IEnumerator CreateEmptyService() { yield return ServiceTest("@CreateEmptyService"); }
 
-    [Step(@"^we prepare for a new service$")] public void SetProjectDirectory() {
+    [Step(@"^we prepare for a new service$")] public void PrepareNewService() {
       assetDb?.Dispose();
       assetDb          = AssetDb.Instance;
-      projectDirectory = $"/Assets/Temp/{GUID.Generate()}";
-      assetDb.CreateFolders(path: projectDirectory).Select().Dispose();
+      projectDirectory = $"/Assets/Temp/CreateServiceExamples/{GUID.Generate()}";
+      assetDb.CreateFolders(path: projectDirectory).Select();
       if (assetDb.Error) Fail($"Can't create '{projectDirectory}'");
 
       assetEditor?.Dispose();
-      assetEditor = AssetEditor.Instance("CreateServiceExamples", "Assets/Askowl/Decoupler/Scripts/Editor")
-                               .Load(("NewService", "Decoupler.NewService"));
+      assetEditor = AssetEditor.Instance("CreateServiceExamples", projectDirectory.Substring(1))
+                               .Load((name: "NewService", asset: "Decoupler.NewService"))
+                               .SetField("NewService", "destinationPath", fieldValue: projectDirectory);
     }
     [Step(@"^we set ""(.*?)"" to ""(.*?)""$")] public void SetField(string[] matches) =>
       assetEditor.SetField(assetName: "NewService", fieldName: matches[0], fieldValue: matches[1]);
 
     [Step(@"^we create the new service$")] public void CreateService() =>
-      ((AssetWizard) assetEditor.Asset("NewService")).Create();
+      ((AssetWizard) assetEditor.Save().Asset("NewService")).Create();
 
     [Step(@"^processing is complete$")] public Emitter ProcessingComplete() =>
       AssetEditor.onCompleteEmitter.Listen(validation: ("AssetEditor", "CreateServiceExamples"), once: true);

@@ -15,7 +15,7 @@ namespace Decoupler {
       EditorGUI.FocusTextInControl("FirstWizardField");
     }
     private static readonly Jit<NewService> wizard = Jit<NewService>.Instance(
-      _ => LoadOrCreate<NewService>("Askowl/Decoupler/Scripts/Editor/NewService.asset"));
+      _ => AssetDb.LoadOrCreate<NewService>("Askowl/Decoupler/Scripts/Editor/NewService.asset"));
 
     [SerializeField] private string newServiceName;
     [SerializeField, Tooltip("C# definitions, as in 'String str;RuntimePlatform platform'")]
@@ -31,8 +31,9 @@ namespace Decoupler {
     }
 
     protected override void Clear() {
-      newServiceName = context = "";
-      entryPoints    = default;
+      destinationPath = "";
+      newServiceName  = context = "";
+      entryPoints     = default;
       var       ray       = new Ray();
       LayerMask layerMask = LayerMask.GetMask("default");
       Physics.Raycast(ray, maxDistance: 10, layerMask);
@@ -75,10 +76,7 @@ namespace Decoupler {
     }
 
     /// <a href=""></a> //#TBD#//
-    protected override string GetDestinationPath() {
-      Debug.Log($"*** GetDestinationPath '{selectedPathInProjectView}' '{newServiceName}'"); //#DM#//
-      return $"{selectedPathInProjectView}/{newServiceName}";
-    }
+    protected override string GetDestinationPath() => $"{selectedPathInProjectView}/{newServiceName}";
 
     [DidReloadScripts] private static void Phase2() {
       using (var assets = AssetEditor.Instance("NewDecoupledService.")) {

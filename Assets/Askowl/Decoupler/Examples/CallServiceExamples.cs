@@ -14,7 +14,7 @@ namespace Askowl.Decoupler.Examples {
     /// Sample service call
     private Emitter CallService() {
       // Load the service manager for this service type. You can cache this. It does not change (except for testing)
-      manager = Manager.Load<ServiceExampleServicesManager>($"{serviceManagerName}ServicesManager.asset");
+      manager = AssetDb.Load<ServiceExampleServicesManager>($"{serviceManagerName}ServicesManager.asset");
       // Build Service DTO
       addService = Service<ServiceExampleServiceAdapter.AddDto>.Instance;
       // The DTO will have request data going in and response data coming back
@@ -47,7 +47,7 @@ namespace Askowl.Decoupler.Examples {
       serviceManagerName = matches[0];
 
     [Step(@"^server success of ""(.*)""$")] public void MockStateOf(string[] matches) {
-      mockState      = Manager.Load<String>("MockState.asset");
+      mockState      = AssetDb.Load<String>("MockState.asset");
       mockState.Text = matches[0];
     }
 
