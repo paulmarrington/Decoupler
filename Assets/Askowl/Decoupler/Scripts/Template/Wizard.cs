@@ -19,8 +19,6 @@ namespace Decoupler.Services {
 
     [SerializeField] private string newTemplateServiceName;
 
-    private string destinationPath;
-
     protected override void Clear() => newTemplateServiceName = "";
 
     public override void Create() {
@@ -39,7 +37,7 @@ namespace Decoupler.Services {
     }
 
     /// <a href=""></a> //#TBD#//
-    protected override string GetDestinationPath() => null;
+    protected override string GetDestinationPath(string basePath) => basePath;
 
     protected override string FillTemplate(Template template, string text) =>
       template.From(text)

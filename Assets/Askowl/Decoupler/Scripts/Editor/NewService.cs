@@ -76,12 +76,13 @@ namespace Decoupler {
     }
 
     /// <a href=""></a> //#TBD#//
-    protected override string GetDestinationPath() => $"{selectedPathInProjectView}/{newServiceName}";
+    protected override string GetDestinationPath(string basePath) => $"{basePath}/{newServiceName}";
 
     [DidReloadScripts] private static void Phase2() {
       using (var assets = AssetEditor.Instance("NewDecoupledService.")) {
         if (assets == null) return;
-        destination = assets.destination.Split('/')[1].Trim();
+        var split = assets.destination.Split('/');
+        destination = split[split.Length - 1].Trim();
         Environment mockEnvironment =
           AssetDatabase.LoadAssetAtPath<Environment>("Assets/Askowl/Decoupler/Scripts/Environments/Mock.asset");
         assets.Add(
