@@ -1,0 +1,23 @@
+{
+    "name": "DecouplerExamples",
+    "references": [
+        "Able",
+        "BDD",
+        "CustomAssets",
+        "Decoupler",
+        "Fibers",
+        "CustomAssetsEditor",
+        "AbleEditor",
+        "DecouplerEditor"
+    ],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
+}

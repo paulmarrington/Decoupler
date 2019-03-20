@@ -194,25 +194,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &709564396
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e6215cf1fcc0f4611844eb753f877c9d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  description: 
-  services:
-  - {fileID: 0}
-  context: {fileID: 0}
-  order: 0
-  usagesRemaining: 0
-  currentService: {fileID: 0}
 --- !u!1 &1332467727
 GameObject:
   m_ObjectHideFlags: 0
@@ -243,42 +224,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   managers:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 1956239551}
-  - {fileID: 0}
-  - {fileID: 709564396}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 3b4c6c9f2282348d7994864deb2e7449, type: 2}
 --- !u!4 &1332467729
 Transform:
   m_ObjectHideFlags: 0
@@ -293,25 +239,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1956239551
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e6215cf1fcc0f4611844eb753f877c9d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  description: 
-  services:
-  - {fileID: 0}
-  context: {fileID: 0}
-  order: 0
-  usagesRemaining: 0
-  currentService: {fileID: 0}
 --- !u!222 &4002030153311280264
 CanvasRenderer:
   m_ObjectHideFlags: 0

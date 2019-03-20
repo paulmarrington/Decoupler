@@ -1,0 +1,17 @@
+{
+    "name": "DecouplerEditor",
+    "references": [
+        "CustomAssetsEditor",
+        "Able",
+        "CustomAssets",
+        "Decoupler"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
+}

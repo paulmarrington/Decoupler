@@ -17,19 +17,19 @@ namespace Decoupler.Services {
       Selection.activeObject = newServiceInputForm;
     }
 
-    [SerializeField] private string newTemplateServiceName;
+    [SerializeField] private string new_Template_Name;
 
-    protected override void Clear() => newTemplateServiceName = "";
+    protected override void Clear() => new_Template_Name = "";
 
     public override void Create() {
       assetType   = "/*-assetType-*/";
       destination = "/*-destination-*/";
-      PlayerPrefs.SetString($"AssetWizard.CreateAssets._Template_", $"ServiceFor{newTemplateServiceName}");
+      PlayerPrefs.SetString($"AssetWizard.CreateAssets._Template_", $"ServiceFor{new_Template_Name}");
       CreateAssets("Decoupler", "_Template_DecoupledService");
     }
     protected override bool ProcessAllFiles(string textAssetTypes) {
       var serviceFor = $"{destination}/_Template_ServiceFor";
-      var fileName   = $"{serviceFor}{newTemplateServiceName}.cs";
+      var fileName   = $"{serviceFor}{new_Template_Name}.cs";
       if (File.Exists(fileName)) throw new Exception($"'{fileName}' already exists. Try another name.");
       File.Copy($"{serviceFor}.cs", fileName);
       ProcessFiles("cs", fileName);
@@ -41,10 +41,10 @@ namespace Decoupler.Services {
 
     protected override string FillTemplate(Template template, string text) =>
       template.From(text)
-              .Substitute("_ConcreteService_", newTemplateServiceName)
+              .Substitute("_ConcreteService_", new_Template_Name)
               .And(@"/\*\+\+", "").And(@"\+\+\*/", "").Result();
 
-    [DidReloadScripts] private static void Phase2() {
+    public override void OnScriptReload() {
       using (var assets = AssetEditor.Instance("_Template_DecoupledService")) {
         if (assets == null) return;
         var newTemplateServiceName = PlayerPrefs.GetString($"AssetWizard.CreateAssets._Template_");
