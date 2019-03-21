@@ -40,10 +40,11 @@ namespace Askowl.Decoupler.Examples {
                                .Load((name: "NewService", asset: "Decoupler.NewService"))
                                .SetField("NewService", "destinationPath", fieldValue: projectDirectory);
     }
+
     [Step(@"^we set ""(.*?)"" to ""(.*?)""$")] public void SetField(string[] matches) =>
       assetEditor.SetField(assetName: "NewService", fieldName: matches[0], fieldValue: matches[1]);
 
-    [Step(@"^we create the new service$")] public void CreateService() =>
+    [Step(@"^we create the new service$")] public void CreateService(Definitions definitions) =>
       ((AssetWizard) assetEditor.Save().Asset("NewService")).Create();
 
     [Step(@"^processing is complete$")] public Emitter ProcessingComplete() =>
