@@ -39,7 +39,7 @@ namespace Decoupler {
       Physics.Raycast(ray, maxDistance: 10, layerMask);
     }
 
-    public override void Create() => CreateAssets("Decoupler", "NewDecoupledService.");
+    public override void Create() => CreateAssets(newAssetType: "Decoupler", key: "Decoupled.NewService");
 
     protected override string FillTemplate(Template template, string text) {
       template.From(text);
@@ -78,8 +78,8 @@ namespace Decoupler {
     /// <a href=""></a> //#TBD#//
     protected override string GetDestinationPath(string basePath) => $"{basePath}/{newServiceName}";
 
-    public override void OnScriptReload() {
-      using (var assets = AssetEditor.Instance("NewDecoupledService.")) {
+    [DidReloadScripts] private static void OnScriptReload() {
+      using (var assets = AssetEditor.Instance(key: "Decoupled.NewService")) {
         if (assets == null) return;
         var split = assets.destination.Split('/');
         destination = split[split.Length - 1].Trim();

@@ -1,10 +1,10 @@
 ﻿// Copyright 2019 (C) paul@marrington.net http://www.askowl.net/unity-packages
 #if AskowlTests
+using System;
 using System.Collections;
 using System.IO;
 using Askowl.Gherkin;
 using CustomAsset;
-using CustomAsset.Mutable;
 using Decoupler;
 using Decoupler.Services;
 using NUnit.Framework;
@@ -12,6 +12,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.TestTools;
+using String = CustomAsset.Mutable.String;
 // ReSharper disable MissingXmlDoc
 
 namespace Askowl.Decoupler.Examples {
@@ -19,6 +20,7 @@ namespace Askowl.Decoupler.Examples {
     private string      projectDirectory;
     private AssetDb     assetDb;
     private AssetEditor assetEditor;
+    private string      fileBase;
 
     private IEnumerator ServiceTest(string label) {
       yield return Feature.Go("DecouplerDefinitions", featureFile: "CreateServices", label).AsCoroutine();
@@ -31,7 +33,7 @@ namespace Askowl.Decoupler.Examples {
     [Step(@"^we prepare for a new service$")] public void PrepareNewService() {
       assetDb?.Dispose();
       assetDb          = AssetDb.Instance;
-      projectDirectory = $"/Assets/Temp/CreateServiceExamples/{GUID.Generate()}";
+      projectDirectory = $"/Assets/Temp/CreateServiceExamples";
       assetDb.CreateFolders(path: projectDirectory).Select();
       if (assetDb.Error) Fail($"Can't create '{projectDirectory}'");
 
@@ -41,14 +43,18 @@ namespace Askowl.Decoupler.Examples {
                                .SetField("NewService", "destinationPath", fieldValue: projectDirectory);
     }
 
-    [Step(@"^we set ""(.*?)"" to ""(.*?)""$")] public void SetField(string[] matches) =>
-      assetEditor.SetField(assetName: "NewService", fieldName: matches[0], fieldValue: matches[1]);
+    [Step(@"^we set ""(.*?)"" to ""(.*?)""$")] public void SetField(string[] matches) {
+      fileBase = $"{matches[1]}_{(int) Clock.EpochTimeNow}";
+      assetEditor.SetField(assetName: "NewService", fieldName: matches[0], fieldValue: fileBase);
+    }
 
-    [Step(@"^we create the new service$")] public void CreateService(Definitions definitions) =>
+    [Step(@"^we create the new service$")] public void CreateService() =>
       ((AssetWizard) assetEditor.Save().Asset("NewService")).Create();
 
-    [Step(@"^processing is complete$")] public Emitter ProcessingComplete() =>
-      AssetEditor.onCompleteEmitter.Listen(validation: ("AssetEditor", "CreateServiceExamples"), once: true);
+    [Step(@"^processing is complete$")] public Emitter ProcessingComplete() {
+      var wizard = $"{projectDirectory}/{fileBase}/{fileBase} Wizard.asset";
+      return Fiber.Start.Begin.WaitFor(0.2f).Until(_ => File.Exists(wizard)).OnComplete;
+    }
 
     [Step(@"^there are no errors in the log$")] public void NoErrors() { }
 

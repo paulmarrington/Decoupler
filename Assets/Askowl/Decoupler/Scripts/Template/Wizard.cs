@@ -44,7 +44,7 @@ namespace Decoupler.Services {
               .Substitute("_ConcreteService_", new_Template_Name)
               .And(@"/\*\+\+", "").And(@"\+\+\*/", "").Result();
 
-    public override void OnScriptReload() {
+    [DidReloadScripts] private static void OnScriptReload() {
       using (var assets = AssetEditor.Instance("_Template_DecoupledService")) {
         if (assets == null) return;
         var newTemplateServiceName = PlayerPrefs.GetString($"AssetWizard.CreateAssets._Template_");
