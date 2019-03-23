@@ -30,6 +30,14 @@ namespace Decoupler {
       public ServiceMeta(string to = default) => entryPointName = requestData = responseData = to;
     }
 
+    /// <a href="">For testing purposes only. Normally use inspector</a> //#TBD#//
+    public void AddEntryPoint(string name, string request, string response) {
+      var meta = new ServiceMeta[entryPoints.Length + 1];
+      entryPoints.CopyTo(meta, 0);
+      meta[entryPoints.Length] = new ServiceMeta
+        {entryPointName = name, requestData = request, responseData = response};
+    }
+
     protected override void Clear() {
       destinationPath = "";
       newServiceName  = context = "";

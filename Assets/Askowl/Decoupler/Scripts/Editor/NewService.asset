@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   description: 
   destinationPath: /Assets/Temp/CreateServiceExamples
-  newServiceName: EmptyService_1553247243
+  newServiceName: EmptyService_1553249318
   context: 
   entryPoints: []

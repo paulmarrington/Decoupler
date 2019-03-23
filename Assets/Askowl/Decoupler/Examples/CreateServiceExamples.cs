@@ -21,6 +21,7 @@ namespace Askowl.Decoupler.Examples {
     private AssetDb     assetDb;
     private AssetEditor assetEditor;
     private string      fileBase;
+    private NewService  newService;
 
     private IEnumerator ServiceTest(string label) {
       yield return Feature.Go("DecouplerDefinitions", featureFile: "CreateServices", label).AsCoroutine();
@@ -29,6 +30,9 @@ namespace Askowl.Decoupler.Examples {
     }
 
     [UnityTest] public IEnumerator CreateEmptyService() { yield return ServiceTest("@CreateEmptyService"); }
+    [UnityTest] public IEnumerator WithContext()        { yield return ServiceTest("@CreateServiceWithContext"); }
+    [UnityTest] public IEnumerator WithEntryPoints()    { yield return ServiceTest("@CreateServiceWithEntryPoints"); }
+    [UnityTest] public IEnumerator ConcreteService()    { yield return ServiceTest("@CreateConcreteService"); }
 
     [Step(@"^we prepare for a new service$")] public void PrepareNewService() {
       assetDb?.Dispose();
@@ -41,6 +45,7 @@ namespace Askowl.Decoupler.Examples {
       assetEditor = AssetEditor.Instance("CreateServiceExamples", projectDirectory.Substring(1))
                                .Load((name: "NewService", asset: "Decoupler.NewService"))
                                .SetField("NewService", "destinationPath", fieldValue: projectDirectory);
+      newService = (NewService) assetEditor.Asset("NewService");
     }
 
     [Step(@"^we set ""(.*?)"" to ""(.*?)""$")] public void SetField(string[] matches) {
@@ -51,10 +56,14 @@ namespace Askowl.Decoupler.Examples {
     [Step(@"^we create the new service$")] public void CreateService() =>
       ((AssetWizard) assetEditor.Save().Asset("NewService")).Create();
 
-    [Step(@"^processing is complete$")] public Emitter ProcessingComplete() {
-      var wizard = $"{projectDirectory}/{fileBase}/{fileBase} Wizard.asset";
-      return Fiber.Start.Begin.WaitFor(0.2f).Until(_ => File.Exists(wizard)).OnComplete;
+    [Step(@"^we add entry points:$")] public void AddEntryPoints(string[][] table) {
+      for (int row = 1; row < table.Length; row++) {
+        newService.AddEntryPoint(table[row][0], table[row][1], table[row][2]);
+      }
     }
+
+    // Not much we can do from here on in because this thread appears to be terminated by the compile.
+    [Step(@"^processing is complete$")] public void ProcessingComplete() { }
 
     [Step(@"^there are no errors in the log$")] public void NoErrors() { }
 
