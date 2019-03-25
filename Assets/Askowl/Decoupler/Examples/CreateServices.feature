@@ -6,7 +6,7 @@ Feature: Automated creation of decoupled services
     And we set "New Service Name" to "EmptyService"
     And we create the new service
     When processing is complete
-    Then manually check that there are no errors in the log
+    Then Ask: Is the log clean, assets filled and source fit for purpose?
 
   @CreateServiceWithContext
   Scenario Outline: Create an empty service with context items context item
@@ -14,8 +14,8 @@ Feature: Automated creation of decoupled services
     And we set "New Service Name" to "ContextService_<row>"
     And we set "Context" to "<context>"
     And we create the new service
-    When processing is complete
-    Then manually check that there are no errors in the log
+    When Tell: Wait for processing to complete
+    Then Ask: Is the log clean, assets filled and source fit for purpose?
 
     Examples:
       | row | context                       |
@@ -34,13 +34,13 @@ Feature: Automated creation of decoupled services
       | Simple | int             | string                   |
       | Tuple  | int i, string s | string msg,int errorCode |
     And we create the new service
-    When processing is complete
-    Then manually check that there are no errors in the log
+    When Tell: Wait for processing to complete
+    Then Ask: Is the log clean, assets filled and source fit for purpose?
 
   @AddConcreteService
   Scenario: Add a concrete service
-    Given we have to do this manually
-    And we have created a service elsewhere
-    When we choose "Asset // Create // Decoupled // Service Name // Concrete Service
-    And we give the service a name
-    Then manually check that there are no errors in the log
+    And Tell: Select a service we created earlier
+    When Tell: Choose Asset // Create // Decoupled // <b>Service Name</b> // Concrete Service
+    And Tell: Give the concrete service a name
+    When Tell: Wait for processing to complete
+    Then Ask: Is the log clean, assets filled and source fit for purpose?

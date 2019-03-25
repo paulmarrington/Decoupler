@@ -9,6 +9,7 @@ using Decoupler;
 using Decoupler.Services;
 using NUnit.Framework;
 using UnityEditor;
+using UnityEditor.Callbacks;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.TestTools;
@@ -17,11 +18,12 @@ using String = CustomAsset.Mutable.String;
 
 namespace Askowl.Decoupler.Examples {
   public class CreateServiceExamples : PlayModeTests {
-    private string      projectDirectory;
-    private AssetDb     assetDb;
-    private AssetEditor assetEditor;
-    private string      fileBase;
-    private NewService  newService;
+    private        string      projectDirectory;
+    private        AssetDb     assetDb;
+    private        AssetEditor assetEditor;
+    private        string      fileBase;
+    private        NewService  newService;
+    private static Emitter     afterCompile;
 
     private IEnumerator ServiceTest(string label) {
       yield return Feature.Go("DecouplerDefinitions", featureFile: "CreateServices", label).AsCoroutine();
@@ -29,10 +31,10 @@ namespace Askowl.Decoupler.Examples {
       assetEditor?.Dispose();
     }
 
-    [UnityTest] public IEnumerator CreateEmptyService() { yield return ServiceTest("@CreateEmptyService"); }
-    [UnityTest] public IEnumerator WithContext()        { yield return ServiceTest("@CreateServiceWithContext"); }
-    [UnityTest] public IEnumerator WithEntryPoints()    { yield return ServiceTest("@CreateServiceWithEntryPoints"); }
-    [UnityTest] public IEnumerator ConcreteService()    { yield return ServiceTest("@CreateConcreteService"); }
+    [UnityTest] public IEnumerator EmptyService()    { yield return ServiceTest("@CreateEmptyService"); }
+    [UnityTest] public IEnumerator WithContext()     { yield return ServiceTest("@CreateServiceWithContext"); }
+    [UnityTest] public IEnumerator WithEntryPoints() { yield return ServiceTest("@CreateServiceWithEntryPoints"); }
+    [UnityTest] public IEnumerator ConcreteService() { yield return ServiceTest("@CreateConcreteService"); }
 
     [Step(@"^we prepare for a new service$")] public void PrepareNewService() {
       assetDb?.Dispose();
@@ -57,19 +59,16 @@ namespace Askowl.Decoupler.Examples {
       ((AssetWizard) assetEditor.Save().Asset("NewService")).Create();
 
     [Step(@"^we add entry points:$")] public void AddEntryPoints(string[][] table) {
-      for (int row = 1; row < table.Length; row++) {
+      newService.ClearEntryPoints();
+      for (int row = 1; row < table.Length; row++)
         newService.AddEntryPoint(table[row][0], table[row][1], table[row][2]);
-      }
     }
 
     // Not much we can do from here on in because this thread appears to be terminated by the compile.
-    [Step(@"^processing is complete$")] public void ProcessingComplete() { }
+    [Step(@"^processing is complete$")] public Emitter ProcessingComplete() =>
+      Fiber.Start.WaitFor(afterCompile = Emitter.Instance).Log("YEY!!!!!").WaitFor(seconds: 2).OnComplete;
 
-    [Step(@"^there are no errors in the log$")] public void NoErrors() { }
-
-    /*
-    [Step(@"^$")] public void () { }
-    */
+    [DidReloadScripts] private static void OnScriptReload() => afterCompile?.Fire();
   }
 }
 #endif

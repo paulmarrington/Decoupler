@@ -31,6 +31,8 @@ namespace Decoupler {
     }
 
     /// <a href="">For testing purposes only. Normally use inspector</a> //#TBD#//
+    public void ClearEntryPoints() => entryPoints = new ServiceMeta[0];
+    /// <a href="">For testing purposes only. Normally use inspector</a> //#TBD#//
     public void AddEntryPoint(string name, string request, string response) {
       var meta = new ServiceMeta[entryPoints.Length + 1];
       entryPoints.CopyTo(meta, 0);
@@ -69,10 +71,11 @@ namespace Decoupler {
       using (var inner = template.Inner(re("/*-EntryPoint...-*/(.*?)/*-...EntryPoint-*/"))) {
         while (inner.More())
           for (int i = 0; i < entryPoints.Length; i++)
-            inner.Substitute("EntryPoint", entryPoints[i].entryPointName)
-                 .And(re("int /*-entryPointRequest-*/"),  ToTuple(entryPoints[i].requestData)  ?? "string")
-                 .And(re("int /*-entryPointResponse-*/"), ToTuple(entryPoints[i].responseData) ?? "string")
-                 .Add();
+            if (!string.IsNullOrWhiteSpace(entryPoints[i].entryPointName))
+              inner.Substitute("EntryPoint", entryPoints[i].entryPointName)
+                   .And(re("int /*-entryPointRequest-*/"),  ToTuple(entryPoints[i].requestData)  ?? "string")
+                   .And(re("int /*-entryPointResponse-*/"), ToTuple(entryPoints[i].responseData) ?? "string")
+                   .Add();
       }
 
       return template.Substitute("_Template_", newServiceName)
