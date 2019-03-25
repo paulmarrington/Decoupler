@@ -15,6 +15,8 @@ The Askowl Decoupler is here to provide an interface between your code and Unity
 # Videos
 
 # Cheat-Sheet
+#### Menu Items
+* Create a new Decoupled Interface: ***Assets / Create / Decoupled / New Service***
 
 # Introduction
 
@@ -171,7 +173,7 @@ The Askowl Decoupler package includes a wizard that creates the framework for yo
       return result.ServiceError == default ? emitter : null;
     }
 
-    protected virtual string Display(Emitter emitter) => 
+    protected virtual string Display(Emitter emitter) =>
       throw new NotImplementedException();
   }
 ```
@@ -182,8 +184,8 @@ The Askowl Decoupler package includes a wizard that creates the framework for yo
   [CreateAssetMenu(menuName = "Custom Assets/Services/Adze/ServiceFor", fileName = "AdzeServiceFor")]
   public abstract class AdzeServiceFor : AdzeServiceAdapter {
     protected override void Prepare() => base.Prepare();
-    
-    protected override void LogOnResponse(Emitter emitter) => 
+
+    protected override void LogOnResponse(Emitter emitter) =>
       base.LogOnResponse(emitter);
 
     protected override string Display(Emitter emitter) =>
@@ -293,18 +295,18 @@ Feature: Adze
   Adze provides a decoupled layer to external advertising services.
 
   Rule: First passing service will respond to a display request repeatedly
-  
+
     Background:
       Given 4 services available
       And they are ordered  as "Round Robin"
-      
+
     Example: The first service responds
       Given that all services work
       When I ask for an advertisement
       Then I get the first service
       When I ask for an advertisement again
       Then I get the second service
-      
+
     #... Examples to cover all the other combinations
 ```
 

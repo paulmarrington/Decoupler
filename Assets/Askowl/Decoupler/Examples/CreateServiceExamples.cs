@@ -31,10 +31,17 @@ namespace Askowl.Decoupler.Examples {
       assetEditor?.Dispose();
     }
 
-    [UnityTest] public IEnumerator EmptyService()    { yield return ServiceTest("@CreateEmptyService"); }
-    [UnityTest] public IEnumerator WithContext()     { yield return ServiceTest("@CreateServiceWithContext"); }
-    [UnityTest] public IEnumerator WithEntryPoints() { yield return ServiceTest("@CreateServiceWithEntryPoints"); }
-    [UnityTest] public IEnumerator ConcreteService() { yield return ServiceTest("@CreateConcreteService"); }
+    [UnityTest, Timeout(180000)] public IEnumerator EmptyService() { yield return ServiceTest("@CreateEmptyService"); }
+    [UnityTest, Timeout(180000)] public IEnumerator WithContext() {
+      yield return ServiceTest("@CreateServiceWithContext");
+    }
+    [UnityTest, Timeout(180000)] public IEnumerator WithEntryPoints() {
+      yield return ServiceTest("@CreateServiceWithEntryPoints");
+    }
+
+    [UnityTest, Timeout(180000)] public IEnumerator AddConcreteService() {
+      yield return ServiceTest("@AddConcreteService");
+    }
 
     [Step(@"^we prepare for a new service$")] public void PrepareNewService() {
       assetDb?.Dispose();
@@ -65,10 +72,14 @@ namespace Askowl.Decoupler.Examples {
     }
 
     // Not much we can do from here on in because this thread appears to be terminated by the compile.
-    [Step(@"^processing is complete$")] public Emitter ProcessingComplete() =>
-      Fiber.Start.WaitFor(afterCompile = Emitter.Instance).Log("YEY!!!!!").WaitFor(seconds: 2).OnComplete;
-
-    [DidReloadScripts] private static void OnScriptReload() => afterCompile?.Fire();
+    [Step(@"^processing is complete$")] public Emitter ProcessingComplete() {
+      var wizard = $"{projectDirectory.Substring(1)}/{fileBase}/{fileBase} Wizard.asset";
+      return Fiber.Start.Begin.WaitFor(seconds: 0.2f)
+                  .Log($"Exists is {File.Exists(wizard)}")
+                  .Until(_ => File.Exists(wizard))
+                  .Log("FOUND")
+                  .OnComplete;
+    }
   }
 }
 #endif
