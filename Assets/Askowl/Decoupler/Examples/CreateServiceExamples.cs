@@ -1,19 +1,11 @@
 ﻿// Copyright 2019 (C) paul@marrington.net http://www.askowl.net/unity-packages
 #if AskowlTests
-using System;
 using System.Collections;
 using System.IO;
 using Askowl.Gherkin;
-using CustomAsset;
 using Decoupler;
-using Decoupler.Services;
 using NUnit.Framework;
-using UnityEditor;
-using UnityEditor.Callbacks;
-using UnityEngine;
-using UnityEngine.Assertions;
 using UnityEngine.TestTools;
-using String = CustomAsset.Mutable.String;
 // ReSharper disable MissingXmlDoc
 
 namespace Askowl.Decoupler.Examples {
@@ -26,9 +18,15 @@ namespace Askowl.Decoupler.Examples {
     private static Emitter     afterCompile;
 
     private IEnumerator ServiceTest(string label) {
+      Clear();
       yield return Feature.Go("DecouplerDefinitions", featureFile: "CreateServices", label).AsCoroutine();
       assetDb?.Dispose();
       assetEditor?.Dispose();
+    }
+    private void Clear() {
+      if (newService == null) return;
+      newService.Clear(projectDirectory);
+      assetEditor.SerialisedAsset("NewService").Update();
     }
 
     [UnityTest, Timeout(180000)] public IEnumerator EmptyService() { yield return ServiceTest("@CreateEmptyService"); }
@@ -38,7 +36,6 @@ namespace Askowl.Decoupler.Examples {
     [UnityTest, Timeout(180000)] public IEnumerator WithEntryPoints() {
       yield return ServiceTest("@CreateServiceWithEntryPoints");
     }
-
     [UnityTest, Timeout(180000)] public IEnumerator AddConcreteService() {
       yield return ServiceTest("@AddConcreteService");
     }
@@ -46,7 +43,7 @@ namespace Askowl.Decoupler.Examples {
     [Step(@"^we prepare for a new service$")] public void PrepareNewService() {
       assetDb?.Dispose();
       assetDb          = AssetDb.Instance;
-      projectDirectory = $"/Assets/Temp/CreateServiceExamples";
+      projectDirectory = "/Assets/Temp/CreateServiceExamples";
       assetDb.CreateFolders(path: projectDirectory).Select();
       if (assetDb.Error) Fail($"Can't create '{projectDirectory}'");
 
@@ -55,22 +52,22 @@ namespace Askowl.Decoupler.Examples {
                                .Load((name: "NewService", asset: "Decoupler.NewService"))
                                .SetField("NewService", "destinationPath", fieldValue: projectDirectory);
       newService = (NewService) assetEditor.Asset("NewService");
+      Clear();
     }
-
-    [Step(@"^we set ""(.*?)"" to ""(.*?)""$")] public void SetField(string[] matches) {
+    [Step(@"^we set ""(.*?)"" to ""(.*?)""$")] public void SetField(string[] matches) =>
+      assetEditor.SetField(assetName: "NewService", fieldName: matches[0], fieldValue: matches[1]);
+    [Step(@"^we set ""(.*?)"" to unique ""(.*?)""$")] public void SetFieldUnique(string[] matches) {
       fileBase = $"{matches[1]}_{(int) Clock.EpochTimeNow}";
       assetEditor.SetField(assetName: "NewService", fieldName: matches[0], fieldValue: fileBase);
+      assetEditor.SerialisedAsset("NewService").ApplyModifiedPropertiesWithoutUndo();
     }
-
     [Step(@"^we create the new service$")] public void CreateService() =>
       ((AssetWizard) assetEditor.Save().Asset("NewService")).Create();
-
     [Step(@"^we add entry points:$")] public void AddEntryPoints(string[][] table) {
-      newService.ClearEntryPoints();
       for (int row = 1; row < table.Length; row++)
         newService.AddEntryPoint(table[row][0], table[row][1], table[row][2]);
+      assetEditor.SerialisedAsset("NewService").Update();
     }
-
     // Not much we can do from here on in because this thread appears to be terminated by the compile.
     [Step(@"^processing is complete$")] public Emitter ProcessingComplete() {
       var wizard = $"{projectDirectory.Substring(1)}/{fileBase}/{fileBase} Wizard.asset";

@@ -1,6 +1,4 @@
-﻿// Copyright 2019 (C) paul@marrington.net http://www.askowl.net/unity-packages
-
-using System;
+﻿using System;
 using System.IO;
 using Askowl;
 using UnityEditor;
@@ -11,33 +9,32 @@ namespace Decoupler.Services {
   public class _Template_Wizard : AssetWizard {
     private static _Template_Wizard newServiceInputForm;
 
-    /*--[MenuItem("Assets/Create/Decoupled/_Template_/New Concrete Service")]--*/
-    private static void Start() {
+    /*--[MenuItem("Assets/Create/Decoupled/_Template_/Add Concrete Service")]--*/
+    internal static void Start() {
       if (newServiceInputForm == null) newServiceInputForm = CreateInstance<_Template_Wizard>();
       Selection.activeObject = newServiceInputForm;
     }
 
     [SerializeField] private string new_Template_Name;
 
-    protected override void Clear() => new_Template_Name = "";
+    public override void Clear(string dest = "") => new_Template_Name = dest;
 
     public override void Create() {
-      assetType   = "/*-assetType-*/";
-      destination = "/*-destination-*/";
+      assetType = "/*-assetType-*/";
       PlayerPrefs.SetString($"AssetWizard.CreateAssets._Template_", $"ServiceFor{new_Template_Name}");
-      CreateAssets("Decoupler", "_Template_DecoupledService");
+      CreateAssets(
+        newAssetType: "Decoupler"
+      , key: "_Template_DecoupledService"
+      , destinationDirectory: "/*-destination-*/");
     }
     protected override bool ProcessAllFiles(string textAssetTypes) {
-      var serviceFor = $"{destination}/_Template_ServiceFor";
-      var fileName   = $"{serviceFor}{new_Template_Name}.cs";
+      var serviceFor = $"/*-destination-*//_Template_ServiceFor";
+      var fileName   = $"{destination}/_Template_ServiceFor{new_Template_Name}.cs";
       if (File.Exists(fileName)) throw new Exception($"'{fileName}' already exists. Try another name.");
       File.Copy($"{serviceFor}.cs", fileName);
       ProcessFiles("cs", fileName);
       return true;
     }
-
-    /// <a href=""></a> //#TBD#//
-    protected override string GetDestinationPath(string basePath) => basePath;
 
     protected override string FillTemplate(Template template, string text) =>
       template.From(text)

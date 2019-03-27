@@ -495,7 +495,7 @@ PlayerSettings:
   webGLLinkerTarget: 0
   webGLThreadsSupport: 0
   scriptingDefineSymbols:
-    1: AskowlTests
+    1: AskowlTests;EntryPointService_1553641825ServiceForFuck;EntryPointService_1553649086ServiceForTit
   platformArchitecture: {}
   scriptingBackend: {}
   il2cppCompilerConfiguration: {}

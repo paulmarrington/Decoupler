@@ -1,6 +1,4 @@
-﻿// Copyright 2019 (C) paul@marrington.net http://www.askowl.net/unity-packages
-
-using Askowl;
+﻿using Askowl;
 using UnityEngine;
 
 namespace Decoupler.Services {

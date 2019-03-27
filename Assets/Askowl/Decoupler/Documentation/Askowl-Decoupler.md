@@ -15,8 +15,70 @@ The Askowl Decoupler is here to provide an interface between your code and Unity
 # Videos
 
 # Cheat-Sheet
-#### Menu Items
-* Create a new Decoupled Interface: ***Assets / Create / Decoupled / New Service***
+
+##### Menu Items
+> Where `Dddd` is the decoupled service name and `Cccc` is the name of a concrete service interface.
+* Create a new Decoupled Interface: **Assets / Create / Decoupled / New Service**
+* Add an Additional Context: **Assets/Create/Decoupled/`Dddd`/Add Context**
+* Add a Concrete Service: **Assets/Create/Decoupled/`Dddd`/Add Concrete Service**
+* Add New Environment: **Assets/Create/Decoupled/Add Environment**
+
+##### Editing Required
+* **`Dddd`/`Dddd`ServiceFor`Cccc`.cs**
+  * Update `DetectService()` if the service does not have a folder or Unity packaage manager with the same name.
+  * Use `Prepare()` to initialise the service as needed.
+  * Implement call to concrete service  in each `Cccc`Fiber() class. Use double-star comments as an indication of where to add the needed code.
+* **`Dddd`/`Dddd`ServiceForMock.cs**
+  * Implement a very simple mock to fill in responses so that the service clients will work.
+  * Later sub-class this mock to add more complex mocking as needed.
+* **`Dddd`/`Dddd`Context.cs** for context specific support data. A URL may be different between Test and Production environments.
+* **`Dddd`/`Dddd`ServiceAdapter.cs** for common code. Different concrete services may require the same code to parse responses.
+
+##### Entry Format for Context, Request and Response Fields
+The New Service command asks for information to create context, request and response fields. Enter type/name pairs as a comma separated list.
+
+> int port, string mode, MyClass myClass
+``` c#
+Open(context.port);
+Scope.Dto.response.myClass = (MyClass) MyEntryPoint(Scope.Dto.request.mode);
+```
+
+For request and response fields there must be at least two type/name pairs. For a single entry, provide the type only.
+
+> MyResponse
+``` c#
+Scope.Dto.response = (MyClass) MyEntryPoint(Scope.Dto.request.mode);
+```
+
+##### How to Implement an Entry-Point
+The most common service practice is to provide a callback.
+
+``` c#
+public override Emitter Call(Service<CcccDto> service) {
+    aService.AnEntryPoint(Parse(Scope.Dto.request), (result) => {
+      Scope.Dto.response = Parse(result);
+      Scope.Emitter.Fire();
+    });
+}
+```
+If the service is wrapped in a Task, use a ``Fiber.Closure`` and a `WaitFor(Task)`. `Fiber.Closure` is also useful for more complex activities such as more than one asynchronous requirement.
+
+##### How to Call a Service
+
+``` c#
+// Load the service manager for this service type.
+DdddServicesManager DdddManager = AssetDb.Load<DdddServicesManager>($"{Dddd}ServicesManager.asset");
+[SerializedField] private Text message;
+
+var CallDdddService(int key, string mode) {
+  // Get reference from recycling so we can have more than one request running
+  CcccService = Service<DdddServiceAdapter.CcccDto>.Instance;
+  // The DTO will have request data as a single instance reference or a Tuple
+  CcccService.Dto.request = (key, mode);
+  // In production we would use a Fiber.Closure or at least a cached Fiber.Instance
+  Fiber.Start.WaitFor(_ => manager.CallService(CcccService)).Do(_ => message.text = CcccService.Dto.response;
+}
+```
 
 # Introduction
 
@@ -28,10 +90,10 @@ Now we have Web APIs, REST or SOAP interfaces and micro-services. Design pattern
 
 Despite this, developers have continued to create tightly coupled systems.
 
-Consider a simple example. I have an app that uses a Google Maps API to translate coordinates into a description "Five miles south-west of Gundagai". My app is running on an iPhone calling into a cloud of Google servers. The hardware is different and remote, and they both use completely different software systems. However, my app won't run, or at least perform correctly, without Google. Worse still if I am using a Google library, it won't even compile without a copy.
+Consider a simple example. I have an app that uses a Google Maps API to translate coordinates into a description "Five miles south-west of Gundagai". My app is running on an iPhone calling into a cloud of Google servers. The hardware is different and remote, and they both use completely different software systems. However, my app won't run, or at least perform correctly, without Google. Worse still if I am using a Google library, it won't even compile without a copy. If you want the same code to work on a Windows desktop and a mobile device you are very likely to need different supporting libraries.
 
 # What is the Askowl Decoupler
-First and foremost, the Askowl Decoupler is a way to decouple your app from packages in the Unity3D ecosystem. This would include sub-systems withing your app or game.
+First and foremost, the Askowl Decoupler is a way to decouple your app from packages in the Unity3D ecosystem. This would include sub-systems you have created within your app or game.
 
 It works at the C# class level, meaning that it does not provide the physical separation. That is done by the Unity packages when needed. In approach, it acts very much like a C# Interface.
 
@@ -40,7 +102,8 @@ It works at the C# class level, meaning that it does not provide the physical se
 2. You can choose between unity packages without changing your app code. Changing from Google Analytics to Unity Analytics to Fabric is as simple as getting or writing the connector code.
 3. You can provide a standard interface to a related area. For social media, the interface could support FaceBook, Twitter, Youtube and others. You could then send a command to one, some or all of them. Think of this regarding posting to multiple platforms.
 4. You can have more than one service then cycle through them or select one at random. For advertising, you can move to a new platform if the current one cannot serve you an ad.
-5. Mocking is merely another decoupled package, albeit the first one you will write.
+5. Decoupler includes a fallback mechanism, so if the primary interface fails or cannot serve the request you make it will automatically try other fallback services. These could be as simple as fallback servers on different URLs or as complex as a completely different service provider.
+6. Mocking is merely another decoupled package, albeit the first one you will write.
 
 # Decoupling Packages
 
@@ -50,16 +113,16 @@ A service has one or more entry points. The following example is for one called 
 manager = Manager.Load<AdzeServicesManager>("AdzeServicesManager.asset");
 showService = Service<AdzeServiceAdapter.ShowDto>.Instance;
 showService.Dto.request = (firstValue, secondValue);
-emitter = manager.CallService(showService);
+emitter = manager.Call(showService);
 //... later once the emitter has fired
 response = showService.Dto.response;
 ```
 Because of the unusual design decisions, this code needs some explanation.
 
-1. A service manager is responsible for getting an acceptable service and for switching to a fallback if a service fails. Static cache it if there is one primary service with or without fallback. Don't cache for random or round-robin implementations.
+1. A service manager is responsible for getting an acceptable service and for switching to a fallback if a service fails. We can cache a copy of `manager` but not `showService`. The latter uses a recycling sysem so is not resource intensive.
 2. A service may have many entry points. Each entry point has it's own data transfer object (DTO). Here we get a DTO and fill in request data.
-3. A service has a single method `CallService` with an override for very entry point DTO. It returns an emitter which is fired once the service is complete.
-4. Once done, the service will fill in a response struct/tuple/struct that can be accessed through the DTO.
+3. A service has a single method `Call` method with an overloads for very entry point DTO. It returns an emitter which is fired once the service is complete.
+4. Once done, the service will fill in a response struct/tuple/instance that can be accessed through the DTO.
 
 ### To send to all viable services
 Another type of service is to have multiple instances, and we need to do something with all of them. It could be anything from display a list of names for user selection or call a method on some or all of them. `Social` is one of these where we may be connected to multiple social networks and send a message to some.
@@ -80,14 +143,16 @@ All service interfaces have a method `IsExternalServiceAvailable()`.
 ```
 
 ## How much work do I need to do to add a service to an existing framework?
-There is a wizard under asset creation for adding a new service entry point. You will end up with a script with an abstract function to fill in for each service entry point.
+There is a wizard in menu ***Assets/Create/Decoupled*** for adding a new concrete service. You will end up with a script with `Call` functions to fill in for each entry point.
 
 ## How do I create a new decoupled service framework
-The Askowl Decoupler package includes a wizard that creates the framework for your new service. follow the [Adze sample below](#adze-a-sample-service) to see how to fill in your service specific pieces.
+The Askowl Decoupler package includes a wizard at menu ***Assets/Create/Decoupled/New Service*** that creates the framework for your new service. follow the [Adze sample below](#adze-a-sample-service) to see how to fill in your service specific pieces.
 
 ### Adze: A Sample Service
 * Creating a new service is easy. Just select the Assets or Project context menu ***Create // Decoupled // New Service***
+![Create Service Menu](CreateServiceMenu.png)
 * You will be asked to give a name to your service. Make the name descriptive. Your service will be created in a directory of the same name. Rename or move it as you wish.
+![New Service Form](NewServiceForm.png)
 * Your scene is updated with a ***Service Managers*** game object with a Managers component adding your service manager.
 
 ![Service Managers GameObject](ServiceManagerInHierarchy.png)

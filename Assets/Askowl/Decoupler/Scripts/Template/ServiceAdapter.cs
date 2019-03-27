@@ -1,6 +1,4 @@
-﻿// Copyright 2019 (C) paul@marrington.net http://www.askowl.net/unity-packages
-
-using Askowl;
+﻿using Askowl;
 
 namespace Decoupler.Services {
   public abstract class
@@ -18,11 +16,11 @@ namespace Decoupler.Services {
     // List of virtual interface methods that all concrete service adapters need to implement.
 
     /*-EntryPoint...-*/
+    /************* EntryPoint *************/
     public class EntryPointDto : DelayedCache<EntryPointDto> {
       public int /*-entryPointRequest-*/  request;
       public int /*-entryPointResponse-*/ response;
     }
-
     public abstract Emitter Call(Service<EntryPointDto> service);
     /*-...EntryPoint-*/
     #endregion

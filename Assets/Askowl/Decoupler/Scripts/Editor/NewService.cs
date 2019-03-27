@@ -8,21 +8,18 @@ using UnityEditor.Callbacks;
 using UnityEngine;
 
 namespace Decoupler {
-  /// <a href=""></a> //#TBD#//
   public class NewService : AssetWizard {
     [MenuItem("Assets/Create/Decoupled/New Service")] private static void Start() {
-      Selection.activeObject = wizard;
+      Selection.activeObject = wizard.Value;
       EditorGUI.FocusTextInControl("FirstWizardField");
     }
     private static readonly Jit<NewService> wizard = Jit<NewService>.Instance(
       _ => AssetDb.LoadOrCreate<NewService>("Askowl/Decoupler/Scripts/Editor/NewService.asset"));
 
-    [SerializeField] private string newServiceName;
-    [SerializeField, Tooltip("C# definitions, as in 'String str;RuntimePlatform platform'")]
-    private string context = "RuntimePlatform platform;";
+    [SerializeField] private string        newServiceName;
+    [SerializeField] private string        context = "RuntimePlatform platform;";
     [SerializeField] private ServiceMeta[] entryPoints;
 
-    /// <a href=""></a> //#TBD#//
     [Serializable] private struct ServiceMeta {
       [SerializeField] internal string entryPointName;
       [SerializeField] internal string requestData;
@@ -30,23 +27,20 @@ namespace Decoupler {
       public ServiceMeta(string to = default) => entryPointName = requestData = responseData = to;
     }
 
-    /// <a href="">For testing purposes only. Normally use inspector</a> //#TBD#//
-    public void ClearEntryPoints() => entryPoints = new ServiceMeta[0];
-    /// <a href="">For testing purposes only. Normally use inspector</a> //#TBD#//
-    public void AddEntryPoint(string name, string request, string response) {
+    public void AddEntryPoint(string entryPointName, string request, string response) {
       var meta = new ServiceMeta[entryPoints.Length + 1];
       entryPoints.CopyTo(meta, 0);
       meta[entryPoints.Length] = new ServiceMeta
-        {entryPointName = name, requestData = request, responseData = response};
+        {entryPointName = entryPointName, requestData = request, responseData = response};
+      entryPoints = meta;
     }
 
-    protected override void Clear() {
-      destinationPath = "";
+    public override void Clear(string dest = "") {
+      destinationPath = dest;
       newServiceName  = context = "";
-      entryPoints     = default;
-      var       ray       = new Ray();
-      LayerMask layerMask = LayerMask.GetMask("default");
-      Physics.Raycast(ray, maxDistance: 10, layerMask);
+      entryPoints     = new ServiceMeta[0];
+//      LayerMask layerMask = LayerMask.GetMask("default");
+//      Physics.Raycast(new Ray(), maxDistance: 10, layerMask);
     }
 
     public override void Create() => CreateAssets(newAssetType: "Decoupler", key: "Decoupled.NewService");
@@ -71,11 +65,14 @@ namespace Decoupler {
       using (var inner = template.Inner(re("/*-EntryPoint...-*/(.*?)/*-...EntryPoint-*/"))) {
         while (inner.More())
           for (int i = 0; i < entryPoints.Length; i++)
-            if (!string.IsNullOrWhiteSpace(entryPoints[i].entryPointName))
-              inner.Substitute("EntryPoint", entryPoints[i].entryPointName)
-                   .And(re("int /*-entryPointRequest-*/"),  ToTuple(entryPoints[i].requestData)  ?? "string")
-                   .And(re("int /*-entryPointResponse-*/"), ToTuple(entryPoints[i].responseData) ?? "string")
-                   .Add();
+            if (!string.IsNullOrWhiteSpace(entryPoints[i].entryPointName)) {
+              inner.Substitute("EntryPoint", entryPoints[i].entryPointName);
+              if (!string.IsNullOrWhiteSpace(entryPoints[i].requestData))
+                inner.And(re("int /*-entryPointRequest-*/"), ToTuple(entryPoints[i].requestData) ?? "string");
+              if (!string.IsNullOrWhiteSpace(entryPoints[i].responseData))
+                inner.And(re("int /*-entryPointResponse-*/"), ToTuple(entryPoints[i].responseData) ?? "string");
+              inner.Add();
+            }
       }
 
       return template.Substitute("_Template_", newServiceName)
@@ -86,7 +83,6 @@ namespace Decoupler {
                      .Result();
     }
 
-    /// <a href=""></a> //#TBD#//
     protected override string GetDestinationPath(string basePath) => $"{basePath}/{newServiceName}";
 
     [DidReloadScripts] private static void OnScriptReload() {

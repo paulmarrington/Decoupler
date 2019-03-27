@@ -1,9 +1,7 @@
-﻿// Copyright 2019 (C) paul@marrington.net http://www.askowl.net/unity-packages
-
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Decoupler.Services {
-  /*--[CreateAssetMenu(menuName = "Decoupled/_Template_/Context", fileName = "_Template_Context")]--*/
+  /*--[CreateAssetMenu(menuName = "Decoupled/_Template_/Add Context", fileName = "_Template_Context")]--*/
   public class _Template_Context : Services<_Template_ServiceAdapter, _Template_Context>.Context {
     #region Service Validity Fields
     /*-ContextField...-*/

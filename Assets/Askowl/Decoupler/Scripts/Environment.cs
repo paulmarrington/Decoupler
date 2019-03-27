@@ -4,4 +4,4 @@ using CustomAsset.Constant;
 using UnityEngine;
 
 /// <a href=""></a> //#TBD#//
-[CreateAssetMenu(menuName = "Decoupled/Environment")] public class Environment : Enumeration { }
+[CreateAssetMenu(menuName = "Decoupled/Add Environment")] public class Environment : Enumeration { }

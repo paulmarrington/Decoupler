@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: NewService
   m_EditorClassIdentifier: 
   description: 
-  destinationPath: /Assets/Temp/CreateServiceExamples
-  newServiceName: EntryPointService_1553496294
-  context: int i, string s_1553496228
+  destinationPath: /Assets
+  newServiceName: Adze
+  context: RuntimePlatform platform,Mode mode
   entryPoints:
-  - entryPointName: 
+  - entryPointName: Show
     requestData: 
-    responseData: 
+    responseData: bool adActionTaken,bool dismissed,string serviceError

@@ -1,10 +1,8 @@
-﻿// Copyright 2019 (C) paul@marrington.net http://www.askowl.net/unity-packages
-
-#if _Template_ServiceFor_ConcreteService_ || true
-using System;
+﻿using System;
 using Askowl;
 using UnityEditor;
-using UnityEngine;
+using UnityEngine; // Do not remove
+#if _Template_ServiceFor_ConcreteService_
 // Add using statements for service library here
 #endif
 
@@ -12,28 +10,27 @@ namespace Decoupler.Services {
   /*++[CreateAssetMenu(
     menuName = "Decoupled/_Template_/ServiceFor_ConcreteService_", fileName = "_Template_ServiceFor_ConcreteService_")]++*/
   public class _Template_ServiceFor_ConcreteService_ : _Template_ServiceAdapter {
-    /*++[InitializeOnLoadMethod]++*/
-    private static void DetectService() {
+    [InitializeOnLoadMethod] private static void DetectService() {
       bool usable = DefineSymbols.HasPackage("_ConcreteService_") || DefineSymbols.HasFolder("_ConcreteService_");
       DefineSymbols.AddOrRemoveDefines(addDefines: usable, named: "_Template_ServiceFor_ConcreteService_");
     }
 
     #region Service Entry Points
     #if _Template_ServiceFor_ConcreteService_
-    protected override void Prepare() => base.Prepare();
+    protected override void Prepare() {base.Prepare(); }
 
-    protected override void LogOnResponse(Emitter emitter) => base.LogOnResponse(emitter);
+    protected override void LogOnResponse(Emitter emitter) { base.LogOnResponse(emitter); }
 
     /*-EntryPoint...-*/
-    public override Emitter Call(Service<EntryPointDto> service) => EntryPointDtoFiber.Go(service).OnComplete;
+    public override Emitter Call(Service<EntryPointDto> service) => EntryPointFiber.Go(service).OnComplete;
 
-    private class EntryPointDtoFiber : Fiber.Closure<EntryPointDtoFiber, Service<EntryPointDto>> {
+    private class EntryPointFiber : Fiber.Closure<EntryPointFiber, Service<EntryPointDto>> {
       protected override void Activities(Fiber fiber) =>
         // Use Scope.Dto.request: entryPointRequest
-        fiber.WaitFor(1 /*external service*/)
-             .Do(_ => Scope.Dto.response = default /*fill response*/)
+        fiber.WaitFor(1 /** external service **/)
+             .Do(_ => Scope.Dto.response = default /** fill response **/)
              .Fire(Scope.Emitter);
-    } // or use service.Emitter && service.Emitter.Fire() if another fiber is not needed
+    } /** or use service.Emitter && service.Emitter.Fire() if another fiber is not needed **/
     /*-...EntryPoint-*/
 
     #endif
