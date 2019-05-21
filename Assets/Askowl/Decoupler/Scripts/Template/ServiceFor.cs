@@ -17,20 +17,23 @@ namespace Decoupler.Services {
 
     #region Service Entry Points
     #if _Template_ServiceFor_ConcreteService_
-    protected override void Prepare() {base.Prepare(); }
-
-    protected override void LogOnResponse(Emitter emitter) { base.LogOnResponse(emitter); }
+    protected override void OnEnable()  { base.OnEnable(); }
+    protected override void Prepare()   { base.Prepare(); }
+    protected override void OnDisable() { base.OnDisable(); }
 
     /*-EntryPoint...-*/
-    public override Emitter Call(Service<EntryPointDto> service) => EntryPointFiber.Go(service).OnComplete;
+    public override Emitter Call<T>(EntryPoint<T> EntryPoint) {
+      // **************** START FILL - EntryPoint Request Implementation **************** //
 
-    private class EntryPointFiber : Fiber.Closure<EntryPointFiber, Service<EntryPointDto>> {
-      protected override void Activities(Fiber fiber) =>
-        // Use Scope.Dto.request: entryPointRequest
-        fiber.WaitFor(1 /** external service **/)
-             .Do(_ => Scope.Dto.response = default /** fill response **/)
-             .Fire(Scope.Emitter);
-    } /** or use service.Emitter && service.Emitter.Fire() if another fiber is not needed **/
+      // Step 1: Parse EntryPoint.request to fill request
+      // Step 2: Make request
+      // Step 3: Wait for response from service
+      // Step 4: Fill EntryPoint.response
+      // Step 5: Fire EntryPoint.Emitter
+
+      // **************** END FILL - of EntryPoint Request Implementation **************** //
+      return EntryPoint.Emitter;
+    }
     /*-...EntryPoint-*/
 
     #endif
@@ -39,14 +42,10 @@ namespace Decoupler.Services {
     #region Service Entry Points
     #if !_Template_ServiceFor_ConcreteService_
     /*-EntryPoint...-*/
-    public override Emitter Call(Service<EntryPointDto> service) => throw new NotImplementedException("EntryPointDto");
+    public override Emitter Call(EntryPoint EntryPoint) => throw new NotImplementedException("EntryPointDto");
     /*-...EntryPoint-*/
     #endif
     #endregion
-
-    // One service override per service method
-    // Access the external service here. Save and call dti.Emitter.Fire when service call completes
-    // or set dto.ErrorMessage if the service call fails to initialise
 
     #region Compiler Definition
     #if _Template_ServiceFor_ConcreteService_

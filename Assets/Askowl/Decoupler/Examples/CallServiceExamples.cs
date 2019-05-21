@@ -1,35 +1,28 @@
 ﻿// Copyright 2019 (C) paul@marrington.net http://www.askowl.net/unity-packages
 #if AskowlTests
 using System.Collections;
+using Askowl;
 using Askowl.Gherkin;
 using CustomAsset;
 using CustomAsset.Mutable;
 using Decoupler.Services;
-using UnityEngine.Assertions;
+using UnityEngine;
 using UnityEngine.TestTools;
 // ReSharper disable MissingXmlDoc
 
-namespace Askowl.Decoupler.Examples {
+namespace Decoupler.Examples {
   public class CallServiceExamples : PlayModeTests {
     /// Sample service call
-    private Emitter CallService() {
-      // Load the service manager for this service type. You can cache this. It does not change (except for testing)
-      manager = AssetDb.Load<ServiceExampleServicesManager>($"{serviceManagerName}ServicesManager.asset");
-      // Build Service DTO
-      addService = Service<ServiceExampleServiceAdapter.AddDto>.Instance;
-      // The DTO will have request data going in and response data coming back
-      addService.Dto.request = (firstValue, secondValue);
-      // Here we make the service call with fallback if available/necessary
-      return manager.CallService(addService);
-    }
+    private ServiceExampleServiceAdapter.Add CallService() =>
+      ServiceExampleServiceAdapter.Add.Call((firstValue, secondValue));
 
     // ************ Everything below here is BDD and Test scaffolding ************
 
-    private String                                       mockState;
-    private int                                          firstValue, secondValue;
-    private Service<ServiceExampleServiceAdapter.AddDto> addService;
-    private string                                       serviceManagerName;
-    private ServiceExampleServicesManager                manager;
+    private String mockState;
+    private int    firstValue, secondValue;
+    private string serviceManagerName;
+    // ReSharper disable once NotAccessedField.Local
+    private int usageBalance = 1;
 
     private IEnumerator ServiceTest(string label) {
       yield return Feature.Go(definitionAsset: "DecouplerDefinitions", featureFile: "CallServices", label)
@@ -43,8 +36,11 @@ namespace Askowl.Decoupler.Examples {
     [UnityTest] public IEnumerator Random()           { yield return ServiceTest("@Random"); }
     [UnityTest] public IEnumerator RandomExhaustive() { yield return ServiceTest("@RandomExhaustive"); }
 
-    [Step(@"^a (\S+) stack with (\d+) services$")] public void ServerStack(string[] matches) =>
-      serviceManagerName = matches[0];
+    [Step(@"^a (\S+) stack with (\d+) services$")] public void ServerStack(string[] matches) {
+      var assetName = $"{matches[0]}ServicesManager";
+      Managers.Add<ServiceExampleServicesManager>(assetName);
+      Managers.Add("ServiceExampleServicesManager", Managers.Find(assetName));
+    }
 
     [Step(@"^server success of ""(.*)""$")] public void MockStateOf(string[] matches) {
       mockState      = AssetDb.Load<String>("MockState.asset");
@@ -59,71 +55,66 @@ namespace Askowl.Decoupler.Examples {
     }
 
     [Step(@"^we will get a result of (\d+)$")] public Emitter AddResult(string[] matches) {
-      var expected = int.Parse(matches[0]);
-      return Fiber.Start.WaitFor(_ => CallService())
-                  .Do(_ => Assert.AreEqual(expected, addService.Dto.response))
+      int                              result = int.Parse(matches[0]);
+      ServiceExampleServiceAdapter.Add add    = null;
+      return Fiber.Start().WaitFor(_ => (add = CallService()).OnComplete)
+                  .Assert(_ => add.response == result, _ => $"Expecting {result}, response {add.response}")
                   .OnComplete;
     }
 
-    [Step(@"^we get a service error$")] public Emitter ServiceError() =>
-      Fiber.Start.WaitFor(_ => CallService())
-           .Do(_ => Assert.IsTrue(addService.Error))
-           .OnComplete;
-
-    [Step(@"^a service message of ""(.*)""$")] public void ServiceMessage(string[] matches) {
-      Assert.AreEqual(expected: matches[0], actual: addService.ErrorMessage);
+    [Step(@"^we get a service error$")] public Emitter ServiceError() {
+      ServiceExampleServiceAdapter.Add add = null;
+      return Fiber.Start().WaitFor(_ => (add = CallService()).OnComplete).Assert(_ => add.Failed).OnComplete;
     }
 
     [Step(@"^we use service (\d+)$")] public Emitter WeUseService(string[] matches) {
-      var serviceNumber        = int.Parse(matches[0]);
-      firstValue = secondValue = 0;
-      return Fiber.Start.WaitFor(_ => CallService())
-                  .Do(_ => Assert.AreEqual(serviceNumber, addService.Dto.response + 1))
+      int                              result = int.Parse(matches[0]);
+      ServiceExampleServiceAdapter.Add add    = null;
+      firstValue = secondValue                = 0;
+      return Fiber.Start().WaitFor(_ => (add = CallService()).OnComplete).WaitFor((add = CallService()).OnComplete)
+                  .Assert(_ => add.response == result, $"Expecting {result}, returned service {add.response}")
                   .OnComplete;
     }
 
     [Step(@"^we repeat the service call$")] public void RepeatServiceCall() { }
 
     [Step(@"^we will eventually get the same service number twice in a row$")]
-    public Emitter TwiceInARow(string[] matches) {
-      string services          = "";
-      firstValue = secondValue = 0;
-      var fiber = Fiber.Start.Begin.Do(_ => services = "")
-                       .Begin.WaitFor(_ => CallService())
-                       .Do(_ => services += ((char) ('0' + addService.Dto.response)))
-                       .Repeat(3)
-                       .Until(_ => "0000 1111".Contains(services));
-      return fiber.OnComplete;
+    public Emitter TwiceInARow() {
+      ServiceExampleServiceAdapter.Add add      = null;
+      string                           services = "";
+      firstValue = secondValue                  = 0;
+      return Fiber.Start().Begin.Do(fiber => services = "")
+                  .WaitFor(_ => (add = CallService()).OnComplete)
+                  .Do(_ => services += (char) ('0' + add.response))
+                  .Repeat(3)
+                  .Until(fiber => "0000 1111".Contains(services)).OnComplete;
     }
 
     [Step(@"^we will never get the same service number twice in a row$")]
-    public Emitter NeverTwiceInARow(string[] matches) {
-      string services          = "";
-      firstValue = secondValue = 0;
-      var fiber = Fiber.Start.Begin.ExitOnError.Do(_ => services = "").Begin
-                       .WaitFor(_ => CallService())
-                       .Do(_ => services += ((char) ('0' + addService.Dto.response)))
-                       .Repeat(3)
-                       .Do(_ => Assert.IsFalse("0000 1111".Contains(services), services))
-                       .Repeat(10);
-      return fiber.OnComplete;
+    public Emitter NeverTwiceInARow() {
+      ServiceExampleServiceAdapter.Add add      = null;
+      string                           services = "";
+      firstValue = secondValue                  = 0;
+      return Fiber.Start().ExitOnError.Begin.Do(_ => services = "").Begin
+                  .WaitFor(_ => (add = CallService()).OnComplete)
+                  .Do(_ => services += (char) ('0' + add.response))
+                  .Repeat(3)
+                  .Assert(_ => !"0000 1111".Contains(services), _ => $"Result='{services}', not 0000 or 1111")
+                  .Repeat(10).OnComplete;
     }
 
-    [Step(@"^each service is called (\d+) times in a row$")] public void InARow() { }
+    [Step(@"^each service is called (\d+) times in a row$")] public void InARow(string[] matches) =>
+      usageBalance = int.Parse(matches[0]);
 
     [Step(@"^we get the same service twice cycling$")] public Emitter RepeatCycling() {
-      string services          = "";
-      firstValue = secondValue = 0;
-      var fiber = Fiber.Start.Begin
-                       .WaitFor(_ => CallService())
-                       .Do(_ => services += ((char) ('0' + addService.Dto.response)))
-                       .Repeat(4).Do(_ => Assert.IsTrue("00110".Contains(services), services));
-      return fiber.OnComplete;
+      ServiceExampleServiceAdapter.Add add      = null;
+      string                           services = "";
+      firstValue = secondValue                  = 0;
+      return Fiber.Start().Begin
+                  .WaitFor(_ => (add = CallService()).OnComplete)
+                  .Do(_ => services += ((char) ('0' + add.response)))
+                  .Repeat(4).Assert(_ => "00110".Contains(services), _ => $"Result={services}").OnComplete;
     }
-
-    /*
-    [Step(@"^$")] public void () { }
-    */
   }
 }
 #endif

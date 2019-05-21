@@ -8,7 +8,7 @@ namespace Decoupler.Services {
     [SerializeField] public string /*-contextFieldType-*/ contextFieldName;
     /*-...ContextField-*/
 
-    /// <a href="">Equality is used to decide if a service is valid in this context</a> //#TBD#//
+    /// <a href="http://bit.ly/2uRJubf">Equality is used to decide if a service is valid in this context</a>
     protected bool Equals(_Template_Context other) =>
       base.Equals(other) /*-ContextEquals- && Equals(ContextEquality, other.ContextEquality)-*/;
     #endregion

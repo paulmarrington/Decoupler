@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Askowl/CustomAssets/Examples/Health/Health.unity
     guid: bb74c70c26b7a47659e54099ac7717a6
+  - enabled: 1
+    path: Examples.unity
+    guid: 00000000000000000000000000000000
   m_configObjects: {}

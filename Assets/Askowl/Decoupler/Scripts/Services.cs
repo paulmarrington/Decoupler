@@ -4,14 +4,71 @@ using System;
 using System.Linq;
 using Askowl;
 using CustomAsset;
+using JetBrains.Annotations;
 using UnityEngine;
+using Cache = Askowl.Cache;
+using Object = System.Object;
 
 namespace Decoupler.Services {
-  /// <a href="">Separate selection and service from context for easy Inspector configuration</a> //#TBD#//
-  public class Services<TS, TC> : Manager
+  /// <a href="http://bit.ly/2uRJubf">Interface for services managers</a>
+  public interface IServicesManager {
+    IServiceAdapter First();
+    IServiceAdapter Next();
+//    Fiber.IClosure  CallProvider(IService service);
+  }
+  /// <a href="http://bit.ly/2uRJubf">Interface for service contexts</a>
+  public interface IContext { }
+  /// <a href="http://bit.ly/2uRJubf">Interface for service adapters and concrete instances</a>
+  public interface IServiceAdapter { }
+
+  public class Entry<TRequest, TResponse> : Fiber.Closure {
+    public TRequest  request;
+    public TResponse response;
+    public string    Error;
+    public Emitter   Emitter = Emitter.Instance;
+    public bool      Failed => Error != null;
+
+    public static T Call<T>(TRequest request) where T : Entry<TRequest, TResponse> {
+      var instance = Cache<T>.Instance;
+      instance.request = request;
+      instance.Fiber.Go();
+      return instance;
+    }
+
+    private static string serviceName, entryPointName;
+
+    private IServicesManager manager;
+    private IServiceAdapter  serviceAdapter;
+
+    public static void Name(string service, string entry) {
+      serviceName    = service;
+      entryPointName = entry;
+    }
+
+    protected override void Activities(Fiber fiber) {
+      manager = (IServicesManager) Managers.Find($"{serviceName}ServicesManager");
+      if (manager == default)
+        Debug.LogError(Error = $"No service manager '{serviceName}ServicesManager' in a Managers game object");
+      else
+        fiber.OnError(exit: true, actor: message => Error = message).Do(Reset)
+             .Begin
+             .WaitFor(_ => MethodCache.Call(serviceAdapter, "Call", this) as Emitter)
+             .Until(_ => (Error == null) || ((serviceAdapter = manager.Next()) == null))
+             .If(_ => serviceAdapter == null).Error($"No Server '{serviceName} {entryPointName}' can Respond").End
+             .Finish();
+    }
+
+    private void Reset(Fiber fiber) {
+      Error          = null;
+      serviceAdapter = manager.First();
+    }
+  }
+  /// <inheritdoc cref="services" />
+  /// <a href="http://bit.ly/2uRJubf">Separate selection and service from context for easy Inspector configuration</a>
+  public class Services<TS, TC> : Manager, IServicesManager
     where TS : Services<TS, TC>.ServiceAdapter
     where TC : Services<TS, TC>.Context {
-    /// <a href=""></a> //#TBD#//
+    /// <a href="http://bit.ly/2PMWqLs">How the next service request is filled</a>
     // ReSharper disable MissingXmlDoc
     public enum Order { TopDown, RoundRobin, Random, RandomExhaustive }
     // ReSharper restore MissingXmlDoc
@@ -20,17 +77,20 @@ namespace Decoupler.Services {
     [SerializeField] private TC    context  = default;
     [SerializeField] private Order order    = Order.TopDown;
 
-    /// <a href="">Used in testing.</a> //#TBD#//
+    /// <a href="http://bit.ly/2PMWqLs">List of possible service - to be filtered by platform, etc</a>
+    public TS[] ServiceList => services;
+
+    /// <a href="http://bit.ly/2uZxnc1">Selector instance - public for use in testing</a>
     public Selector<TS> selector;
-    /// <a href=""></a> //#TBD#//
+    /// <a href="http://bit.ly/2uZxnc1">How many times to use this service before asking another</a>
     [HideInInspector] public int usagesRemaining;
-    /// <a href=""></a> //#TBD#//
+    /// <a href="http://bit.ly/2uZxnc1">The service currently being used</a>
     [HideInInspector] public TS currentService;
 
     /// <inheritdoc />
     protected override void Initialise() {
       // only use services that are valid for the current context
-      var useful = services.Where(service => service.context.Equals(context) && service.IsExternalServiceAvailable());
+      var useful = services.Where(service => context.Equals(service.context) && service.IsExternalServiceAvailable());
       services = useful.ToArray();
       // service processing order is dependent on the priority each gives
       Array.Sort(array: services, comparison: (x, y) => x.priority.CompareTo(value: y.priority));
@@ -43,86 +103,65 @@ namespace Decoupler.Services {
       usagesRemaining = 0;
     }
 
-    /// <a href="">Get the next service instance given selection order and repetitions</a> //#TBD#//
-    public TI Instance<TI>() where TI : TS {
+    /// <a href="http://bit.ly/2uZxnc1">Get the next service instance given selection order and repetitions</a>
+    public IServiceAdapter First() {
       if (order == Order.TopDown) {
         selector.Top();
       } else if (--usagesRemaining > 0) {
-        return (TI) currentService;
+        return currentService;
       }
       currentService  = selector.Pick();
       usagesRemaining = currentService.usageBalance;
-      return (TI) currentService;
+      return currentService;
     }
 
-    /// <a href="">If the last service fails, ask for another. If none work, returns null</a> //#TBD#//
-    public TI Next<TI>() where TI : TS {
+    /// <a href="http://bit.ly/2uZxnc1">If the last service fails, ask for another. If none work, returns null</a>
+    public IServiceAdapter Next() {
       currentService = selector.Next();
       if (currentService == default) return default;
       usagesRemaining = currentService.usageBalance;
-      return (TI) currentService;
+      return currentService;
     }
 
-    /// <a href=""></a> //#TBD#//
-    public Emitter CallService(Service service) =>
-      CallServiceFiber.Go((this, Instance<TS>(), service)).OnComplete; //#TBD#//
-
-    private class
-      CallServiceFiber : Fiber.Closure<CallServiceFiber, (Services<TS, TC> manager, TS server, Service service)> {
-      protected override void Activities(Fiber fiber) =>
-        fiber.Begin
-             .WaitFor(_ => MethodCache.Call(Scope.server, "Call", new object[] {Scope.service.Reset()}) as Emitter)
-             .Until(_ => !Scope.service.Error || ((Scope.server = Scope.manager.Next<TS>()) == null));
-    }
-
-    /// <a href="">Parent class for decoupled services</a>
-    [Serializable] public abstract class ServiceAdapter : Base {
-      /// <a href=""></a> //#TBD#//
+    /// <inheritdoc cref="ServiceAdapter" />
+    /// <a href="http://bit.ly/2uRJubf">Parent class for decoupled services</a>
+    [Serializable] public abstract class ServiceAdapter : Base, IServiceAdapter {
+      /// <a href="http://bit.ly/2uZxnc1">Used to sort service so most important are first</a>
       [SerializeField] internal int priority = 1;
-      /// <a href=""></a> //#TBD#//
+      /// <a href="http://bit.ly/2uZxnc1">How many repeats a service has before a new one is asked for</a>
       [SerializeField] internal int usageBalance = 1;
-      /// <a href=""></a> //#TBD#//
+      /// <a href="http://bit.ly/2uZxnc1">Context to be compared with running service to see if we can use this one</a>
       [SerializeField] public TC context = default;
 
-      /// <a href=""></a> //#TBD#//
+      /// <a href="http://bit.ly/2uRJubf">Helper method to log a message to the analytics system</a>
       protected Log.MessageRecorder Log;
-      /// <a href=""></a> //#TBD#//
+      /// <a href="http://bit.ly/2uRJubf">Helper to log an error to the analytics system</a>
       protected Log.EventRecorder Error;
 
-      /// <a href="">Concrete service implements this to prepare for action</a> //#TBD#//
+      /// <a href="http://bit.ly/2uUKZ8x">Concrete service implements this to prepare for action</a>
       protected abstract void Prepare();
 
-      /// <a href=""></a> //#TBD#//
+      /// <a href="http://bit.ly/2Pf34e4">Set by concrete external services</a>
       public abstract bool IsExternalServiceAvailable();
 
-      /// <a href="">Registered with Emitter to provide common logging</a> //#TBD#/
-      protected virtual void LogOnResponse(Emitter emitter) {
-        var service = emitter.Context<Service>();
-        var error   = service.ErrorMessage;
-        if (error != default) {
-          if (!string.IsNullOrEmpty(error)) Error($"Service Error: {error}");
-        } else {
-          Log("Warning", $"LogOnResponse for '{GetType().Name}");
-        }
-      }
-      private Emitter.Action logOnResponse;
-
-      /// <a href="">Override to initialise concrete service instances</a>
+      /// <inheritdoc />
+      /// <a href="http://bit.ly/2uUKZ8x">Override to initialise concrete service instances</a>
       protected override void Initialise() {
         base.Initialise();
-        Log           = Askowl.Log.Messages();
-        Error         = Askowl.Log.Errors();
-        logOnResponse = LogOnResponse;
+        Log   = Askowl.Log.Messages();
+        Error = Askowl.Log.Errors();
         Prepare();
       }
     }
 
-    /// <a href=""></a> //#TBD#//
-    [Serializable] public class Context : Base {
-      /// <a href="">Production, Staging, Test, Dev or user defined environment</a> //#TBD#//
+    /// <inheritdoc cref="IContext" />
+    /// <a href="http://bit.ly/2uZxnc1">Context used to share common service data and select valid services</a>
+    [Serializable] public class Context : Base, IContext {
+      /// <a href="http://bit.ly/2uZxnc1">Production, Staging, Test, Dev or user defined environment</a>
       [SerializeField] private Environment environment = default;
 
-      /// <a href=""></a> //#TBD#//
+      /// <a href="http://bit.ly/2uZxnc1">Compare services to see if the current one can be used</a>
+      // ReSharper disable once VirtualMemberNeverOverridden.Global
       protected virtual bool Equals(Context other) => base.Equals(other) && Equals(environment, other.environment);
 
       /// <inheritdoc />
@@ -132,48 +171,5 @@ namespace Decoupler.Services {
         // ReSharper restore NonReadonlyMemberInGetHashCode
       }
     }
-  }
-  /// <a href=""></a> //#TBD#//
-  public class Service : IDisposable {
-    /// <a href="">Is default for no error, empty for no logging of a message else error message</a> //#TBD#//
-    public string ErrorMessage { get; set; }
-
-    /// <a href=""></a> //#TBD#//
-    public Boolean Error => ErrorMessage != null;
-
-    /// <a href=""></a> //#TBD#//
-    public Emitter Emitter => emitter ?? (emitter = Emitter.SingleFireInstance);
-    private Emitter emitter;
-
-    public void Dispose() {
-      ErrorMessage = null;
-      var em = Emitter;
-      emitter = null; // so we don't spin out
-      em?.Dispose();  // Dto disposed of by the same command
-    }
-
-    /// <a href=""></a> //#TBD#//
-    public Service Reset() {
-      Dispose();
-      return this;
-    }
-  }
-
-  /// <a href=""></a> //#TBD#//
-  public class Service<T> : Service where T : DelayedCache<T> {
-    /// <a href=""></a> //#TBD#//
-    public static Service<T> Instance {
-      get {
-        var service = Cache<Service<T>>.Instance;
-        service.Dto = DelayedCache<T>.Instance;
-        service.Reset();
-        return service;
-      }
-    }
-
-    /// <a href=""></a> //#TBD#//
-    public T Dto;
-
-    public override string ToString() => Dto.ToString();
   }
 }

@@ -2,10 +2,10 @@
 using System.IO;
 using Askowl;
 using UnityEditor;
-using UnityEditor.Callbacks;
 using UnityEngine;
 
 namespace Decoupler.Services {
+  /*--[CreateAssetMenu(menuName = "Decoupled/_Template_/Concrete Service Wizard", fileName = "_Template_Wizard")]--*/
   public class _Template_Wizard : AssetWizard {
     private static _Template_Wizard newServiceInputForm;
 
@@ -17,39 +17,25 @@ namespace Decoupler.Services {
 
     [SerializeField] private string new_Template_Name;
 
-    public override void Clear(string dest = "") => new_Template_Name = dest;
+    public override void Clear() => new_Template_Name = "";
 
     public override void Create() {
-      assetType = "/*-assetType-*/";
-      PlayerPrefs.SetString($"AssetWizard.CreateAssets._Template_", $"ServiceFor{new_Template_Name}");
-      CreateAssets(
-        newAssetType: "Decoupler"
-      , key: "_Template_DecoupledService"
-      , destinationDirectory: "/*-destination-*/");
+      type  = "/*-assetType-*/";
+      Label = "BuildNewService";
+      CreateAssets(assetName: "_Template_", assetType: "Decoupler", basePath: "/*-destination-*/");
+      BuildAssets.Display();
     }
-    protected override bool ProcessAllFiles(string textAssetTypes) {
+    protected override void ProcessAllFiles(string textAssetTypes) {
       var serviceFor = $"/*-destination-*//_Template_ServiceFor";
       var fileName   = $"{destination}/_Template_ServiceFor{new_Template_Name}.cs";
       if (File.Exists(fileName)) throw new Exception($"'{fileName}' already exists. Try another name.");
       File.Copy($"{serviceFor}.cs", fileName);
       ProcessFiles("cs", fileName);
-      return true;
     }
 
     protected override string FillTemplate(Template template, string text) =>
       template.From(text)
               .Substitute("_ConcreteService_", new_Template_Name)
               .And(@"/\*\+\+", "").And(@"\+\+\*/", "").Result();
-
-    [DidReloadScripts] private static void OnScriptReload() {
-      using (var assets = AssetEditor.Instance("_Template_DecoupledService")) {
-        if (assets == null) return;
-        var newTemplateServiceName = PlayerPrefs.GetString($"AssetWizard.CreateAssets._Template_");
-        assets.Add((newTemplateServiceName, $"Decoupler.Services._Template_{newTemplateServiceName}"))
-              .Load(("ContextAsset", "Decoupler.Services._Template_Context"))
-              .SetFieldToAssetEditorEntry(newTemplateServiceName, "context", "ContextAsset");
-        Debug.Log("...All Done");
-      }
-    }
   }
 }

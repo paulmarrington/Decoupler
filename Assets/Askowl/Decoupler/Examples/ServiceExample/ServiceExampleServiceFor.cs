@@ -1,30 +1,41 @@
 // Copyright 2019 (C) paul@marrington.net http://www.askowl.net/unity-packages
 #if AskowlTests
 
-using System;
 using UnityEngine;
-#if ServiceExampleServiceFor || true
-using Askowl;
+#if ServiceExampleServiceFor
 // Add using statements for service library here
+// ReSharper disable MissingXmlDoc
 #endif
 
 namespace Decoupler.Services {
-  /// <a href=""></a><inheritdoc /> //#TBD#//
   [CreateAssetMenu(menuName = "Examples/Decouple/ServiceExample/Service", fileName = "ServiceExampleServiceFor")]
   public abstract class ServiceExampleServiceFor : ServiceExampleServiceAdapter {
-    #if ServiceExampleServiceFor || true
-    protected override void Prepare() => base.Prepare();
+    #if ServiceExampleServiceFor
+    /// <inheritdoc />
+    public override Emitter Call(Service<AddDto> service) {
+      // **************** START FILL - EntryPoint Request Implementation **************** //
 
-    protected override void LogOnResponse(Emitter emitter) => base.LogOnResponse(emitter);
+      // Step 1: Parse Scope.Dto.request to fill request
+      // Step 2: Make request
+      // Step 3: Wait for response from service
+      // Step 4: Fill Scope.Dto.response
+      // Step 5: Fire Scope.Emitter
 
-    // Implement all interface methods that call concrete service adapters need to implement
-
-    /// One service override per service method
-    // Access the external service here. Save and call dto.Emitter.Fire when service call completes
-    // or set dto.ErrorMessage if the service call fails to initialise
-    public override Emitter Call(Service<AddDto> service) => throw new NotImplementedException();
+      // **************** END FILL - of EntryPoint Request Implementation **************** //
+      return service.Emitter;
+    }
 
     #endif
+
+    #region Compiler Definition
+    #if _Template_ServiceFor_ConcreteService_
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    private static void RegisterService() { }
+    public override bool IsExternalServiceAvailable() => true;
+    #else
+    public override bool IsExternalServiceAvailable() => false;
+    #endif
+    #endregion
   }
 }
 #endif

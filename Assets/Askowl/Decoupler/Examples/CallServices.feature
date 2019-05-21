@@ -15,7 +15,6 @@ Feature: Calls to a decoupled service
     And an add service on the math server
     When we add 31 and 42
     Then we get a service error
-    And a service message of "Service 2 Failed"
 
   @TopDownFallback
   Scenario: Top-Down Service Fallback Success

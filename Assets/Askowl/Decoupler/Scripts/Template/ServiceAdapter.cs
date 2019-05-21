@@ -1,4 +1,8 @@
-﻿using Askowl;
+﻿using System;
+using Askowl;
+using CustomAsset;
+using UnityEngine;
+using Object = System.Object;
 
 namespace Decoupler.Services {
   public abstract class
@@ -16,12 +20,14 @@ namespace Decoupler.Services {
     // List of virtual interface methods that all concrete service adapters need to implement.
 
     /*-EntryPoint...-*/
-    /************* EntryPoint *************/
-    public class EntryPointDto : DelayedCache<EntryPointDto> {
-      public int /*-entryPointRequest-*/  request;
-      public int /*-entryPointResponse-*/ response;
+    /************* START EntryPoint *************/
+    public abstract Emitter Call(EntryPoint EntryPoint);
+
+    public class EntryPoint : Entry<int /*-entryPointRequest-*/, int /*-entryPointResponse-*/> {
+      static EntryPoint() => Name("_Template_", "EntryPoint");
+      public static EntryPoint Call(int /*-entryPointRequest-*/requestDto) => (EntryPoint) Call<EntryPoint>(requestDto);
     }
-    public abstract Emitter Call(Service<EntryPointDto> service);
+    /************* END EntryPoint *************/
     /*-...EntryPoint-*/
     #endregion
   }

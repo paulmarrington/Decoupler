@@ -3,5 +3,6 @@
 using CustomAsset.Constant;
 using UnityEngine;
 
-/// <a href=""></a> //#TBD#//
+/// <inheritdoc />
+/// <a href="http://bit.ly/2OZP7gP">Add a new environment over and above production, staging, test and mock</a>
 [CreateAssetMenu(menuName = "Decoupled/Add Environment")] public class Environment : Enumeration { }

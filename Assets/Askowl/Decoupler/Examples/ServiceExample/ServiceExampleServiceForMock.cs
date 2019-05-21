@@ -4,37 +4,32 @@
 using Askowl;
 using CustomAsset.Mutable;
 using UnityEngine;
+// ReSharper disable MissingXmlDoc
 
 namespace Decoupler.Services {
-  /// <a href=""></a> //#TBD#//
-  [CreateAssetMenu(menuName = "Examples/Decouple/ServiceExample/ServiceForMock", fileName = "ServiceExampleServiceForMock")]
+  [CreateAssetMenu(
+    menuName = "Examples/Decouple/ServiceExample/ServiceForMock", fileName = "ServiceExampleServiceForMock")]
   public class ServiceExampleServiceForMock : ServiceExampleServiceAdapter {
     [SerializeField] private String mockState    = default;
     [SerializeField] private int    serviceIndex = 0;
 
-    /// <a href="">Prepare the mock service for operations</a> //#TBD#//
-    protected override void Prepare() => base.Prepare();
-
-    /// <a href="">Use Log and Error to record analytics based on service responses</a> //#TBD#//
-    protected override void LogOnResponse(Emitter emitter) => base.LogOnResponse(emitter);
-
-    public override Emitter Call(Service<AddDto> service) {
+    public override Emitter Call(Add add) {
       var states = mockState.Text.Split(',');
       if (states.Length <= serviceIndex) return null;
       switch (states[serviceIndex]) {
         case "Pass":
-          if (service.Dto.request.firstValue == 0) {
-            service.Dto.response = serviceIndex;
+          if (add.request.firstValue == 0) {
+            add.response = serviceIndex;
           } else {
-            service.Dto.response = service.Dto.request.firstValue + service.Dto.request.secondValue;
+            add.response = add.request.firstValue + add.request.secondValue;
           }
-          Fiber.Start.WaitFor(seconds: 0.1f).Fire(service.Emitter);
-          return service.Emitter;
+          Fiber.Start().WaitFor(seconds: 0.01f).Fire(add.Emitter);
+          return add.Emitter;
         case "Fail":
-          service.ErrorMessage = $"Service {serviceIndex + 1} Failed";
+          add.Error = $"Service {serviceIndex + 1} Failed";
           return null;
         default:
-          service.ErrorMessage = $"Unknown mock state {mockState.Text}";
+          add.Error = $"Unknown mock state {mockState.Text}";
           return null;
       }
     }

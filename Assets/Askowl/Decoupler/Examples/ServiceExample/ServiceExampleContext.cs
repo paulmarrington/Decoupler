@@ -4,11 +4,8 @@
 using UnityEngine;
 
 namespace Decoupler.Services {
-  /// <a href=""></a> //#TBD#//
+  /// <inheritdoc />
   [CreateAssetMenu(menuName = "Examples/Decouple/ServiceExample/Context", fileName = "ServiceExampleContext")]
-  public class ServiceExampleContext : Services<ServiceExampleServiceAdapter, ServiceExampleContext>.Context {
-    /// <a href=""></a> //#TBD#//
-    protected bool Equals(ServiceExampleContext other) => base.Equals(other);
-  }
+  public class ServiceExampleContext : Services<ServiceExampleServiceAdapter, ServiceExampleContext>.Context { }
 }
 #endif
